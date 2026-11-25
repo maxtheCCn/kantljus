@@ -1,0 +1,21 @@
+KANTLJUS – så ligger sajten ute (gratis)
+
+Sajtens filer ligger på GitHub. Cloudflare Pages publicerar automatiskt varje gång
+något ändras där. Formuläret skickas med Web3Forms till Max mejl.
+
+Ändra något
+- Öppna filen på GitHub, tryck på pennan, ändra och tryck "Commit changes".
+  Efter ungefär en minut är ändringen ute på www.kantljus.se.
+
+Formuläret
+- Nyckeln från web3forms.com klistras in i index.html där det står
+  const WEB3FORMS_KEY = 'KLISTRA-IN-NYCKELN-HAR';
+- Förfrågningarna kommer som mejl till adressen nyckeln skapades med.
+
+Domänen
+- kantljus.se och e-posten ligger kvar hos STRATO.
+- www.kantljus.se pekar på Cloudflare Pages med en CNAME-post hos STRATO.
+- kantljus.se skickas vidare till https://www.kantljus.se hos STRATO.
+- Rör aldrig MX-, SPF- eller DKIM-posterna hos STRATO, då slutar e-posten fungera.
+
+Sajten visar inga priser. Kunden bokar ett samtal och får priset där.
