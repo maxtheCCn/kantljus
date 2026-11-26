@@ -45,3 +45,12 @@ Demoläge: öppna admin.html på datorn (eller innan steg 1-3 är klara) och
 tryck "Testa demoläget". Påhittade företag, inget sparas.
 Backup: knappen CSV i Ringlistan laddar ner hela listan.
 
+
+SKILLS (fliken Skills i admin)
+- Kantljus-signatur: samma zip-fil för alla. Lägger "Designat av: kantljus"
+  längst ner på hemsidor som Claude bygger.
+- Connect till kantljus.se: var och en laddar ner sin egen version. Den
+  innehåller en personlig nyckel, så den ska inte delas. Lägg in zip-filen
+  under Skills i Claude och lägg till kantljus.se som tillåten domän. Tappar
+  någon sin fil: tryck "Stäng av" vid nyckeln i Skills (Max ser allas).
+  Själva skillen ligger i mappen skills/connect-kantljus.

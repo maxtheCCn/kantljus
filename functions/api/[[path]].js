@@ -84,6 +84,8 @@ async function skapaTabeller(env) {
     env.DB.prepare('CREATE TABLE IF NOT EXISTS foretag (id TEXT PRIMARY KEY, data TEXT NOT NULL, uppdaterad INTEGER NOT NULL)'),
     env.DB.prepare('CREATE TABLE IF NOT EXISTS inloggning_fel (ip TEXT NOT NULL, tid INTEGER NOT NULL)'),
     env.DB.prepare('CREATE TABLE IF NOT EXISTS poster (id TEXT PRIMARY KEY, data TEXT NOT NULL, datum TEXT NOT NULL)'),
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS nycklar (hash TEXT PRIMARY KEY, person TEXT NOT NULL, skapad TEXT NOT NULL, senast TEXT, aktiv INTEGER NOT NULL DEFAULT 1)'),
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS jobbar (person TEXT PRIMARY KEY, data TEXT NOT NULL, tid INTEGER NOT NULL)'),
   ]);
   tabellerKlara = true;
 }
@@ -121,6 +123,27 @@ function rensaPost(p, id) {
   if (typ === 'ut' && !ut.person) throw new Error('Välj vem som tar ut');
   return ut;
 }
+
+// ---------- personliga nycklar (skillen Connect till kantljus.se) ----------
+// Nyckeln visas bara en gång, när den skapas. I databasen sparas bara en hash.
+async function sha256(text) {
+  const h = new Uint8Array(await crypto.subtle.digest('SHA-256', enc.encode(text)));
+  return [...h].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+function nyNyckel() {
+  const b = crypto.getRandomValues(new Uint8Array(32));
+  return 'kl_' + [...b].map((x) => x.toString(16).padStart(2, '0')).join('');
+}
+async function nyckelPerson(request, env) {
+  const m = (request.headers.get('authorization') || '').match(/^Bearer\s+(kl_[0-9a-f]{64})$/);
+  if (!m) return null;
+  const hash = await sha256(m[1]);
+  const rad = await env.DB.prepare('SELECT person FROM nycklar WHERE hash = ? AND aktiv = 1').bind(hash).first();
+  if (!rad) return null;
+  await env.DB.prepare('UPDATE nycklar SET senast = ? WHERE hash = ?').bind(new Date().toISOString(), hash).run();
+  return rad.person;
+}
+const JOBBAR_TTL = 4 * 60 * 60 * 1000; // "jobbar just nu" försvinner efter 4 timmar utan nytt
 
 async function hamta(env, id) {
   const rad = await env.DB.prepare('SELECT data FROM foretag WHERE id = ?').bind(id).first();
@@ -185,9 +208,12 @@ export async function onRequest({ request, env, params }) {
     }
 
     // ---------- allt nedanför kräver inloggning ----------
-    if (!(await inloggad(request, env))) return svar({ fel: 'Inte inloggad' }, 401);
+    const harBearer = /^Bearer\s/i.test(request.headers.get('authorization') || '');
+    const viaNyckel = harBearer ? await nyckelPerson(request, env) : null;
+    if (harBearer && !viaNyckel) return svar({ fel: 'Nyckeln fungerar inte längre. Ladda ner en ny under Skills i admin.' }, 401);
+    if (!viaNyckel && !(await inloggad(request, env))) return svar({ fel: 'Inte inloggad' }, 401);
 
-    const person = await verifieradPerson(request, env);
+    const person = viaNyckel || (await verifieradPerson(request, env));
     // Den som loggar något i ett kodskyddat namn måste ha låst upp det namnet
     const far = (namn) => !namn || !personKrav(env, namn) || person === namn;
     const nekad = (namn) => svar({ fel: `Välj ${namn} igen och skriv koden för ${namn}` }, 403);
@@ -214,6 +240,75 @@ export async function onRequest({ request, env, params }) {
       }
       await env.DB.prepare('DELETE FROM inloggning_fel WHERE ip = ?').bind(ip).run();
       return svar({ ok: true, person: namn }, 200, { 'set-cookie': await personCookie(env, namn) });
+    }
+
+    // ---------- nycklar ----------
+    if (delar[0] === 'nycklar') {
+      if (viaNyckel) return svar({ fel: 'Nycklar hanteras bara inne i admin' }, 403);
+      if (!person) return svar({ fel: 'Välj vem du är först' }, 403);
+      if (delar.length === 1 && metod === 'POST') {
+        const { n } = await env.DB.prepare('SELECT COUNT(*) AS n FROM nycklar WHERE person = ? AND aktiv = 1').bind(person).first();
+        if (n >= 10) return svar({ fel: 'Du har redan 10 aktiva nycklar. Stäng av några först.' }, 400);
+        const nyckel = nyNyckel();
+        const hash = await sha256(nyckel);
+        await env.DB.prepare('INSERT INTO nycklar (hash, person, skapad, aktiv) VALUES (?, ?, ?, 1)').bind(hash, person, new Date().toISOString()).run();
+        return svar({ nyckel, id: hash.slice(0, 10), person });
+      }
+      if (delar.length === 1 && metod === 'GET') {
+        const q = person === 'Max'
+          ? env.DB.prepare('SELECT hash, person, skapad, senast FROM nycklar WHERE aktiv = 1 ORDER BY skapad DESC')
+          : env.DB.prepare('SELECT hash, person, skapad, senast FROM nycklar WHERE aktiv = 1 AND person = ? ORDER BY skapad DESC').bind(person);
+        const { results } = await q.all();
+        return svar(results.map((r) => ({ id: r.hash.slice(0, 10), person: r.person, skapad: r.skapad, senast: r.senast || '' })));
+      }
+      if (delar.length === 2 && metod === 'DELETE' && /^[0-9a-f]{10}$/.test(delar[1])) {
+        const rad = await env.DB.prepare('SELECT hash, person FROM nycklar WHERE substr(hash, 1, 10) = ? AND aktiv = 1').bind(delar[1]).first();
+        if (!rad) return svar({ fel: 'Nyckeln finns inte' }, 404);
+        if (rad.person !== person && person !== 'Max') return svar({ fel: 'Bara Max kan stänga av andras nycklar' }, 403);
+        await env.DB.prepare('UPDATE nycklar SET aktiv = 0 WHERE hash = ?').bind(rad.hash).run();
+        return svar({ ok: true });
+      }
+      return svar({ fel: 'Finns inte' }, 404);
+    }
+
+    // ---------- jobbar just nu ----------
+    if (delar[0] === 'jobbar') {
+      if (delar.length === 1 && metod === 'GET') {
+        await env.DB.prepare('DELETE FROM jobbar WHERE tid < ?').bind(Date.now() - JOBBAR_TTL).run();
+        const { results } = await env.DB.prepare('SELECT data FROM jobbar ORDER BY tid DESC').all();
+        return svar(results.map((r) => JSON.parse(r.data)));
+      }
+      if (!person) return svar({ fel: 'Välj vem du är först' }, 403);
+      const kropp = await request.json().catch(() => ({}));
+      const txt = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
+      const nu = new Date().toISOString();
+      const gammal = await env.DB.prepare('SELECT data FROM jobbar WHERE person = ?').bind(person).first();
+      const forra = gammal ? JSON.parse(gammal.data) : null;
+      const logga = async (fid, rad) => {
+        if (!giltigtId(fid)) return null;
+        const rec = await hamta(env, fid);
+        if (!rec) return null;
+        rec.arbete = [...(rec.arbete || []), rad].slice(-40);
+        await spara(env, rec);
+        return rec;
+      };
+      if (delar.length === 1 && metod === 'POST') {
+        const vad = txt(kropp.vad, 200);
+        if (!vad) return svar({ fel: 'Skriv vad du jobbar med' }, 400);
+        const fid = giltigtId(kropp.foretag_id) ? kropp.foretag_id : '';
+        const samma = forra && forra.foretag_id === fid && forra.vad === vad;
+        const rec = fid ? (samma ? await hamta(env, fid) : await logga(fid, { tid: nu, av: person, typ: 'start', vad })) : null;
+        if (fid && !rec) return svar({ fel: 'Företaget finns inte' }, 404);
+        const data = { person, vad, foretag_id: fid, foretag_namn: rec?.namn || txt(kropp.foretag_namn, 120), start: samma ? forra.start : nu, uppdaterad: nu, kalla: viaNyckel ? 'claude' : 'admin' };
+        await env.DB.prepare('INSERT INTO jobbar (person, data, tid) VALUES (?, ?, ?) ON CONFLICT(person) DO UPDATE SET data = excluded.data, tid = excluded.tid').bind(person, JSON.stringify(data), Date.now()).run();
+        return svar(data);
+      }
+      if (delar[1] === 'klar' && metod === 'POST') {
+        if (forra?.foretag_id) await logga(forra.foretag_id, { tid: nu, av: person, typ: 'klar', vad: txt(kropp.notis, 500) || forra.vad });
+        await env.DB.prepare('DELETE FROM jobbar WHERE person = ?').bind(person).run();
+        return svar({ ok: true, var: forra });
+      }
+      return svar({ fel: 'Finns inte' }, 404);
     }
 
     // ---------- ekonomi ----------
@@ -304,6 +399,7 @@ export async function onRequest({ request, env, params }) {
       if (nyRingare && (rec.ringer.av !== gammal?.ringer?.av || rec.ringer.tid !== gammal?.ringer?.tid) && !far(nyRingare)) return nekad(nyRingare);
       // Samtal sparas bara via /samtal, så två som ringer samtidigt inte skriver över varandra
       rec.samtal = gammal ? gammal.samtal || [] : Array.isArray(rec.samtal) ? rec.samtal : [];
+      rec.arbete = gammal ? gammal.arbete || [] : [];
       return svar(await spara(env, rec));
     }
 

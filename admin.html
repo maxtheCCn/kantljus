@@ -471,6 +471,31 @@ a.ck-tile:hover{border-color:var(--glod)}
 .rr .vem b{display:inline;font-size:inherit;color:var(--ink);font-weight:600}
 .rr .nr .av{width:28px;height:28px;font-size:10px}
 /* ---------- ringlista (enkel) ---------- */
+.jobb{border:1px solid rgb(90 200 255/.3);background:linear-gradient(100deg,rgb(90 200 255/.08),transparent 70%),var(--s1);border-radius:var(--r);padding:14px 16px;display:grid;gap:8px}
+.jobb h3{margin:0;display:flex;align-items:center;gap:8px;font:500 11.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#7ad7ff}
+.jprick{width:7px;height:7px;border-radius:50%;background:#5ac8ff;animation:mnblink 1.6s infinite}
+.jlist{display:grid;gap:4px}
+.jb{display:flex;align-items:center;gap:10px;text-align:left;padding:6px 4px;border-radius:10px;color:var(--mute);font-size:14.5px;width:100%}
+button.jb:hover{background:rgb(255 255 255/.04)}
+.jb b{color:var(--ink);font-weight:600}
+.jb .t{min-width:0;display:grid}
+.jb small{font:500 11.5px var(--mono);color:var(--dim)}
+.lv-jobb h4{margin:14px 0 6px;font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#7ad7ff}
+.lv-jobb .jb{font-size:15px}
+.arb{display:grid;gap:8px}
+.arb>div{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;font-size:14px;color:var(--mute)}
+.arb b{color:var(--ink);font-weight:600}
+.arb small{display:block;color:var(--dim);font-size:13px}
+.skq{background:#141416;border:1px solid var(--line2);border-radius:14px;padding:16px;display:grid;gap:10px;max-width:520px}
+.skq p{margin:0;color:var(--ink);font-weight:500}
+.skq-o{display:flex;flex-wrap:wrap;gap:8px}
+.skq-o span{border:1px solid var(--line2);border-radius:999px;padding:6px 12px;font-size:13px;color:var(--mute)}
+.skq-o span:first-child{border-color:rgb(255 90 31/.6);color:var(--ink);background:rgb(255 90 31/.1)}
+.skc-demo{padding:22px 24px;border-block:1px solid var(--line);background:radial-gradient(600px 200px at 0 0,rgb(255 90 31/.07),transparent),var(--bg);display:grid;gap:10px}
+.skc-demo small{font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+.skn{display:grid;gap:6px;margin-top:4px}
+.skn>div{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--mute);flex-wrap:wrap}
+.skn b{color:var(--ink);font-weight:600}
 .sk{display:grid;gap:16px;max-width:980px}
 .skc{background:var(--s1);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:grid}
 .skc-top{padding:22px 24px;display:grid;gap:10px}
@@ -826,7 +851,7 @@ a.ck-tile:hover{border-color:var(--glod)}
       <div class="lv-mini"><div><span class="l">Senaste ja</span><b id="lvLastJa">–</b></div><div><span class="l">Svarade</span><b id="lvHit">0 %</b></div><div><span class="l">Senaste timmen</span><b id="lvPace">0</b></div></div>
     </section>
     <div class="lv-side">
-      <section class="lv-card"><h3><span style="width:7px;height:7px;border-radius:50%;background:#ff4a1c;display:inline-block;animation:ping 1.6s infinite"></span>Ringer just nu</h3><div class="lv-now" id="lvNow"></div></section>
+      <section class="lv-card"><h3><span style="width:7px;height:7px;border-radius:50%;background:#ff4a1c;display:inline-block;animation:ping 1.6s infinite"></span>Ringer just nu</h3><div class="lv-now" id="lvNow"></div><div class="lv-jobb" id="lvJobb"></div></section>
       <section class="lv-card"><h3>Topplista idag</h3><div class="lv-lb" id="lvLead"></div></section>
     </div>
   </div>
@@ -868,7 +893,7 @@ const GRUNDARE = ['Max', 'William', 'John-John'];
 
 /* ================= tillstånd ================= */
 const S = {
-  data: [], poster: [], period: 'manad', demo: false, me: null, view: 'oversikt', open: null,
+  data: [], poster: [], jobbar: [], period: 'manad', demo: false, me: null, view: 'oversikt', open: null,
   f: { q: '', st: 'alla', ans: 'alla', sort: 'aktivitet' },
   logPerson: 'alla', pick: null, nasta: '',
 };
@@ -1073,7 +1098,7 @@ async function startaApp() {
       if (ses.person !== S.me) await api('/person', { method: 'POST', body: JSON.stringify({ namn: S.me }) });
     } catch (e) { if (e.message === 'Inte inloggad') return; S.me = null; }
   }
-  try { [S.data, S.poster] = await Promise.all([db.lista(), db.poster()]); setSync(true, S.demo ? 'Demo' : 'Synkad'); }
+  try { [S.data, S.poster] = await Promise.all([db.lista(), db.poster(), hamtaJobbar()]); setSync(true, S.demo ? 'Demo' : 'Synkad'); }
   catch (e) { if (e.message !== 'Inte inloggad') { setSync(false, 'Offline'); toast(e.message, true); } return; }
   const h = (location.hash || '').slice(1);
   S.view = VIEWS[h] ? h : 'oversikt';
@@ -1086,7 +1111,7 @@ async function startaApp() {
 async function uppdatera() {
   if (S.demo || document.hidden || $('#app').hidden) return;
   try {
-    [S.data, S.poster] = await Promise.all([api('/foretag'), api('/poster')]);
+    [S.data, S.poster] = await Promise.all([api('/foretag'), api('/poster'), hamtaJobbar()]);
     setSync(true, 'Synkad ' + klock(new Date()));
     const skriver = $('#drawer').contains(document.activeElement) || $('#modal').classList.contains('on');
     if (LV.pa) liveRita();
@@ -1095,8 +1120,15 @@ async function uppdatera() {
 }
 document.addEventListener('visibilitychange', () => { if (!document.hidden) uppdatera(); });
 
+async function hamtaJobbar() {
+  if (S.demo) return;
+  try { S.jobbar = await api('/jobbar'); } catch {}
+}
+const jobbRad = (j, klass = 'jb') => `<${j.foretag_id ? `button data-open="${esc(j.foretag_id)}"` : 'div'} class="${klass}">${avatar(j.person)}<span class="t"><span><b>${esc(j.person)}</b> jobbar med ${esc(j.vad)}</span><small>började ${nar(j.start)}${j.kalla === 'claude' ? ' · via Claude' : ''}</small></span></${j.foretag_id ? 'button' : 'div'}>`;
+
 function startaDemo() {
   S.demo = true; S.data = demoData(); S.poster = demoPoster();
+  S.jobbar = [{ person: 'William', vad: 'Hemsida åt Salong Vera', foretag_id: '', foretag_namn: 'Salong Vera', start: new Date(Date.now() - 25 * 60000).toISOString(), kalla: 'claude' }];
   $('#notice').hidden = true;
   startaApp();
 }
@@ -1218,7 +1250,7 @@ function vyOversikt() {
   <div class="hello"><div><h2>${halsning}${S.me ? ', ' + esc(S.me) : ''}.</h2>
   <p>${S.data.filter(iRinglistan).length ? `<button class="btn pri sm" data-go="ring" style="margin-right:10px;vertical-align:1px"><svg class="i"><use href="#i-phone"/></svg>${S.data.filter(iRinglistan).length} att ringa</button>` : ''}${att.length ? `Du har <b style="color:var(--ink);font-weight:500">${att.length}</b> uppföljningar de närmaste dagarna.` : 'Inga uppföljningar väntar. Dags att ringa några nya?'}</p></div>
   <span class="mono dim">${new Date().toLocaleDateString('sv-SE', { weekday: 'long', day: 'numeric', month: 'long' })} · v.${veckonr()}</span></div>
-
+  ${S.jobbar.length ? `<section class="jobb"><h3><span class="jprick"></span>Jobbar just nu</h3><div class="jlist">${S.jobbar.map((j) => jobbRad(j)).join('')}</div></section>` : ''}
   <div class="kpis">
     <div class="kpi hot"><span class="l">Samtal i veckan</span><span class="v">${denna.length}</span>
       <span class="s">${forra.length || denna.length ? `<span class="${diff >= 0 ? 'up' : 'down'}">${diff >= 0 ? '+' : '−'}${Math.abs(diff)}</span> mot förra veckan` : 'Inga samtal än'}</span></div>
@@ -1935,28 +1967,110 @@ function vyManus() {
 /* ================= SKILLS ================= */
 const SKILLS = [
   {
+    id: 'connect-kantljus', namn: 'Connect till kantljus.se', tag: 'Koppling', personlig: true,
+    om: 'Kopplar Claude till admin. När du startar ett projekt frågar Claude om det ska rapporteras, och teamet ser direkt vad du jobbar med. Du kan också be Claude lägga till företag, logga samtal eller visa vilka som ska ringas tillbaka.',
+    gor: ['Frågar ”Ska jag rapportera det här till kantljus.se?” när du startar ett projekt', 'Hittar rätt företag i admin, eller skapar ett nytt', 'Visar ”Jobbar just nu” på Översikt och i Live', 'Kan lägga till företag, logga samtal och visa listor åt dig'],
+    steg: ['Tryck på <b>Ladda ner min version</b>. Den är bara din, så dela den inte.', 'Ladda upp zip-filen under <b>Skills</b> i Claudes inställningar och slå på den.', 'Lägg till <b>kantljus.se</b> som tillåten domän i Claudes inställningar.', 'Skriv till exempel ”bygg en hemsida åt Salong Vera”. Claude frågar om det ska rapporteras.'],
+  },
+  {
     id: 'kantljus-signatur', namn: 'Kantljus-signatur', tag: 'Signatur', fil: '/skills/kantljus-signatur.zip', storlek: '620 kB',
     om: 'Lägger till ”Designat av: kantljus” längst ner till höger på varje hemsida vi bygger med Claude. Loggan och texten blir en länk till kantljus.se.',
     gor: ['Sätter signaturen sist i sidfoten, på alla sidor och undersidor', 'Liten och diskret: 11 px text och en 90 px bred logga', 'Fungerar på både mörka och ljusa sidfötter', 'Rör inte kundens egen copyright eller logga'],
+    steg: ['Tryck på <b>Ladda ner skill</b>. Packa inte upp zip-filen.', 'Öppna Claude, gå till inställningarna och leta upp <b>Skills</b>.', 'Ladda upp zip-filen och slå på den.', 'Be Claude bygga en hemsida. Signaturen kommer med automatiskt.'],
   },
 ];
+const SKV = { nycklar: null, hamtar: false, laddar: false, saker: '' };
+async function hamtaNycklar() {
+  if (S.demo || SKV.hamtar) return;
+  SKV.hamtar = true;
+  try { SKV.nycklar = await api('/nycklar'); } catch { SKV.nycklar = []; }
+  SKV.hamtar = false;
+  if (S.view === 'skills') render(false);
+}
 function vySkills() {
+  if (SKV.nycklar === null && !S.demo) setTimeout(hamtaNycklar);
   const sig = '<a class="skc-sig" href="https://kantljus.se/" target="_blank" rel="noopener"><span>Designat av:</span><img src="/skills/kantljus-outline.png" alt="Kantljus" width="360" height="120"></a>';
+  const nyck = SKV.nycklar || [];
+  const nyckLista = S.demo ? '<div class="dim" style="font-size:13px">Nycklar finns inte i demoläget.</div>'
+    : SKV.nycklar === null ? '<div class="dim" style="font-size:13px">Hämtar …</div>'
+    : nyck.length ? nyck.map((n) => `<div>${avatar(n.person)}<span><b>${esc(n.person)}</b> · skapad ${nar(n.skapad)} · ${n.senast ? 'använd ' + nar(n.senast) : 'inte använd än'}</span><button class="btn ghost sm" data-stang="${n.id}">${SKV.saker === n.id ? 'Säker? Stäng av' : 'Stäng av'}</button></div>`).join('')
+    : '<div class="dim" style="font-size:13px">Inga nycklar än. Den skapas när du laddar ner.</div>';
   return `
   <div class="ringtop"><div><h2>Skills</h2><p>Ladda ner och lägg in i Claude. Sen följer Claude våra regler automatiskt när ni bygger hemsidor.</p></div></div>
   <div class="sk">${SKILLS.map((x) => `
     <article class="skc">
       <div class="skc-top"><span class="tag" style="justify-self:start">${esc(x.tag)}</span><h3>${esc(x.namn)}</h3><p>${esc(x.om)}</p>
-        <div class="skc-meta"><a class="btn pri" href="${x.fil}" download><svg class="i"><use href="#i-down"/></svg>Ladda ner skill</a><span class="mono dim">${esc(x.id)}.zip · ${x.storlek}</span></div></div>
+        <div class="skc-meta">${x.personlig
+          ? `<button class="btn pri" data-minskill="${x.id}" ${SKV.laddar ? 'disabled' : ''}><svg class="i"><use href="#i-down"/></svg>${SKV.laddar ? 'Skapar …' : 'Ladda ner min version'}</button><span class="mono dim">${S.me ? 'för ' + esc(S.me) : 'välj vem du är först'}</span>`
+          : `<a class="btn pri" href="${x.fil}" download><svg class="i"><use href="#i-down"/></svg>Ladda ner skill</a><span class="mono dim">${esc(x.id)}.zip · ${x.storlek}</span>`}</div></div>
       ${x.id === 'kantljus-signatur' ? `<div class="skc-prev">
         <div class="skc-mork"><small>Så ser det ut · mörk sidfot</small><div class="skc-fot"><span>© 2026 Salong Exempel</span>${sig}</div></div>
         <div class="skc-ljus"><small>Så ser det ut · ljus sidfot</small><div class="skc-fot"><span>© 2026 Salong Exempel</span>${sig}</div></div>
       </div>` : ''}
+      ${x.id === 'connect-kantljus' ? `<div class="skc-demo"><small>Så ser det ut i Claude</small>
+        <div class="skq"><p>Ska jag rapportera det här till kantljus.se?</p><div class="skq-o"><span>Ja, under Salong Vera (08-123 45 67)</span><span>Annat företag</span><span>Skapa nytt företag</span><span>Nej, inte nu</span></div></div>
+      </div>` : ''}
       <div class="skc-body">
         <div><h4>Vad den gör</h4><ul>${x.gor.map((g) => `<li>${esc(g)}</li>`).join('')}</ul></div>
-        <div><h4>Så lägger du in den</h4><ol><li>Tryck på <b>Ladda ner skill</b>. Packa inte upp zip-filen.</li><li>Öppna Claude, gå till inställningarna och leta upp <b>Skills</b>.</li><li>Ladda upp zip-filen och slå på den.</li><li>Be Claude bygga en hemsida. Signaturen kommer med automatiskt.</li></ol></div>
+        <div><h4>Så lägger du in den</h4><ol>${x.steg.map((g) => `<li>${g}</li>`).join('')}</ol></div>
+        ${x.personlig ? `<div style="grid-column:1/-1"><h4>${S.me === 'Max' ? 'Alla aktiva nycklar' : 'Dina aktiva nycklar'}</h4><p class="dim" style="margin:0 0 6px;font-size:13.5px">Varje nedladdning får en egen nyckel. Har någon tappat sin fil stänger du av nyckeln här, så slutar den fungera direkt.</p><div class="skn">${nyckLista}</div></div>` : ''}
       </div>
     </article>`).join('')}</div>`;
+}
+
+// Bygger en zip-fil i webbläsaren (utan komprimering)
+const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+const crc32 = (b) => { let c = 0xffffffff; for (const x of b) c = CRC[(c ^ x) & 255] ^ (c >>> 8); return (c ^ 0xffffffff) >>> 0; };
+function zippa(filer) {
+  const te = new TextEncoder(), delar = [], central = [];
+  let off = 0;
+  const d = new Date(), tid = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), dag = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  for (const [namn, text] of filer) {
+    const n = te.encode(namn), data = te.encode(text), crc = crc32(data);
+    const h = new DataView(new ArrayBuffer(30));
+    h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+    h.setUint16(10, tid, true); h.setUint16(12, dag, true); h.setUint32(14, crc, true); h.setUint32(18, data.length, true); h.setUint32(22, data.length, true);
+    h.setUint16(26, n.length, true); h.setUint16(28, 0, true);
+    delar.push(new Uint8Array(h.buffer), n, data);
+    const c = new DataView(new ArrayBuffer(46));
+    c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true);
+    c.setUint16(12, tid, true); c.setUint16(14, dag, true); c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true);
+    c.setUint16(28, n.length, true); c.setUint32(42, off, true);
+    central.push(new Uint8Array(c.buffer), n);
+    off += 30 + n.length + data.length;
+  }
+  const storlek = central.reduce((s, x) => s + x.length, 0);
+  const e = new DataView(new ArrayBuffer(22));
+  e.setUint32(0, 0x06054b50, true); e.setUint16(8, filer.length, true); e.setUint16(10, filer.length, true); e.setUint32(12, storlek, true); e.setUint32(16, off, true);
+  return new Blob([...delar, ...central, new Uint8Array(e.buffer)], { type: 'application/zip' });
+}
+async function laddaNerMinSkill() {
+  if (S.demo) return toast('Det går inte i demoläget. Logga in på riktigt först.', true);
+  if (!S.me) return valjPerson();
+  SKV.laddar = true; render(false);
+  try {
+    const [md, py] = await Promise.all(['/skills/connect-kantljus/SKILL.md', '/skills/connect-kantljus/scripts/kantljus.py'].map(async (u) => {
+      const r = await fetch(u + '?v=' + Date.now()); if (!r.ok) throw new Error('Kunde inte hämta skillens filer'); return r.text();
+    }));
+    const { nyckel, person } = await api('/nycklar', { method: 'POST' });
+    const blob = zippa([
+      ['connect-kantljus/SKILL.md', md.replaceAll('{{NAMN}}', person)],
+      ['connect-kantljus/scripts/kantljus.py', py],
+      ['connect-kantljus/config.json', JSON.stringify({ namn: person, nyckel, bas: location.origin }, null, 2) + '\n'],
+    ]);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = `connect-kantljus-${person.toLowerCase()}.zip`;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    toast('Nedladdad. Dela inte filen, den fungerar som din inloggning.');
+    SKV.nycklar = null;
+  } catch (e) { toast(e.message || 'Något gick fel', true); }
+  SKV.laddar = false; render(false);
+}
+async function stangNyckel(id) {
+  if (SKV.saker !== id) { SKV.saker = id; render(false); return; }
+  SKV.saker = '';
+  try { await api('/nycklar/' + id, { method: 'DELETE' }); toast('Nyckeln är avstängd.'); } catch (e) { toast(e.message, true); }
+  SKV.nycklar = null; render(false);
 }
 
 function vyPromptar() {
@@ -2100,7 +2214,7 @@ function nyPost(typ, kund) {
 }
 
 /* ================= LIVE DASHBOARD ================= */
-const LV = { pa: false, sett: new Set(), forst: true, poll: null, tick: null, ko: [], visar: false, ljud: false, ac: null, demoT: null, sist: {}, mal: +(store.get('kl_mal') || 40), malKlar: false, raf: null, tkNyckel: '' };
+const LV = { jt: 0, pa: false, sett: new Set(), forst: true, poll: null, tick: null, ko: [], visar: false, ljud: false, ac: null, demoT: null, sist: {}, mal: +(store.get('kl_mal') || 40), malKlar: false, raf: null, tkNyckel: '' };
 const JA = ['intresserad', 'mote', 'offert', 'kund'];
 // Ett ja/nej räknas bara så länge företaget fortfarande har den statusen (ändrar Max till Ring tillbaka går siffran ner)
 const jaNu = (s) => JA.includes(s.utfall) && JA.includes(s.f.status);
@@ -2150,7 +2264,7 @@ function stangLive() {
 }
 async function liveHamta() {
   if (!LV.pa || S.demo || document.hidden) return;
-  try { [S.data, S.poster] = await Promise.all([api('/foretag'), api('/poster')]); liveRita(); } catch {}
+  try { [S.data, S.poster] = await Promise.all([api('/foretag'), api('/poster'), LV.jt++ % 5 ? null : hamtaJobbar()]); liveRita(); } catch {}
 }
 function liveTick() {
   const nu = new Date();
@@ -2268,6 +2382,9 @@ function liveRita() {
     $$('[data-avsluta]', now).forEach((b) => b.onclick = () => avslutaSamtal(b.dataset.avsluta, b));
     liveTick();
   }
+  // --- jobbar just nu (från skillen Connect till kantljus.se)
+  const lj = $('#lvJobb'), jk = S.jobbar.map((j) => j.person + j.vad + j.start).join('|');
+  if (lj.dataset.k !== jk) { lj.dataset.k = jk; lj.innerHTML = S.jobbar.length ? `<h4>Jobbar just nu</h4>${S.jobbar.map((j) => jobbRad(j, 'jb lv')).join('')}` : ''; $$('[data-open]', lj).forEach((b) => b.onclick = () => { stangLive(); oppna(b.dataset.open); }); }
   // --- topplista med animerade placeringar
   const rad = TEAM.map((pp) => ({ p: pp, n: samt.filter((s) => s.av === pp.n).length, ja: unikaForetag(samt.filter((s) => s.av === pp.n && jaNu(s))) }))
     .sort((a, b) => b.ja - a.ja || b.n - a.n);
@@ -2480,6 +2597,8 @@ function koppla(v) {
   $$('[data-filter]', v).forEach((b) => b.onclick = () => { S.f.st = b.dataset.filter; ga('ringlista'); });
   $$('[data-st]', v).forEach((b) => b.onclick = () => { S.f.st = b.dataset.st; render(false); });
   $$('[data-lp]', v).forEach((b) => b.onclick = () => { S.logPerson = b.dataset.lp; render(false); });
+  $$('[data-minskill]', v).forEach((b) => b.onclick = laddaNerMinSkill);
+  $$('[data-stang]', v).forEach((b) => b.onclick = () => stangNyckel(b.dataset.stang));
   $$('[data-mnsvar]', v).forEach((b) => b.onclick = () => { MN.svar = MN.svar === b.dataset.mnsvar ? null : (b.dataset.mnsvar || null); render(false); });
   $$('[data-mnkop]', v).forEach((b) => b.onclick = async () => { if (await kopiera(MAIL)) toast('Mejladressen är kopierad.'); });
   $$('[data-prk]', v).forEach((b) => b.onclick = () => { PR.kat = b.dataset.prk; render(false); });
@@ -2587,6 +2706,8 @@ function ritaLada() {
       <div class="mact"><button class="btn sm" type="submit">Spara kunduppgifter</button></div>
     </form>` : ''}
 
+    ${(f.arbete || []).length ? `<div class="box"><h3><svg class="i"><use href="#i-edit"/></svg>Arbete <span class="mono dim" style="margin-left:auto">via Claude</span></h3>
+      <div class="arb">${[...f.arbete].reverse().slice(0, 12).map((x) => `<div>${avatar(x.av)}<span><b>${esc(x.av)}</b> ${x.typ === 'klar' ? 'blev klar' : 'började jobba'}<small>${esc(x.vad || '')}</small></span><span class="mono dim" title="${new Date(x.tid).toLocaleString('sv-SE')}">${nar(x.tid)}</span></div>`).join('')}</div></div>` : ''}
     <div class="box"><h3><svg class="i"><use href="#i-chat"/></svg>Historik <span class="mono dim" style="margin-left:auto">${hist.length} samtal</span></h3>
       ${hist.length ? `<div class="hist">${hist.map((s) => `
         <div class="hi" style="--c:${(ST[s.utfall] || ST.att_ringa).c}"><div class="hd">${avatar(s.av)}<b>${esc(s.av || 'Okänd')}</b>${pill(s.utfall)}<span class="mono" title="${new Date(s.tid).toLocaleString('sv-SE')}">${nar(s.tid)}</span></div>${s.sa ? `<p>${esc(s.sa)}</p>` : ''}</div>`).join('')}</div>`
