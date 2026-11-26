@@ -417,6 +417,8 @@ a.ck-tile:hover{border-color:var(--glod)}
 .pra .mono{margin-left:auto}
 .btn.done{background:var(--ok)!important;color:#06210f}
 .prt{margin:0;white-space:pre-wrap;word-break:break-word;font:13px/1.6 var(--mono);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:16px 18px;max-height:60vh;overflow:auto}
+.nv-live .livedot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#ff4a1c;animation:ping 1.6s infinite}
+.nv-live:hover{color:#ff9a66}
 /* ---------- ringlista (enkel) ---------- */
 .ringtop{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .ringtop h2{margin:0;font:600 clamp(26px,3vw,34px)/1.05 var(--sans);letter-spacing:-.035em}
@@ -569,7 +571,10 @@ a.ck-tile:hover{border-color:var(--glod)}
 .app{grid-template-columns:minmax(0,1fr)}
 .side{position:fixed;inset:auto 0 0;height:auto;z-index:40;flex-direction:row;padding:6px 8px calc(6px + env(safe-area-inset-bottom));border-right:0;border-top:1px solid var(--line);background:rgb(12 12 13/.92);backdrop-filter:blur(14px)}
 .side .brand,.side .grow,.side .meBox,.side .sidefoot,.side .demo-flag{display:none}
-.nav{grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);width:100%}
+.nav{grid-auto-flow:column;grid-auto-columns:minmax(58px,1fr);width:100%;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nv-live .n{display:block!important;position:absolute;margin:-2px 0 0 26px}
+.nv-live{position:relative}
 .row .pill{display:none}
 .kpi .v{font-size:28px}
 .nv{flex-direction:column;gap:3px;font-size:10.5px;padding:7px 2px;justify-content:center;white-space:nowrap;letter-spacing:-.01em}
@@ -630,6 +635,7 @@ a.ck-tile:hover{border-color:var(--glod)}
 <symbol id="i-crown" viewBox="0 0 24 24"><path d="M3.5 8 7.5 12 12 5l4.5 7 4-4-2 10.5h-13z"/></symbol>
 <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/></symbol>
 <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3.5 13.8 9 19.5 10.5 13.8 12 12 17.5 10.2 12 4.5 10.5 10.2 9z"/><path d="M18.5 16.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></symbol>
+<symbol id="i-live" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2"/><path d="M8.2 15.8a5.4 5.4 0 0 1 0-7.6M15.8 8.2a5.4 5.4 0 0 1 0 7.6M5.3 18.7a9.5 9.5 0 0 1 0-13.4M18.7 5.3a9.5 9.5 0 0 1 0 13.4"/></symbol>
 <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
 <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="1.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></symbol>
 </defs>
@@ -661,6 +667,7 @@ a.ck-tile:hover{border-color:var(--glod)}
     <div class="brand"><svg viewBox="13 14 372 88" aria-label="Kantljus" class="wm"><use class="b" href="#wm"/><use class="f2" href="#wm"/></svg><span class="tag">ADMIN</span></div>
     <nav class="nav" aria-label="Admin">
       <button class="nv" data-view="oversikt"><svg class="i"><use href="#i-home"/></svg>Översikt</button>
+      <button class="nv nv-live" data-livenav><svg class="i"><use href="#i-live"/></svg>Live<span class="n"><i class="livedot"></i></span></button>
       <button class="nv" data-view="ring"><svg class="i"><use href="#i-phone"/></svg>Att ringa<span class="n" id="nAtt"></span></button>
       <button class="nv" data-view="ringlista"><svg class="i"><use href="#i-list"/></svg>Företag<span class="n" id="nRing"></span></button>
       <button class="nv" data-view="samtal"><svg class="i"><use href="#i-chat"/></svg>Samtal<span class="n" id="nSamtal"></span></button>
@@ -969,7 +976,7 @@ async function startaApp() {
   try { [S.data, S.poster] = await Promise.all([db.lista(), db.poster()]); setSync(true, S.demo ? 'Demo' : 'Synkad'); }
   catch (e) { if (e.message !== 'Inte inloggad') { setSync(false, 'Offline'); toast(e.message, true); } return; }
   const h = (location.hash || '').slice(1);
-  S.view = VIEWS[h] ? h : h === 'live' ? 'ekonomi' : 'oversikt';
+  S.view = VIEWS[h] ? h : 'oversikt';
   visaMig(); render();
   if (h === 'live') oppnaLive();
   if (!S.me) valjPerson();
@@ -1062,11 +1069,12 @@ function ga(v) {
   render();
   window.scrollTo({ top: 0 });
 }
-$$('.nv').forEach((b) => b.onclick = () => ga(b.dataset.view));
+$$('.nv[data-view]').forEach((b) => b.onclick = () => ga(b.dataset.view));
+$('[data-livenav]').onclick = oppnaLive;
 $('#addBtn').onclick = () => (S.view === 'ekonomi' ? nyPost('in') : S.view === 'ring' ? laggTillNummer() : nyttForetag());
 
 function render(anim = true) {
-  $$('.nv').forEach((b) => { if (b.dataset.view === S.view) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+  $$('.nv[data-view]').forEach((b) => { if (b.dataset.view === S.view) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
   $('#title').textContent = VIEWS[S.view];
   $('#addBtn').innerHTML = `<svg class="i"><use href="#i-plus"/></svg>${S.view === 'ekonomi' ? 'Ny post' : S.view === 'ring' ? 'Lägg till nummer' : 'Nytt företag'}`;
   document.title = VIEWS[S.view] + ' · Admin · Kantljus';
@@ -1738,7 +1746,7 @@ function vyEkonomi() {
   }
   const tecken = (n) => (n < 0 ? '−' : '+') + kr(Math.abs(n));
   return `
-  <div class="tools"><div class="seg" role="group" aria-label="Period">${[['manad', 'Denna månad'], ['ar', 'I år'], ['allt', 'Allt']].map(([k, t]) => `<button type="button" data-period="${k}" aria-pressed="${S.period === k}">${t}</button>`).join('')}</div><span style="flex:1"></span><button class="btn livebtn" data-live><i></i>Live dashboard</button></div>
+  <div class="tools"><div class="seg" role="group" aria-label="Period">${[['manad', 'Denna månad'], ['ar', 'I år'], ['allt', 'Allt']].map(([k, t]) => `<button type="button" data-period="${k}" aria-pressed="${S.period === k}">${t}</button>`).join('')}</div></div>
   <div class="kpis">
     <div class="kpi hot"><span class="l">Kvar i företaget</span><span class="v">${saldo < 0 ? '−' : ''}${kr(Math.abs(saldo))}</span><span class="s">intäkter minus uttag, totalt</span></div>
     <div class="kpi"><span class="l">Intjänat</span><span class="v">${kr(intjanat)}</span><span class="s">${jamfor}</span></div>
@@ -2119,7 +2127,6 @@ function koppla(v) {
   $$('[data-filter]', v).forEach((b) => b.onclick = () => { S.f.st = b.dataset.filter; ga('ringlista'); });
   $$('[data-st]', v).forEach((b) => b.onclick = () => { S.f.st = b.dataset.st; render(false); });
   $$('[data-lp]', v).forEach((b) => b.onclick = () => { S.logPerson = b.dataset.lp; render(false); });
-  $$('[data-live]', v).forEach((b) => b.onclick = oppnaLive);
   $$('[data-prk]', v).forEach((b) => b.onclick = () => { PR.kat = b.dataset.prk; render(false); });
   $$('[data-visa]', v).forEach((b) => b.onclick = () => { PR.oppen = PR.oppen === b.dataset.visa ? null : b.dataset.visa; render(false); });
   $$('[data-kopiera]', v).forEach((b) => b.onclick = async () => {
@@ -2377,6 +2384,7 @@ document.addEventListener('keydown', (e) => {
   if (skriver || e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key === '/') { e.preventDefault(); if (S.view !== 'ringlista') ga('ringlista'); $('#q')?.focus(); }
   if (e.key === 'n' || e.key === 'N') { e.preventDefault(); nyttForetag(); }
+  if (e.key === 'l' || e.key === 'L') { e.preventDefault(); oppnaLive(); }
   if (['1', '2', '3', '4', '5', '6', '7'].includes(e.key)) ga(Object.keys(VIEWS)[+e.key - 1]);
 });
 
