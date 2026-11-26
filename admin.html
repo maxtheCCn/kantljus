@@ -207,6 +207,42 @@ button.row:hover{background:var(--s2);border-radius:10px}
 .cc dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13.5px}
 .cc dt{color:var(--dim)}.cc dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
 
+/* ---------- ringlista (enkel) ---------- */
+.ringtop{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ringtop h2{margin:0;font:600 clamp(26px,3vw,34px)/1.05 var(--sans);letter-spacing:-.035em}
+.ringtop p{margin:6px 0 0;color:var(--mute)}
+.rl{display:grid;background:var(--s1);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.rr{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 18px;border-top:1px solid var(--line);text-align:left;width:100%;transition:background .15s}
+.rr:first-child{border-top:0}
+.rr:hover{background:var(--s2)}
+.rr .nr{font:500 12px var(--mono);color:var(--dim);text-align:center}
+.rr b{display:block;font-weight:500;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rr small{display:block;color:var(--mute);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rr .tel{font:500 15px var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.rr .tel.no{color:var(--dim);font-size:13px}
+.rr.busy{opacity:.55}
+.badge{display:inline-flex;align-items:center;gap:6px;font:500 11.5px var(--mono);padding:2px 8px;border-radius:999px;background:rgb(255 90 31/.12);color:#ff9a66;margin-left:6px;vertical-align:2px}
+.badge.re{background:rgb(158 230 247/.1);color:var(--kall)}
+.callbox{display:grid;gap:14px;text-align:center}
+.callbox h2{font-size:24px}
+.bignum{display:block;font:600 clamp(30px,8vw,40px)/1.1 var(--mono);letter-spacing:-.02em;padding:18px 12px;border-radius:16px;background:var(--bg);border:1px solid var(--line2);font-variant-numeric:tabular-nums}
+.bignum:hover{border-color:var(--glod)}
+.cbtn{display:flex;align-items:center;justify-content:center;gap:10px;min-height:58px;border-radius:16px;font:600 17px var(--sans);border:1px solid var(--line2);transition:all .2s;width:100%}
+.cbtn:hover{transform:translateY(-1px);border-color:var(--ink)}
+.cbtn.ja{border:0;background:var(--ok);color:#06210f}
+.cbtn.nej{color:var(--bad);border-color:rgb(232 128 111/.45)}
+.cbtn.nej:hover{background:rgb(232 128 111/.08);border-color:var(--bad)}
+.cbtn.nu{border:0;background:linear-gradient(120deg,#ffc061 0%,#ff7a2c 38%,#ff4a1c 72%,#e8341a 100%) 0 0/180% 100%;color:#1a0802;box-shadow:0 14px 34px -16px rgb(255 90 31/.9)}
+.cbtn.nu.on{background:var(--s3);color:var(--ink);box-shadow:inset 0 0 0 1px var(--glod)}
+.cbtn svg{width:20px;height:20px}
+.lnk{color:var(--mute);font-size:14px;text-decoration:underline;text-underline-offset:3px}
+.lnk:hover{color:var(--ink)}
+.prev{max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:12px;font-size:13.5px}
+.prev div{display:flex;justify-content:space-between;gap:12px;padding:7px 12px;border-top:1px solid var(--line)}
+.prev div:first-child{border-top:0}
+.prev .mono{color:var(--mute);white-space:nowrap}
+.prev .dub{opacity:.45;text-decoration:line-through}
+
 /* ---------- ekonomi ---------- */
 .pengar{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .big{display:flex;align-items:center;justify-content:center;gap:12px;min-height:64px;border-radius:var(--r);font:600 17px var(--sans);letter-spacing:-.01em;border:1px solid var(--line2);background:var(--s1);transition:all .2s}
@@ -397,7 +433,8 @@ button.row:hover{background:var(--s2);border-radius:10px}
     <div class="brand"><svg viewBox="13 14 372 88" aria-label="Kantljus" class="wm"><use class="b" href="#wm"/><use class="f2" href="#wm"/></svg><span class="tag">ADMIN</span></div>
     <nav class="nav" aria-label="Admin">
       <button class="nv" data-view="oversikt"><svg class="i"><use href="#i-home"/></svg>Översikt</button>
-      <button class="nv" data-view="ringlista"><svg class="i"><use href="#i-list"/></svg>Ringlista<span class="n" id="nRing"></span></button>
+      <button class="nv" data-view="ring"><svg class="i"><use href="#i-phone"/></svg>Ringlista<span class="n" id="nAtt"></span></button>
+      <button class="nv" data-view="ringlista"><svg class="i"><use href="#i-list"/></svg>Företag<span class="n" id="nRing"></span></button>
       <button class="nv" data-view="samtal"><svg class="i"><use href="#i-chat"/></svg>Samtal<span class="n" id="nSamtal"></span></button>
       <button class="nv" data-view="kunder"><svg class="i"><use href="#i-star"/></svg>Kunder<span class="n" id="nKund"></span></button>
       <button class="nv" data-view="ekonomi"><svg class="i"><use href="#i-wallet"/></svg>Ekonomi</button>
@@ -451,7 +488,7 @@ const ST = {
 const FLODE = ['att_ringa', 'inget_svar', 'aterkom', 'intresserad', 'mote', 'offert', 'kund'];
 const UTFALL = ['inget_svar', 'aterkom', 'intresserad', 'mote', 'offert', 'kund', 'nej'];
 const TJANSTER = ['Hemsida', 'Webbshop', 'Logga', 'SEO', 'Drift'];
-const VIEWS = { oversikt: 'Översikt', ringlista: 'Ringlista', samtal: 'Samtal', kunder: 'Kunder', ekonomi: 'Ekonomi' };
+const VIEWS = { oversikt: 'Översikt', ring: 'Ringlista', ringlista: 'Företag', samtal: 'Samtal', kunder: 'Kunder', ekonomi: 'Ekonomi' };
 const BETALSATT = ['Swish', 'Faktura', 'Annat'];
 const GRUNDARE = ['Max', 'William', 'John-John'];
 
@@ -660,7 +697,7 @@ async function startaApp() {
   visaMig(); render();
   if (!S.me) valjPerson();
   clearInterval(pollT);
-  if (!S.demo) pollT = setInterval(uppdatera, 45000);
+  if (!S.demo) pollT = setInterval(uppdatera, 20000);
 }
 async function uppdatera() {
   if (S.demo || document.hidden || $('#app').hidden) return;
@@ -706,19 +743,20 @@ function ga(v) {
   window.scrollTo({ top: 0 });
 }
 $$('.nv').forEach((b) => b.onclick = () => ga(b.dataset.view));
-$('#addBtn').onclick = () => (S.view === 'ekonomi' ? nyPost('in') : nyttForetag());
+$('#addBtn').onclick = () => (S.view === 'ekonomi' ? nyPost('in') : S.view === 'ring' ? laggTillNummer() : nyttForetag());
 
 function render(anim = true) {
   $$('.nv').forEach((b) => { if (b.dataset.view === S.view) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
   $('#title').textContent = VIEWS[S.view];
-  $('#addBtn').innerHTML = `<svg class="i"><use href="#i-plus"/></svg>${S.view === 'ekonomi' ? 'Ny post' : 'Nytt företag'}`;
+  $('#addBtn').innerHTML = `<svg class="i"><use href="#i-plus"/></svg>${S.view === 'ekonomi' ? 'Ny post' : S.view === 'ring' ? 'Lägg till nummer' : 'Nytt företag'}`;
   document.title = VIEWS[S.view] + ' · Admin · Kantljus';
   const aktiva = S.data.filter((f) => f.status !== 'kund' && f.status !== 'nej').length;
   $('#nRing').textContent = aktiva || '';
+  $('#nAtt').textContent = S.data.filter(iRinglistan).length || '';
   $('#nSamtal').textContent = allaSamtal().length || '';
   $('#nKund').textContent = S.data.filter((f) => f.status === 'kund').length || '';
   const v = $('#view');
-  v.innerHTML = ({ oversikt: vyOversikt, ringlista: vyRinglista, samtal: vySamtal, kunder: vyKunder, ekonomi: vyEkonomi })[S.view]();
+  v.innerHTML = ({ oversikt: vyOversikt, ring: vyRing, ringlista: vyRinglista, samtal: vySamtal, kunder: vyKunder, ekonomi: vyEkonomi })[S.view]();
   if (anim) v.classList.remove('fade'), void v.offsetWidth, v.classList.add('fade');
   koppla(v);
 }
@@ -748,7 +786,7 @@ function vyOversikt() {
 
   return `
   <div class="hello"><div><h2>${halsning}${S.me ? ', ' + esc(S.me) : ''}.</h2>
-  <p>${att.length ? `Du har <b style="color:var(--ink);font-weight:500">${att.length}</b> uppföljningar de närmaste dagarna.` : 'Inga uppföljningar väntar. Dags att ringa några nya?'}</p></div>
+  <p>${S.data.filter(iRinglistan).length ? `<button class="btn pri sm" data-go="ring" style="margin-right:10px;vertical-align:1px"><svg class="i"><use href="#i-phone"/></svg>${S.data.filter(iRinglistan).length} att ringa</button>` : ''}${att.length ? `Du har <b style="color:var(--ink);font-weight:500">${att.length}</b> uppföljningar de närmaste dagarna.` : 'Inga uppföljningar väntar. Dags att ringa några nya?'}</p></div>
   <span class="mono dim">${new Date().toLocaleDateString('sv-SE', { weekday: 'long', day: 'numeric', month: 'long' })} · v.${veckonr()}</span></div>
 
   <div class="kpis">
@@ -883,6 +921,141 @@ function vyKunder() {
   : `<section class="card"><div class="empty"><b>Inga kunder än</b>När ett samtal slutar med ”Kund” hamnar företaget här.</div></section>`}`;
 }
 
+/* ================= RINGLISTA (enkel) ================= */
+const RING_STATUS = ['att_ringa', 'inget_svar', 'aterkom'];
+const iRinglistan = (f) => RING_STATUS.includes(f.status);
+const ringerAktiv = (f) => f.ringer && f.ringer.av && Date.now() - new Date(f.ringer.tid) < 20 * 60e3;
+const siffror = (t) => String(t || '').replace(/[^\d+]/g, '').replace(/^\+46/, '0');
+
+function ringOrdning() {
+  const prio = (f) => (f.status === 'att_ringa' ? 0 : 1);
+  return S.data.filter(iRinglistan).sort((a, b) =>
+    prio(a) - prio(b) ||
+    (!!ringerAktiv(a) && a.ringer.av !== S.me) - (!!ringerAktiv(b) && b.ringer.av !== S.me) ||
+    (!a.telefon) - (!b.telefon) ||
+    String(aktivitet(a) || a.skapad || '').localeCompare(String(aktivitet(b) || b.skapad || '')));
+}
+function vyRing() {
+  const l = ringOrdning();
+  const nya = l.filter((f) => f.status === 'att_ringa').length;
+  const idagRingda = allaSamtal().filter((s) => s.tid >= idag() && s.av === S.me).length;
+  return `
+  <div class="ringtop"><div><h2>${l.length ? `${l.length} nummer att ringa` : 'Ringlistan är tom'}</h2>
+    <p>${l.length ? `${nya} nya${l.length > nya ? ` · ${l.length - nya} att ringa igen` : ''} · du har ringt ${idagRingda} idag` : 'Lägg till nummer så dyker de upp här.'}</p></div>
+    ${l.length ? '' : '<button class="btn pri" data-addnr><svg class="i"><use href="#i-plus"/></svg>Lägg till nummer</button>'}</div>
+  ${l.length ? `<div class="rl">${l.map((f, i) => {
+    const upptagen = ringerAktiv(f) && f.ringer.av !== S.me;
+    const min = ringerAktiv(f) && f.ringer.av === S.me;
+    return `<button class="rr${upptagen ? ' busy' : ''}" data-ring="${f.id}">
+      <span class="nr">${i + 1}</span>
+      <span style="min-width:0"><b>${esc(f.namn)}</b>
+      <small>${upptagen ? `<span class="badge" style="margin:0 6px 0 0">${esc(f.ringer.av)} ringer</span>` : min ? '<span class="badge" style="margin:0 6px 0 0">Du ringer</span>' : f.status !== 'att_ringa' ? `<span class="badge re" style="margin:0 6px 0 0">${f.status === 'aterkom' ? 'Ring igen' : 'Svarade inte'} · ${nar(aktivitet(f))}</span>` : ''}${esc([f.bransch, f.ort].filter(Boolean).join(' · '))}</small></span>
+      <span class="tel${f.telefon ? '' : ' no'}">${f.telefon ? esc(f.telefon) : 'Inget nummer'}</span>
+    </button>`; }).join('')}</div>`
+  : `<section class="card"><div class="empty"><b>Allt är ringt 🎉</b>Tryck på Lägg till nummer och klistra in en ny lista.</div></section>`}`;
+}
+
+function ringKort(id) {
+  const f = S.data.find((x) => x.id === id);
+  if (!f) return;
+  const tel = siffror(f.telefon);
+  const upptagen = ringerAktiv(f) && f.ringer.av !== S.me;
+  const min = ringerAktiv(f) && f.ringer.av === S.me;
+  modal(`<div class="callbox">
+    <div><h2>${esc(f.namn)}</h2><p>${esc([f.bransch, f.ort, f.kontakt].filter(Boolean).join(' · ') || ' ')}</p></div>
+    ${tel ? `<a class="bignum" href="tel:${esc(tel)}" data-call>${esc(f.telefon)}</a>`
+      : `<form id="telForm" style="display:flex;gap:8px"><input class="in" name="t" type="tel" placeholder="Skriv in numret" autofocus><button class="btn pri" type="submit">Spara</button></form>`}
+    ${upptagen ? `<p style="color:#ff9a66">${esc(f.ringer.av)} ringer det här numret just nu.</p>` : ''}
+    ${(f.samtal || []).length ? `<p class="mono dim">Senast: ${esc(senaste(f).av)} · ${nar(senaste(f).tid)}${senaste(f).sa ? ' · ' + esc(senaste(f).sa) : ''}</p>` : ''}
+    ${tel ? `<a class="cbtn nu${min ? ' on' : ''}" href="tel:${esc(tel)}" data-call><svg class="i"><use href="#i-phone"/></svg>${min ? 'Du ringer just nu' : 'Ringer just nu'}</a>` : ''}
+    <button class="cbtn ja" data-svar="ja">Tackade ja</button>
+    <button class="cbtn nej" data-svar="nej">Tackade nej</button>
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><button class="lnk" data-svar="inget">Svarade inte, ring senare</button><button class="lnk" id="rStang">Stäng</button></div>
+  </div>`);
+  const m = $('#mbox');
+  $$('[data-call]', m).forEach((a) => a.addEventListener('click', async () => {
+    if (!S.me) return;
+    try { await db.spara({ ...S.data.find((x) => x.id === id), ringer: { av: S.me, tid: new Date().toISOString() } }); render(false); $$('.cbtn.nu', m).forEach((b) => { b.classList.add('on'); b.lastChild.textContent = 'Du ringer just nu'; }); } catch {}
+  }));
+  $('#rStang', m).onclick = stangModal;
+  $('#telForm', m)?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const t = e.target.t.value.trim(); if (!siffror(t)) return;
+    await sparaFalt(S.data.find((x) => x.id === id), { telefon: t }); ringKort(id);
+  });
+  $$('[data-svar]', m).forEach((b) => b.onclick = () => ringSvar(id, b.dataset.svar));
+}
+
+async function ringSvar(id, svar) {
+  if (!S.me) { valjPerson(); return; }
+  const f = S.data.find((x) => x.id === id);
+  const utfall = svar === 'ja' ? 'intresserad' : svar === 'nej' ? 'nej' : 'inget_svar';
+  const sa = svar === 'ja' ? 'Tackade ja.' : svar === 'nej' ? 'Tackade nej.' : 'Svarade inte.';
+  $$('#mbox button').forEach((b) => (b.disabled = true));
+  try {
+    const ut = await db.samtal(id, {
+      samtal: { id: nyId(), tid: new Date().toISOString(), av: S.me, utfall, sa },
+      status: utfall,
+      nasta: svar === 'ja' ? plusDagar(1) : svar === 'nej' ? '' : f.nasta || '',
+      nastaNotis: svar === 'ja' ? 'Tackade ja i ringlistan, ring upp och boka möte' : svar === 'nej' ? '' : f.nastaNotis || '',
+    });
+    await db.spara({ ...ut, ringer: null, ansvarig: ut.ansvarig || S.me });
+    stangModal(); render(false);
+    toast(svar === 'ja' ? `${f.namn} tackade ja! Ligger nu under Att följa upp.` : svar === 'nej' ? `${f.namn}: Nej tack, flyttad till Samtal` : `${f.namn} hamnar längre ner i listan`);
+  } catch (err) { toast(err.message, true); $$('#mbox button').forEach((b) => (b.disabled = false)); }
+}
+
+/* Klistra in vad som helst: "Namn – 08-123 45 67", Google Maps-kopior, Excel-rader … */
+function tolkaNummer(text) {
+  const telRe = /(?<!\d)(?:\+46|0)\s*\d(?:[\s\-]?\d){5,11}/;
+  const rensaNamn = (t) => t.replace(/\((?:Sverige|Stockholm|Sweden)\)/gi, '').replace(/^\s*\d+[.)]\s+/, '').replace(/[–—\-:;,\t|]+\s*$/, '').replace(/^[\s–—\-:;,|]+/, '').replace(/\s{2,}/g, ' ').trim();
+  const rader = text.split(/\r?\n/).map((r) => r.trim()).filter(Boolean);
+  const ut = []; let namnUtanNr = '';
+  for (const rad of rader) {
+    const m = rad.match(telRe);
+    if (!m) { if (!namnUtanNr) namnUtanNr = rensaNamn(rad); continue; }
+    const tel = m[0].replace(/\s+/g, ' ').trim();
+    const delar = rad.replace(m[0], '\u0000').split('\u0000');
+    let namn = rensaNamn(delar[0]) || rensaNamn(delar[1] || '');
+    const ort = delar[0] && rensaNamn(delar[1] || '').length < 60 ? rensaNamn(delar[1] || '') : '';
+    if (!namn && namnUtanNr) namn = namnUtanNr;
+    namnUtanNr = '';
+    let adress = ort.replace(/^\(|\)$/g, '');
+    const dela = namn.split(/\s[–—-]\s/);
+    if (dela.length > 1) { namn = dela[0].trim(); adress = adress || dela.slice(1).join(' – ').trim(); }
+    ut.push({ namn: namn || tel, telefon: tel, ort: adress });
+  }
+  return ut;
+}
+function laggTillNummer() {
+  modal(`<h2>Lägg till nummer</h2>
+  <p>Klistra in en lista, ett företag per rad: namn och nummer. Du kan kopiera direkt från Google Maps, Eniro, hitta.se, Excel eller en anteckning. Telefonnumret hittas automatiskt.</p>
+  <textarea class="in" id="nrT" style="min-height:170px;font:13px/1.5 var(--mono)" autofocus placeholder="Bageri Sötdeg – 08-640 12 34&#10;Rörkraft AB 070-111 22 33&#10;Frisör Lina&#10;073-555 18 18"></textarea>
+  <div id="nrPrev"></div>
+  <div class="mact"><button class="btn ghost" id="nrNo">Avbryt</button><button class="btn pri" id="nrYes" disabled>Lägg till</button></div>`);
+  const finnsTel = new Set(S.data.map((f) => siffror(f.telefon)).filter(Boolean));
+  const finnsNamn = new Set(S.data.map((f) => f.namn.toLowerCase()));
+  let nya = [];
+  const upd = () => {
+    const l = tolkaNummer($('#nrT').value);
+    const sedda = new Set();
+    const mark = l.map((x) => { const k = siffror(x.telefon); const dub = finnsTel.has(k) || finnsNamn.has(x.namn.toLowerCase()) || sedda.has(k); sedda.add(k); return { ...x, dub }; });
+    nya = mark.filter((x) => !x.dub);
+    const dubbel = mark.length - nya.length;
+    $('#nrPrev').innerHTML = mark.length ? `<p class="mono" style="margin-bottom:8px">${nya.length} nya nummer${dubbel ? ` · ${dubbel} finns redan (hoppas över)` : ''}</p><div class="prev">${mark.map((x) => `<div class="${x.dub ? 'dub' : ''}"><span>${esc(x.namn)}${x.ort ? ` <span class="dim">· ${esc(x.ort)}</span>` : ''}</span><span class="mono">${esc(x.telefon)}</span></div>`).join('')}</div>` : '';
+    $('#nrYes').disabled = !nya.length;
+    $('#nrYes').textContent = nya.length ? `Lägg till ${nya.length} i ringlistan` : 'Lägg till';
+  };
+  $('#nrT').oninput = upd;
+  $('#nrNo').onclick = stangModal;
+  $('#nrYes').onclick = async () => {
+    const nu = new Date().toISOString();
+    const lista = nya.map((x) => ({ id: nyId(), skapad: nu, status: 'att_ringa', samtal: [], ansvarig: '', namn: x.namn, telefon: x.telefon, ort: x.ort, bransch: '', kontakt: '', epost: '', webb: '' }));
+    try { await db.importera(lista); stangModal(); render(false); toast(`${lista.length} nummer tillagda i ringlistan`); }
+    catch (err) { toast(err.message, true); }
+  };
+}
+
 /* ================= EKONOMI ================= */
 const manadNyckel = (d) => d.slice(0, 7);
 function periodGrans(period, bakat = 0) {
@@ -1010,6 +1183,8 @@ function koppla(v) {
   $$('[data-filter]', v).forEach((b) => b.onclick = () => { S.f.st = b.dataset.filter; ga('ringlista'); });
   $$('[data-st]', v).forEach((b) => b.onclick = () => { S.f.st = b.dataset.st; render(false); });
   $$('[data-lp]', v).forEach((b) => b.onclick = () => { S.logPerson = b.dataset.lp; render(false); });
+  $$('[data-ring]', v).forEach((b) => b.onclick = () => ringKort(b.dataset.ring));
+  $$('[data-addnr]', v).forEach((b) => b.onclick = laggTillNummer);
   $$('[data-period]', v).forEach((b) => b.onclick = () => { S.period = b.dataset.period; render(false); });
   $$('[data-ny]', v).forEach((b) => b.onclick = () => nyPost(b.dataset.ny));
   $$('[data-delpost]', v).forEach((z) => {
@@ -1253,7 +1428,7 @@ document.addEventListener('keydown', (e) => {
   if (skriver || e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key === '/') { e.preventDefault(); if (S.view !== 'ringlista') ga('ringlista'); $('#q')?.focus(); }
   if (e.key === 'n' || e.key === 'N') { e.preventDefault(); nyttForetag(); }
-  if (['1', '2', '3', '4', '5'].includes(e.key)) ga(Object.keys(VIEWS)[+e.key - 1]);
+  if (['1', '2', '3', '4', '5', '6'].includes(e.key)) ga(Object.keys(VIEWS)[+e.key - 1]);
 });
 
 /* ================= DEMODATA (påhittad) ================= */
