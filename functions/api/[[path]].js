@@ -278,6 +278,24 @@ export async function onRequest({ request, env, params }) {
       return svar(await spara(env, rec));
     }
 
+    // POST /api/foretag/:id/status – bara Max får ändra status från Live-listorna
+    if (delar[2] === 'status' && metod === 'POST') {
+      if (person !== 'Max') return svar({ fel: 'Bara Max kan ändra status här' }, 403);
+      const { status, nasta } = await request.json().catch(() => ({}));
+      const TILLATNA = ['att_ringa', 'inget_svar', 'aterkom', 'intresserad', 'mote', 'offert', 'kund', 'nej'];
+      if (!TILLATNA.includes(status)) return svar({ fel: 'Ogiltig status' }, 400);
+      const rec = await hamta(env, id);
+      if (!rec) return svar({ fel: 'Företaget finns inte' }, 404);
+      const fran = rec.status;
+      rec.status = status;
+      rec.ringer = null;
+      if (status === 'aterkom') { rec.nasta = /^\d{4}-\d{2}-\d{2}$/.test(nasta || '') ? nasta : ''; rec.nastaNotis = 'Max flyttade till Ring tillbaka'; }
+      else if (['att_ringa', 'inget_svar', 'nej'].includes(status)) { rec.nasta = ''; rec.nastaNotis = ''; }
+      if (status === 'kund' && !rec.kund?.sedan) rec.kund = { ...(rec.kund || {}), sedan: new Date().toISOString().slice(0, 10) };
+      rec.andringar = [...(rec.andringar || []), { tid: new Date().toISOString(), av: 'Max', fran, till: status }].slice(-30);
+      return svar(await spara(env, rec));
+    }
+
     // PUT /api/foretag/:id – skapa eller uppdatera
     if (delar.length === 2 && metod === 'PUT') {
       const rec = rensa(await request.json(), id);
