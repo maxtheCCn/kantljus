@@ -471,6 +471,27 @@ a.ck-tile:hover{border-color:var(--glod)}
 .rr .vem b{display:inline;font-size:inherit;color:var(--ink);font-weight:600}
 .rr .nr .av{width:28px;height:28px;font-size:10px}
 /* ---------- ringlista (enkel) ---------- */
+.mn{display:grid;gap:14px;max-width:860px}
+.mn-steg{background:var(--s1);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;display:grid;gap:12px;transition:opacity .25s,border-color .25s}
+.mn-nr{font:500 11.5px var(--mono);color:var(--glod);letter-spacing:.08em;text-transform:uppercase}
+.mn-q{margin:0;font:500 clamp(18px,1.9vw,22px)/1.5 var(--sans);color:var(--ink);letter-spacing:-.01em}
+.mn-vanta{display:inline-flex;align-items:center;gap:8px;justify-self:start;font:500 12px var(--mono);color:#7ad7ff;border:1px solid rgb(90 200 255/.35);background:rgb(90 200 255/.08);border-radius:999px;padding:5px 12px}
+.mn-vanta::before{content:"";width:7px;height:7px;border-radius:50%;background:#5ac8ff;animation:mnblink 1.6s infinite}
+@keyframes mnblink{50%{opacity:.25}}
+.mn-svar{display:flex;gap:10px;flex-wrap:wrap}
+.mn-svar .btn{min-height:46px;padding:0 20px;border:1px solid var(--line2);background:var(--s2,rgb(255 255 255/.04))}
+.mn-svar .btn:hover{border-color:rgb(255 90 31/.6)}
+.mn-svar .btn[aria-pressed="true"]{background:var(--glod);border-color:var(--glod);color:#fff}
+.mn-val{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.mn-gren{border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:10px;align-content:start;background:var(--bg);transition:opacity .25s,border-color .25s,box-shadow .25s}
+.mn-gren h3{margin:0;font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.mn-gren .mn-q{font-size:clamp(17px,1.7vw,20px)}
+.mn-gren.pa{border-color:rgb(255 90 31/.55);box-shadow:0 0 0 1px rgb(255 90 31/.25),0 12px 40px -18px rgb(255 90 31/.55)}
+.mn-tona{opacity:.38}
+.mn-mail{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.mn-mail a{font:600 clamp(22px,2.6vw,30px)/1.1 var(--sans);letter-spacing:-.025em;color:var(--ink)}
+.mn-tips{margin:0;padding-left:18px;color:var(--mute);display:grid;gap:4px;font-size:14px}
+@media (max-width:640px){.mn-val{grid-template-columns:minmax(0,1fr)}.mn-steg{padding:16px}}
 .ringtop{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .ringtop h2{margin:0;font:600 clamp(26px,3vw,34px)/1.05 var(--sans);letter-spacing:-.035em}
 .ringtop p{margin:6px 0 0;color:var(--mute)}
@@ -689,6 +710,7 @@ a.ck-tile:hover{border-color:var(--glod)}
 <symbol id="i-live" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2"/><path d="M8.2 15.8a5.4 5.4 0 0 1 0-7.6M15.8 8.2a5.4 5.4 0 0 1 0 7.6M5.3 18.7a9.5 9.5 0 0 1 0-13.4M18.7 5.3a9.5 9.5 0 0 1 0 13.4"/></symbol>
 <symbol id="i-back" viewBox="0 0 24 24"><path d="M6.6 3.5h2.6l1.5 4-2 1.3a10.5 10.5 0 0 0 6.5 6.5l1.3-2 4 1.5v2.6a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z"/><path d="M14 3.5h6.5V10M20.5 3.5 14.5 9.5"/></symbol>
 <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
+<symbol id="i-script" viewBox="0 0 24 24"><path d="M6 3.5h9l3.5 3.5v13.5H6z"/><path d="M14.5 3.5V7.5h4M9 11.5h6M9 15h6M9 18h3.5"/></symbol>
 <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="1.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></symbol>
 </defs>
 </svg>
@@ -722,6 +744,7 @@ a.ck-tile:hover{border-color:var(--glod)}
       <button class="nv nv-live" data-livenav><svg class="i"><use href="#i-live"/></svg>Live<span class="n"><i class="livedot"></i></span></button>
       <button class="nv" data-view="ring"><svg class="i"><use href="#i-phone"/></svg>Att ringa<span class="n" id="nAtt"></span></button>
       <button class="nv" data-view="tillbaka"><svg class="i"><use href="#i-back"/></svg>Ring tillbaka<span class="n" id="nTb"></span></button>
+      <button class="nv" data-view="manus"><svg class="i"><use href="#i-script"/></svg>Manus</button>
       <button class="nv" data-view="ringlista"><svg class="i"><use href="#i-list"/></svg>Företag<span class="n" id="nRing"></span></button>
       <button class="nv" data-view="samtal"><svg class="i"><use href="#i-chat"/></svg>Samtal<span class="n" id="nSamtal"></span></button>
       <button class="nv" data-view="kunder"><svg class="i"><use href="#i-star"/></svg>Kunder<span class="n" id="nKund"></span></button>
@@ -815,7 +838,7 @@ const ST = {
 const FLODE = ['att_ringa', 'inget_svar', 'aterkom', 'intresserad', 'mote', 'offert', 'kund'];
 const UTFALL = ['inget_svar', 'aterkom', 'intresserad', 'mote', 'offert', 'kund', 'nej'];
 const TJANSTER = ['Hemsida', 'Webbshop', 'Logga', 'SEO', 'Drift'];
-const VIEWS = { oversikt: 'Översikt', ring: 'Att ringa', tillbaka: 'Ring tillbaka', ringlista: 'Företag', samtal: 'Samtal', kunder: 'Kunder', ekonomi: 'Ekonomi', promptar: 'Promptar' };
+const VIEWS = { oversikt: 'Översikt', ring: 'Att ringa', tillbaka: 'Ring tillbaka', manus: 'Manus', ringlista: 'Företag', samtal: 'Samtal', kunder: 'Kunder', ekonomi: 'Ekonomi', promptar: 'Promptar' };
 const BETALSATT = ['Swish', 'Faktura', 'Annat'];
 const GRUNDARE = ['Max', 'William', 'John-John'];
 
@@ -1139,7 +1162,7 @@ function render(anim = true) {
   $('#nSamtal').textContent = allaSamtal().length || '';
   $('#nKund').textContent = S.data.filter((f) => f.status === 'kund').length || '';
   const v = $('#view');
-  v.innerHTML = ({ oversikt: vyOversikt, ring: vyRing, tillbaka: vyTillbaka, ringlista: vyRinglista, samtal: vySamtal, kunder: vyKunder, ekonomi: vyEkonomi, promptar: vyPromptar })[S.view]();
+  v.innerHTML = ({ oversikt: vyOversikt, ring: vyRing, tillbaka: vyTillbaka, manus: vyManus, ringlista: vyRinglista, samtal: vySamtal, kunder: vyKunder, ekonomi: vyEkonomi, promptar: vyPromptar })[S.view]();
   if (anim) v.classList.remove('fade'), void v.offsetWidth, v.classList.add('fade');
   koppla(v);
 }
@@ -1443,17 +1466,17 @@ function ringKort(id) {
         </div>
         <details class="ck-acc" open><summary>Samtalsmanus</summary>
           <ol class="ck-script">
-            <li><b>Hälsa:</b> ”Hej! Jag heter ${esc(jag)} och ringer från Kantljus, en liten webbyrå här i Stockholm. Har du en minut?”</li>
-            <li><b>Varför:</b> ”Vi bygger snabba, snygga hemsidor åt småföretag${f.bransch ? ' som ' + esc(f.bransch.toLowerCase()) : ''}, så att fler hittar er på Google och kan boka direkt i mobilen.”</li>
-            <li><b>Fråga:</b> ${f.hemsidaNotis ? `”Jag kollade på ${f.webb ? 'er hemsida' : 'er på nätet'} innan jag ringde och såg några saker vi kan hjälpa till med.” <span class="dim">(${esc(f.hemsidaNotis)})</span> ”Är det något ni har funderat på?”` : '”Hur får ni nya kunder i dag? Kommer många via er hemsida?”'}</li>
-            <li><b>Avslut:</b> ”Får vi komma förbi och visa ett förslag? Det är gratis och tar en kvart.”</li>
+            <li><b>Börja:</b> ”${esc(MANUS.oppna(S.me))}”</li>
+            <li><b>Fråga:</b> ”${MANUS.fraga}” <span class="dim">Vänta på svar.</span></li>
+            <li><b>Om ja:</b> ”${MANUS.ja}”<br><b>Om nej:</b> ”${MANUS.nej}”</li>
+            <li><b>Demo:</b> ”${MANUS.demo}”</li>
+            <li><b>Mejl:</b> ”${MANUS.mail}”</li>
           </ol>
         </details>
         <details class="ck-acc"><summary>Om de säger …</summary>
           <dl class="ck-obj">
-            <dt>”Vi har redan en hemsida.”</dt><dd>”Vad bra! Hur många kunder hittar er via den? Vi kan göra en gratis jämförelse på mobilen.”</dd>
-            <dt>”Vad kostar det?”</dt><dd>”Det beror på vad ni behöver. Efter ett kort möte får ni ett fast pris, innan vi börjar.”</dd>
-            <dt>”Inte intresserad.”</dt><dd>”Helt okej! Får jag mejla några exempel så har ni dem om ni ändrar er?”</dd>
+            <dt>”Vad kostar det?”</dt><dd>”Demon är helt gratis. Gillar ni den får ni ett fast pris innan vi börjar.”</dd>
+            <dt>”Inte intresserad.”</dt><dd>”Helt okej, tack för att du tog dig tid! Om ni ändrar er når ni oss på ${MAIL}.”</dd>
             <dt>”Ring senare.”</dt><dd>”Absolut, när passar det bäst?” Tryck sedan på <em>Svarade inte, ring senare</em>.</dd>
           </dl>
         </details>
@@ -1854,6 +1877,36 @@ Vad var problemet innan: [STICKORD]
 Vad vi gjorde: [STICKORD]
 Länk: [ADRESS]` },
 ];
+
+/* ================= MANUS ================= */
+const MAIL = 'teamet@kantljus.se';
+const MN = { svar: null };
+const MANUS = {
+  oppna: (jag) => `Hej! ${jag ? `Jag heter ${jag}. ` : ''}Jag och mina kompisar går i årskurs 9, och vi har en hobby där vi gör hemsidor och reklam till företag som känner att de behöver det.`,
+  fraga: 'Har ni redan en hemsida?',
+  ja: 'Okej! Är ni intresserade av att kanske uppgradera den? Behöver den kanske en ny look eller nya funktioner?',
+  nej: 'Perfekt! Vi designar hemsidor åt företag.',
+  demo: 'Och vi kan till och med göra en demo innan ni ens har betalat någonting överhuvudtaget, och skicka den eller komma och visa den för er.',
+  mail: `Ni kan alltid nå oss på ${MAIL}.`,
+};
+function vyManus() {
+  const s = MN.svar;
+  const gren = (k, rubrik, text, extra = '') => `<div class="mn-gren${s === k ? ' pa' : s ? ' mn-tona' : ''}"><h3>${rubrik}</h3><p class="mn-q">”${esc(text)}”</p>${extra}</div>`;
+  return `
+  <div class="ringtop"><div><h2>Manus</h2><p>Läs högt, i din egen takt. Tryck på vad de svarar, så ser du vad du ska säga sen.</p></div>${s ? '<button class="btn ghost sm" data-mnsvar="">Börja om</button>' : ''}</div>
+  <div class="mn">
+    <section class="mn-steg"><span class="mn-nr">1 · Börja</span><p class="mn-q">”${esc(MANUS.oppna(S.me))}”</p></section>
+    <section class="mn-steg"><span class="mn-nr">2 · Fråga</span><p class="mn-q">”${esc(MANUS.fraga)}”</p><span class="mn-vanta">Vänta på svar</span>
+      <div class="mn-svar"><button class="btn ghost" data-mnsvar="ja" aria-pressed="${s === 'ja'}">Ja, de har en hemsida</button><button class="btn ghost" data-mnsvar="nej" aria-pressed="${s === 'nej'}">Nej, de har ingen</button></div></section>
+    <section class="mn-steg"><span class="mn-nr">3 · Svara</span>
+      <div class="mn-val">${gren('ja', 'Om de har en hemsida', MANUS.ja, '<span class="mn-vanta">Vänta på svar</span>')}${gren('nej', 'Om de inte har någon', MANUS.nej)}</div></section>
+    <section class="mn-steg${s ? '' : ' mn-tona'}"><span class="mn-nr">4 · Erbjud en demo</span><p class="mn-q">”${esc(MANUS.demo)}”</p></section>
+    <section class="mn-steg${s ? '' : ' mn-tona'}"><span class="mn-nr">5 · Ge vår mejl</span><p class="mn-q">”${esc(MANUS.mail)}”</p>
+      <div class="mn-mail"><a href="mailto:${MAIL}">${MAIL}</a><button class="btn ghost sm" data-mnkop><svg class="i"><use href="#i-copy"/></svg>Kopiera</button></div></section>
+    <section class="mn-steg"><span class="mn-nr">Efter samtalet</span>
+      <ul class="mn-tips"><li>Vill de ha en demo? Tryck på <b>Tackade ja</b> i Att ringa och fyll i kundformuläret.</li><li>Bad de dig ringa senare eller svarade inte? Tryck på <b>Svarade inte / Ring tillbaka</b>.</li><li>Sa de nej? Tryck på <b>Tackade nej</b> och tacka för deras tid.</li></ul></section>
+  </div>`;
+}
 
 function vyPromptar() {
   const kat = ['alla', ...new Set(PROMPTAR.map((x) => x.kat))];
@@ -2376,6 +2429,8 @@ function koppla(v) {
   $$('[data-filter]', v).forEach((b) => b.onclick = () => { S.f.st = b.dataset.filter; ga('ringlista'); });
   $$('[data-st]', v).forEach((b) => b.onclick = () => { S.f.st = b.dataset.st; render(false); });
   $$('[data-lp]', v).forEach((b) => b.onclick = () => { S.logPerson = b.dataset.lp; render(false); });
+  $$('[data-mnsvar]', v).forEach((b) => b.onclick = () => { MN.svar = MN.svar === b.dataset.mnsvar ? null : (b.dataset.mnsvar || null); render(false); });
+  $$('[data-mnkop]', v).forEach((b) => b.onclick = async () => { if (await kopiera(MAIL)) toast('Mejladressen är kopierad.'); });
   $$('[data-prk]', v).forEach((b) => b.onclick = () => { PR.kat = b.dataset.prk; render(false); });
   $$('[data-visa]', v).forEach((b) => b.onclick = () => { PR.oppen = PR.oppen === b.dataset.visa ? null : b.dataset.visa; render(false); });
   $$('[data-kopiera]', v).forEach((b) => b.onclick = async () => {
