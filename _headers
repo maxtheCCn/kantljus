@@ -1,0 +1,11 @@
+/admin
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+  X-Frame-Options: DENY
+/admin.html
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+  X-Frame-Options: DENY
+/api/*
+  X-Robots-Tag: noindex
+  Cache-Control: no-store

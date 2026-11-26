@@ -19,3 +19,29 @@ Domänen
 - Rör aldrig MX-, SPF- eller DKIM-posterna hos STRATO, då slutar e-posten fungera.
 
 Sajten visar inga priser. Kunden bokar ett samtal och får priset där.
+
+ADMINSIDAN (www.kantljus.se/admin)
+Länken "Logga in som admin" ligger längst ner på sajten. Där loggar teamet
+samtal, ser vilka företag som ringts, vad de sa och vilka som är kunder.
+
+Kunddatan ligger INTE i GitHub (repot är publikt). Den sparas i en gratis
+databas hos Cloudflare, och koden kontrolleras på servern.
+
+Engångsinställning i Cloudflare (dash.cloudflare.com):
+1. Storage & Databases -> D1 SQL Database -> Create.
+   Döp den till kantljus-admin.
+2. Workers & Pages -> ditt Pages-projekt -> Settings -> Bindings -> Add
+   -> D1 database. Variable name: DB   Databas: kantljus-admin.
+3. Settings -> Variables and Secrets -> Add. Typ: Secret.
+   Namn: ADMIN_KOD   Värde: koden ni ska logga in med (minst 8 tecken,
+   gärna ord + siffror, t.ex. "ljus-kant-4821"). Spara.
+4. Lägg upp de nya filerna på GitHub (admin.html, _headers, index.html och
+   mappen functions). Cloudflare publicerar om automatiskt. Om sidan säger
+   att något saknas: Deployments -> senaste -> Retry deployment.
+
+Byta kod: ändra ADMIN_KOD i Cloudflare och publicera om. Alla loggas ut.
+Säkerhet: 8 fel försök från samma uppkoppling spärrar i 15 minuter.
+Demoläge: öppna admin.html på datorn (eller innan steg 1-3 är klara) och
+tryck "Testa demoläget". Påhittade företag, inget sparas.
+Backup: knappen CSV i Ringlistan laddar ner hela listan.
+
