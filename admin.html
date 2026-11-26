@@ -433,7 +433,7 @@ button.row:hover{background:var(--s2);border-radius:10px}
     <div class="brand"><svg viewBox="13 14 372 88" aria-label="Kantljus" class="wm"><use class="b" href="#wm"/><use class="f2" href="#wm"/></svg><span class="tag">ADMIN</span></div>
     <nav class="nav" aria-label="Admin">
       <button class="nv" data-view="oversikt"><svg class="i"><use href="#i-home"/></svg>Översikt</button>
-      <button class="nv" data-view="ring"><svg class="i"><use href="#i-phone"/></svg>Ringlista<span class="n" id="nAtt"></span></button>
+      <button class="nv" data-view="ring"><svg class="i"><use href="#i-phone"/></svg>Att ringa<span class="n" id="nAtt"></span></button>
       <button class="nv" data-view="ringlista"><svg class="i"><use href="#i-list"/></svg>Företag<span class="n" id="nRing"></span></button>
       <button class="nv" data-view="samtal"><svg class="i"><use href="#i-chat"/></svg>Samtal<span class="n" id="nSamtal"></span></button>
       <button class="nv" data-view="kunder"><svg class="i"><use href="#i-star"/></svg>Kunder<span class="n" id="nKund"></span></button>
@@ -488,7 +488,7 @@ const ST = {
 const FLODE = ['att_ringa', 'inget_svar', 'aterkom', 'intresserad', 'mote', 'offert', 'kund'];
 const UTFALL = ['inget_svar', 'aterkom', 'intresserad', 'mote', 'offert', 'kund', 'nej'];
 const TJANSTER = ['Hemsida', 'Webbshop', 'Logga', 'SEO', 'Drift'];
-const VIEWS = { oversikt: 'Översikt', ring: 'Ringlista', ringlista: 'Företag', samtal: 'Samtal', kunder: 'Kunder', ekonomi: 'Ekonomi' };
+const VIEWS = { oversikt: 'Översikt', ring: 'Att ringa', ringlista: 'Företag', samtal: 'Samtal', kunder: 'Kunder', ekonomi: 'Ekonomi' };
 const BETALSATT = ['Swish', 'Faktura', 'Annat'];
 const GRUNDARE = ['Max', 'William', 'John-John'];
 
@@ -940,7 +940,7 @@ function vyRing() {
   const nya = l.filter((f) => f.status === 'att_ringa').length;
   const idagRingda = allaSamtal().filter((s) => s.tid >= idag() && s.av === S.me).length;
   return `
-  <div class="ringtop"><div><h2>${l.length ? `${l.length} nummer att ringa` : 'Ringlistan är tom'}</h2>
+  <div class="ringtop"><div><h2>${l.length ? `${l.length} nummer att ringa` : 'Inga nummer att ringa'}</h2>
     <p>${l.length ? `${nya} nya${l.length > nya ? ` · ${l.length - nya} att ringa igen` : ''} · du har ringt ${idagRingda} idag` : 'Lägg till nummer så dyker de upp här.'}</p></div>
     ${l.length ? '' : '<button class="btn pri" data-addnr><svg class="i"><use href="#i-plus"/></svg>Lägg till nummer</button>'}</div>
   ${l.length ? `<div class="rl">${l.map((f, i) => {
@@ -1044,14 +1044,14 @@ function laggTillNummer() {
     const dubbel = mark.length - nya.length;
     $('#nrPrev').innerHTML = mark.length ? `<p class="mono" style="margin-bottom:8px">${nya.length} nya nummer${dubbel ? ` · ${dubbel} finns redan (hoppas över)` : ''}</p><div class="prev">${mark.map((x) => `<div class="${x.dub ? 'dub' : ''}"><span>${esc(x.namn)}${x.ort ? ` <span class="dim">· ${esc(x.ort)}</span>` : ''}</span><span class="mono">${esc(x.telefon)}</span></div>`).join('')}</div>` : '';
     $('#nrYes').disabled = !nya.length;
-    $('#nrYes').textContent = nya.length ? `Lägg till ${nya.length} i ringlistan` : 'Lägg till';
+    $('#nrYes').textContent = nya.length ? `Lägg till ${nya.length} nummer` : 'Lägg till';
   };
   $('#nrT').oninput = upd;
   $('#nrNo').onclick = stangModal;
   $('#nrYes').onclick = async () => {
     const nu = new Date().toISOString();
     const lista = nya.map((x) => ({ id: nyId(), skapad: nu, status: 'att_ringa', samtal: [], ansvarig: '', namn: x.namn, telefon: x.telefon, ort: x.ort, bransch: '', kontakt: '', epost: '', webb: '' }));
-    try { await db.importera(lista); stangModal(); render(false); toast(`${lista.length} nummer tillagda i ringlistan`); }
+    try { await db.importera(lista); stangModal(); render(false); toast(`${lista.length} nummer tillagda i Att ringa`); }
     catch (err) { toast(err.message, true); }
   };
 }
