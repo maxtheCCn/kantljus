@@ -301,6 +301,15 @@ button.row:hover{background:var(--s2);border-radius:10px}
 .rr .tel{font:500 15px var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
 .rr .tel.no{color:var(--dim);font-size:13px}
 .rr.busy{opacity:.55}
+.morepill{display:inline-flex;align-items:center;gap:8px;padding:9px 14px 9px 16px;border-radius:999px;font:600 13.5px var(--sans);white-space:nowrap;color:#1a0802;background:linear-gradient(120deg,#ffc061 0%,#ff7a2c 45%,#ff4a1c 100%) 0 0/180% 100%;box-shadow:0 8px 22px -12px rgb(255 90 31/.9);transition:background-position .4s,transform .2s}
+.morepill svg{width:14px;height:14px;transition:transform .2s}
+.rr:hover .morepill{background-position:100% 0;transform:translateY(-1px)}
+.rr:hover .morepill svg{transform:translateX(3px)}
+.morepill.busy{background:var(--s3);color:#ff9a66;box-shadow:inset 0 0 0 1px rgb(255 90 31/.4)}
+.howto{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.howto li{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--s1);font-size:14px;color:var(--mute);line-height:1.45}
+.howto b{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:rgb(255 90 31/.14);color:#ff9a66;font:600 13px var(--mono)}
+.howto em{font-style:normal;color:var(--ink);font-weight:500}
 .badge{display:inline-flex;align-items:center;gap:6px;font:500 11.5px var(--mono);padding:2px 8px;border-radius:999px;background:rgb(255 90 31/.12);color:#ff9a66;margin-left:6px;vertical-align:2px}
 .badge.re{background:rgb(158 230 247/.1);color:var(--kall)}
 .callbox{display:grid;gap:14px;text-align:center}
@@ -443,6 +452,11 @@ button.row:hover{background:var(--s2);border-radius:10px}
 .tr2 .co{grid-area:co}.tr2 .st{grid-area:st}.tr2 .said{grid-area:said}
 .tr2>:nth-child(4),.tr2 .who{display:none}
 .fgrid{grid-template-columns:1fr}
+.howto{grid-template-columns:1fr;gap:8px}
+.howto li{padding:10px 12px;font-size:13px}
+.rr{grid-template-columns:minmax(0,1fr);gap:10px;padding:14px 16px}
+.rr .nr{display:none}
+.morepill{justify-self:start;padding:9px 14px;font-size:13px}
 .pengar{grid-template-columns:1fr 1fr;gap:10px}
 .big{min-height:56px;font-size:15px}
 .post{grid-template-columns:30px minmax(0,1fr) auto auto;gap:8px}
@@ -1099,6 +1113,11 @@ function vyRing() {
   const nya = l.filter((f) => f.status === 'att_ringa').length;
   const idagRingda = allaSamtal().filter((s) => s.tid >= idag() && s.av === S.me).length;
   return `
+  ${l.length ? `<ol class="howto">
+    <li><b>1</b><span>Tryck på <em>Klicka för mer information</em> vid ett företag.</span></li>
+    <li><b>2</b><span>Tryck på <em>Ringer just nu</em>. Telefonen ringer upp och teamet ser att du ringer.</span></li>
+    <li><b>3</b><span>Efter samtalet: tryck <em>Tackade ja</em> eller <em>Tackade nej</em>. Företaget försvinner från listan.</span></li>
+  </ol>` : ''}
   <div class="ringtop"><div><h2>${l.length ? `${l.length} nummer att ringa` : 'Inga nummer att ringa'}</h2>
     <p>${l.length ? `${nya} nya${l.length > nya ? ` · ${l.length - nya} att ringa igen` : ''} · du har ringt ${idagRingda} idag` : 'Lägg till nummer så dyker de upp här.'}</p></div>
     ${l.length ? '' : '<button class="btn pri" data-addnr><svg class="i"><use href="#i-plus"/></svg>Lägg till nummer</button>'}</div>
@@ -1109,7 +1128,7 @@ function vyRing() {
       <span class="nr">${i + 1}</span>
       <span style="min-width:0"><b>${esc(f.namn)}</b>
       <small>${upptagen ? `<span class="badge" style="margin:0 6px 0 0">${esc(f.ringer.av)} ringer</span>` : min ? '<span class="badge" style="margin:0 6px 0 0">Du ringer</span>' : f.status !== 'att_ringa' ? `<span class="badge re" style="margin:0 6px 0 0">${f.status === 'aterkom' ? 'Ring igen' : 'Svarade inte'} · ${nar(aktivitet(f))}</span>` : ''}${esc([f.bransch, f.ort].filter(Boolean).join(' · '))}</small></span>
-      <span class="tel${f.telefon ? '' : ' no'}">${f.telefon ? esc(f.telefon) : 'Inget nummer'}</span>
+      <span class="morepill${upptagen ? ' busy' : ''}">${upptagen ? `${esc(f.ringer.av)} ringer` : 'Klicka för mer information'}<svg class="i"><use href="#i-arr"/></svg></span>
     </button>`; }).join('')}</div>`
   : `<section class="card"><div class="empty"><b>Allt är ringt 🎉</b>Tryck på Lägg till nummer och klistra in en ny lista.</div></section>`}`;
 }
