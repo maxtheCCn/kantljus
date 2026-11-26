@@ -498,7 +498,17 @@ button.jb:hover{background:rgb(255 255 255/.04)}
 .skn b{color:var(--ink);font-weight:600}
 .sk{display:grid;gap:16px;max-width:980px}
 .skc{background:var(--s1);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:grid}
-.skc-top{padding:22px 24px;display:grid;gap:10px}
+.skc-top{padding:0 24px 22px;display:grid;gap:14px}
+.skc-head{display:flex;align-items:center;gap:14px;width:100%;padding:20px 24px;text-align:left;border-radius:var(--r);transition:background .2s}
+.skc-head:hover{background:rgb(255 255 255/.025)}
+.skc-head:focus-visible{outline:2px solid var(--glod);outline-offset:-2px}
+.skc-head h3{flex:1;min-width:0;margin:0;font:600 20px/1.2 var(--sans);letter-spacing:-.025em}
+.skc.open .skc-head{border-radius:var(--r) var(--r) 0 0}
+.skc-pil{width:22px;height:22px;flex:none;color:var(--mute);transition:transform .35s cubic-bezier(.2,.8,.2,1),color .2s}
+.skc.open .skc-pil{transform:rotate(180deg);color:var(--ink)}
+.skc-fold{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s cubic-bezier(.2,.8,.2,1)}
+.skc.open .skc-fold{grid-template-rows:1fr}
+.skc-fold>div{overflow:hidden;min-height:0}
 .skc-top h3{margin:0;font:600 24px/1.15 var(--sans);letter-spacing:-.03em}
 .skc-top p{margin:0;color:var(--mute);max-width:62ch}
 .skc-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -759,6 +769,7 @@ button.jb:hover{background:rgb(255 255 255/.04)}
 <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
 <symbol id="i-script" viewBox="0 0 24 24"><path d="M6 3.5h9l3.5 3.5v13.5H6z"/><path d="M14.5 3.5V7.5h4M9 11.5h6M9 15h6M9 18h3.5"/></symbol>
 <symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M5 7.5h3.2a2.3 2.3 0 1 1 4.6 0H16a1 1 0 0 1 1 1v3.2a2.3 2.3 0 1 1 0 4.6V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8.5a1 1 0 0 1 1-1z"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></symbol>
 <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="1.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></symbol>
 </defs>
 </svg>
@@ -1979,7 +1990,7 @@ const SKILLS = [
     steg: ['Tryck på <b>Ladda ner skill</b>. Packa inte upp zip-filen.', 'Öppna Claude, gå till inställningarna och leta upp <b>Skills</b>.', 'Ladda upp zip-filen och slå på den.', 'Be Claude bygga en hemsida. Signaturen kommer med automatiskt.'],
   },
 ];
-const SKV = { nycklar: null, hamtar: false, laddar: false, saker: '' };
+const SKV = { oppen: new Set(), nycklar: null, hamtar: false, laddar: false, saker: '' };
 async function hamtaNycklar() {
   if (S.demo || SKV.hamtar) return;
   SKV.hamtar = true;
@@ -1998,8 +2009,10 @@ function vySkills() {
   return `
   <div class="ringtop"><div><h2>Skills</h2><p>Ladda ner och lägg in i Claude. Sen följer Claude våra regler automatiskt när ni bygger hemsidor.</p></div></div>
   <div class="sk">${SKILLS.map((x) => `
-    <article class="skc">
-      <div class="skc-top"><span class="tag" style="justify-self:start">${esc(x.tag)}</span><h3>${esc(x.namn)}</h3><p>${esc(x.om)}</p>
+    <article class="skc${SKV.oppen.has(x.id) ? ' open' : ''}">
+      <button class="skc-head" data-skopen="${x.id}" aria-expanded="${SKV.oppen.has(x.id)}" aria-controls="skf-${x.id}"><span class="tag">${esc(x.tag)}</span><h3>${esc(x.namn)}</h3><svg class="i skc-pil" aria-hidden="true"><use href="#i-chev"/></svg></button>
+      <div class="skc-fold" id="skf-${x.id}" ${SKV.oppen.has(x.id) ? '' : 'inert'}><div>
+      <div class="skc-top"><p>${esc(x.om)}</p>
         <div class="skc-meta">${x.personlig
           ? `<button class="btn pri" data-minskill="${x.id}" ${SKV.laddar ? 'disabled' : ''}><svg class="i"><use href="#i-down"/></svg>${SKV.laddar ? 'Skapar …' : 'Ladda ner min version'}</button><span class="mono dim">${S.me ? 'för ' + esc(S.me) : 'välj vem du är först'}</span>`
           : `<a class="btn pri" href="${x.fil}" download><svg class="i"><use href="#i-down"/></svg>Ladda ner skill</a><span class="mono dim">${esc(x.id)}.zip · ${x.storlek}</span>`}</div></div>
@@ -2015,6 +2028,7 @@ function vySkills() {
         <div><h4>Så lägger du in den</h4><ol>${x.steg.map((g) => `<li>${g}</li>`).join('')}</ol></div>
         ${x.personlig ? `<div style="grid-column:1/-1"><h4>${S.me === 'Max' ? 'Alla aktiva nycklar' : 'Dina aktiva nycklar'}</h4><p class="dim" style="margin:0 0 6px;font-size:13.5px">Varje nedladdning får en egen nyckel. Har någon tappat sin fil stänger du av nyckeln här, så slutar den fungera direkt.</p><div class="skn">${nyckLista}</div></div>` : ''}
       </div>
+      </div></div>
     </article>`).join('')}</div>`;
 }
 
@@ -2597,6 +2611,12 @@ function koppla(v) {
   $$('[data-filter]', v).forEach((b) => b.onclick = () => { S.f.st = b.dataset.filter; ga('ringlista'); });
   $$('[data-st]', v).forEach((b) => b.onclick = () => { S.f.st = b.dataset.st; render(false); });
   $$('[data-lp]', v).forEach((b) => b.onclick = () => { S.logPerson = b.dataset.lp; render(false); });
+  $$('[data-skopen]', v).forEach((b) => b.onclick = () => {
+    const id = b.dataset.skopen, art = b.closest('.skc'), oppna = !SKV.oppen.has(id);
+    if (oppna) SKV.oppen.add(id); else SKV.oppen.delete(id);
+    art.classList.toggle('open', oppna); b.setAttribute('aria-expanded', oppna);
+    $('.skc-fold', art).toggleAttribute('inert', !oppna);
+  });
   $$('[data-minskill]', v).forEach((b) => b.onclick = laddaNerMinSkill);
   $$('[data-stang]', v).forEach((b) => b.onclick = () => stangNyckel(b.dataset.stang));
   $$('[data-mnsvar]', v).forEach((b) => b.onclick = () => { MN.svar = MN.svar === b.dataset.mnsvar ? null : (b.dataset.mnsvar || null); render(false); });
