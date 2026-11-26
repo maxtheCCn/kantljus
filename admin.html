@@ -466,6 +466,10 @@ a.ck-tile:hover{border-color:var(--glod)}
 .lv-k .l em{font-style:normal;float:right;color:var(--dim);font-size:10.5px;letter-spacing:.06em;opacity:0;transition:opacity .2s}
 .lv-k.klick:hover .l em{opacity:1;color:var(--c)}
 @media (max-width:820px){.ll-row{grid-template-columns:26px minmax(0,1fr)}.ll-st{grid-column:2;justify-items:start}.ll-st .in{width:100%}.jaf{padding:16px}.jaf-foot{padding:14px 16px}}
+.rr .vem{display:block;margin-top:5px;font-size:13px;color:var(--mute)}
+.rr .vem span{display:inline}
+.rr .vem b{display:inline;font-size:inherit;color:var(--ink);font-weight:600}
+.rr .nr .av{width:28px;height:28px;font-size:10px}
 /* ---------- ringlista (enkel) ---------- */
 .ringtop{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .ringtop h2{margin:0;font:600 clamp(26px,3vw,34px)/1.05 var(--sans);letter-spacing:-.035em}
@@ -1331,16 +1335,20 @@ function ringRad(f, i, tillbaka) {
   let badge = '';
   if (upptagen) badge = `<span class="badge" style="margin:0 6px 0 0">${esc(f.ringer.av)} ringer</span>`;
   else if (min) badge = '<span class="badge" style="margin:0 6px 0 0">Du ringer</span>';
-  else if (tillbaka) {
-    const n = forsok(f);
-    badge = f.status === 'aterkom'
+  let vemHtml = '';
+  if (tillbaka) {
+    const n = forsok(f), sist = senaste(f), andr = (f.andringar || []).slice(-1)[0];
+    const flyttad = andr && (!sist || andr.tid > sist.tid);
+    const vem = sist?.av || '';
+    vemHtml = vem ? `<span class="vem"><span>Ringd av <b>${esc(vem)}</b>${sist ? ' · ' + nar(sist.tid) : ''}${flyttad ? ` · flyttad hit av ${esc(andr.av)}` : ''}</span></span>` : flyttad ? `<span class="vem"><span>Flyttad hit av <b>${esc(andr.av)}</b> · ${nar(andr.tid)}</span></span>` : '';
+    if (!upptagen && !min) badge = f.status === 'aterkom'
       ? `<span class="badge cb" style="margin:0 6px 0 0">Bad oss återkomma${f.nasta ? ' · ' + (f.nasta < idag() ? 'försenad' : dagNamn(f.nasta).toLowerCase()) : ''}</span>`
-      : `<span class="badge re" style="margin:0 6px 0 0">Svarade inte · ${nar(aktivitet(f))}${n > 1 ? ` · ${n} försök` : ''}</span>`;
+      : `<span class="badge re" style="margin:0 6px 0 0">Svarade inte${n > 1 ? ` · ${n} försök` : ''}</span>`;
   }
   return `<button class="rr${upptagen ? ' busy' : ''}" data-ring="${f.id}">
-    <span class="nr">${i + 1}</span>
+    <span class="nr">${tillbaka && senaste(f) ? avatar(senaste(f).av) : i + 1}</span>
     <span style="min-width:0"><b>${esc(f.namn)}</b>
-    <small>${badge}${esc([f.bransch, f.ort].filter(Boolean).join(' · '))}</small></span>
+    <small>${badge}${esc([f.bransch, f.ort].filter(Boolean).join(' · '))}</small>${vemHtml}</span>
     <span class="morepill${upptagen ? ' busy' : ''}">${upptagen ? `${esc(f.ringer.av)} ringer` : 'Klicka för mer information'}<svg class="i"><use href="#i-arr"/></svg></span>
   </button>`;
 }
@@ -1990,6 +1998,10 @@ function nyPost(typ, kund) {
 /* ================= LIVE DASHBOARD ================= */
 const LV = { pa: false, sett: new Set(), forst: true, poll: null, tick: null, ko: [], visar: false, ljud: false, ac: null, demoT: null, sist: {}, mal: +(store.get('kl_mal') || 40), malKlar: false, raf: null, tkNyckel: '' };
 const JA = ['intresserad', 'mote', 'offert', 'kund'];
+// Ett ja/nej räknas bara så länge företaget fortfarande har den statusen (ändrar Max till Ring tillbaka går siffran ner)
+const jaNu = (s) => JA.includes(s.utfall) && JA.includes(s.f.status);
+const nejNu = (s) => s.utfall === 'nej' && s.f.status === 'nej';
+const unikaForetag = (l) => new Set(l.map((s) => s.f.id)).size;
 const EV = {
   ringer:      { c: '#ff7a2c', ic: 'i-phone', t: (e) => `<b>${e.av}</b> ringer <b>${e.namn}</b>`, k: (e) => `${e.av} ringer ${e.namn}` },
   nej:         { c: '#e8806f', ic: 'i-x',     t: (e) => `<b>${e.av}</b> fick ett nej <span>från</span> ${e.namn}`, k: (e) => `${e.av} fick ett nej från ${e.namn}` },
@@ -2062,7 +2074,7 @@ function odo(el, varde) {
 }
 function liveMini() {
   const d0 = idag(), samt = allaSamtal().filter((s) => s.tid >= d0);
-  const ja = allaSamtal().find((s) => JA.includes(s.utfall));
+  const ja = allaSamtal().find(jaNu);
   $('#lvLastJa').textContent = ja ? nar(ja.tid) : '–';
   const svarade = samt.filter((s) => s.utfall !== 'inget_svar').length;
   $('#lvHit').textContent = samt.length ? Math.round((svarade / samt.length) * 100) + ' %' : '–';
@@ -2072,8 +2084,8 @@ function liveRita() {
   if (!LV.pa) return;
   const h = liveHandelser();
   const d0 = idag(), samt = allaSamtal().filter((s) => s.tid >= d0);
-  const ja = samt.filter((s) => JA.includes(s.utfall)).length;
-  const nej = samt.filter((s) => s.utfall === 'nej').length;
+  const ja = unikaForetag(samt.filter(jaNu));
+  const nej = unikaForetag(samt.filter(nejNu));
   const [m0] = periodGrans('manad');
   const intj = S.poster.filter((p) => p.typ === 'in' && p.datum >= m0).reduce((s, p) => s + p.belopp, 0);
   // --- räknare
@@ -2153,7 +2165,7 @@ function liveRita() {
     liveTick();
   }
   // --- topplista med animerade placeringar
-  const rad = TEAM.map((pp) => ({ p: pp, n: samt.filter((s) => s.av === pp.n).length, ja: samt.filter((s) => s.av === pp.n && JA.includes(s.utfall)).length }))
+  const rad = TEAM.map((pp) => ({ p: pp, n: samt.filter((s) => s.av === pp.n).length, ja: unikaForetag(samt.filter((s) => s.av === pp.n && jaNu(s))) }))
     .sort((a, b) => b.ja - a.ja || b.n - a.n);
   const max = Math.max(1, ...rad.map((x) => x.n));
   const lead = $('#lvLead');
@@ -2181,8 +2193,8 @@ function liveRita() {
 /* Klicka på en ruta i Live: se vilka det gäller. Bara Max kan ändra status. */
 const LISTOR = {
   samtal: { t: 'Samtal idag', f: (s) => true },
-  ja: { t: 'Ja idag', f: (s) => JA.includes(s.utfall) },
-  nej: { t: 'Nej idag', f: (s) => s.utfall === 'nej' },
+  ja: { t: 'Ja idag', f: jaNu },
+  nej: { t: 'Nej idag', f: nejNu },
 };
 const ANDRA_TILL = [['kund', 'Kund'], ['aterkom', 'Ring tillbaka senare'], ['inget_svar', 'Ring tillbaka (svarade inte)'], ['att_ringa', 'Tillbaka till Att ringa'], ['nej', 'Nej tack']];
 function liveLista(typ) {
@@ -2615,7 +2627,7 @@ function exportera() {
 document.addEventListener('keydown', (e) => {
   if ($('#app').hidden) return;
   const skriver = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName);
-  if (e.key === 'Escape' && LV.pa && !$('#modal').classList.contains('on')) { if (!document.fullscreenElement) stangLive(); return; }
+  if (e.key === 'Escape' && LV.pa) { if ($('#modal').classList.contains('on')) stangModal(); else if (!document.fullscreenElement) stangLive(); return; }
   if (LV.pa) return;
   if (e.key === 'Escape') { if ($('#modal').classList.contains('on') && S.me) return stangModal(); if (S.open) return stangLada(); }
   if (skriver || e.metaKey || e.ctrlKey || e.altKey) return;
