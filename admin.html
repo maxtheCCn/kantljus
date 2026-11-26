@@ -1302,7 +1302,8 @@ function ringKort(id) {
       <section class="ck-info">
         <div class="ck-grid">
           <a class="ck-tile" href="${karta}" target="_blank" rel="noopener"><svg class="i"><use href="#i-globe"/></svg><span><small>Adress</small>${esc(f.ort || 'Visa på kartan')}</span><em>Karta ↗</em></a>
-          <a class="ck-tile" href="${f.webb ? esc(/^https?:/.test(f.webb) ? f.webb : 'https://' + f.webb) : sok}" target="_blank" rel="noopener"><svg class="i"><use href="#i-search"/></svg><span><small>Hemsida</small>${f.webb ? esc(f.webb.replace(/^https?:\/\//, '')) : 'Kolla deras sajt innan du ringer'}</span><em>${f.webb ? 'Öppna ↗' : 'Googla ↗'}</em></a>
+          <a class="ck-tile" href="${f.webb ? esc(/^https?:/.test(f.webb) ? f.webb : 'https://' + f.webb) : sok}" target="_blank" rel="noopener"><svg class="i"><use href="#i-search"/></svg><span><small>Hemsida${f.hemsidaBetyg ? ` · betyg ${esc(f.hemsidaBetyg)}/5` : ''}</small>${f.webb ? esc(f.webb.replace(/^https?:\/\//, '')) : f.hemsidaNotis ? 'Ingen hemsida' : 'Kolla deras sajt innan du ringer'}</span><em>${f.webb ? 'Öppna ↗' : 'Googla ↗'}</em></a>
+          ${f.hemsidaNotis ? `<div class="ck-tile ck-wide" style="grid-column:1/-1;border-color:rgb(255 90 31/.35);background:linear-gradient(100deg,rgb(255 90 31/.08),transparent 70%),var(--bg)"><svg class="i" style="color:#ff9a66"><use href="#i-search"/></svg><span><small>Vad som är dåligt med sajten</small>${esc(f.hemsidaNotis)}</span></div>` : ''}
           <div class="ck-tile"><svg class="i"><use href="#i-cal"/></svg><span><small>Status</small>${st[1]}${hist.length ? ' · ' + nar(hist[0].tid) : ''}</span></div>
           <div class="ck-tile"><svg class="i"><use href="#i-chat"/></svg><span><small>Samtal hittills</small>${hist.length ? hist.length + (hist.length === 1 ? ' samtal' : ' samtal') : 'Inga än'}</span></div>
         </div>
@@ -1310,7 +1311,7 @@ function ringKort(id) {
           <ol class="ck-script">
             <li><b>Hälsa:</b> ”Hej! Jag heter ${esc(jag)} och ringer från Kantljus, en liten webbyrå här i Stockholm. Har du en minut?”</li>
             <li><b>Varför:</b> ”Vi bygger snabba, snygga hemsidor åt småföretag${f.bransch ? ' som ' + esc(f.bransch.toLowerCase()) : ''}, så att fler hittar er på Google och kan boka direkt i mobilen.”</li>
-            <li><b>Fråga:</b> ”Hur får ni nya kunder i dag? Kommer många via er hemsida?”</li>
+            <li><b>Fråga:</b> ${f.hemsidaNotis ? `”Jag kollade på ${f.webb ? 'er hemsida' : 'er på nätet'} innan jag ringde och såg några saker vi kan hjälpa till med.” <span class="dim">(${esc(f.hemsidaNotis)})</span> ”Är det något ni har funderat på?”` : '”Hur får ni nya kunder i dag? Kommer många via er hemsida?”'}</li>
             <li><b>Avslut:</b> ”Får vi komma förbi och visa ett förslag? Det är gratis och tar en kvart.”</li>
           </ol>
         </details>
@@ -1366,6 +1367,16 @@ function tolkaNummer(text) {
   const rader = text.split(/\r?\n/).map((r) => r.trim()).filter(Boolean);
   const ut = []; let namnUtanNr = '';
   for (const rad of rader) {
+    // Tabellformat från AI-prompten: Namn | Adress | Telefon | Bransch | Hemsida | Betyg | Vad som är dåligt
+    const kol = rad.split('|').map((k) => k.trim());
+    if (kol.length >= 3) {
+      const ti = kol.findIndex((k) => telRe.test(k));
+      if (ti < 0 || /^namn$/i.test(kol[0])) continue;
+      const webb = (kol[4] || '').replace(/^(ingen|saknas|-|–|nej)$/i, '');
+      ut.push({ namn: rensaNamn(kol[0]), ort: ti === 1 ? '' : kol[1] || '', telefon: kol[ti].match(telRe)[0].replace(/\s+/g, ' ').trim(), bransch: kol[3] || '', webb, betyg: (kol[5] || '').replace(/[^\d]/g, '').slice(0, 1), notis: kol.slice(6).join(' | ') });
+      namnUtanNr = '';
+      continue;
+    }
     const m = rad.match(telRe);
     if (!m) { if (!namnUtanNr) namnUtanNr = rensaNamn(rad); continue; }
     const tel = m[0].replace(/\s+/g, ' ').trim();
@@ -1383,7 +1394,7 @@ function tolkaNummer(text) {
 }
 function laggTillNummer() {
   modal(`<h2>Lägg till nummer</h2>
-  <p>Klistra in en lista, ett företag per rad: namn och nummer. Du kan kopiera direkt från Google Maps, Eniro, hitta.se, Excel eller en anteckning. Telefonnumret hittas automatiskt.</p>
+  <p>Klistra in en lista, ett företag per rad: namn och nummer. Du kan kopiera direkt från Google Maps, Eniro, hitta.se, Excel eller en anteckning. Telefonnumret hittas automatiskt. Listor från AI-prompten (med | mellan kolumnerna) läses in med bransch, hemsida och bedömning.</p>
   <textarea class="in" id="nrT" style="min-height:170px;font:13px/1.5 var(--mono)" autofocus placeholder="Bageri Sötdeg – 08-640 12 34&#10;Rörkraft AB 070-111 22 33&#10;Frisör Lina&#10;073-555 18 18"></textarea>
   <div id="nrPrev"></div>
   <div class="mact"><button class="btn ghost" id="nrNo">Avbryt</button><button class="btn pri" id="nrYes" disabled>Lägg till</button></div>`);
@@ -1396,7 +1407,7 @@ function laggTillNummer() {
     const mark = l.map((x) => { const k = siffror(x.telefon); const dub = finnsTel.has(k) || finnsNamn.has(x.namn.toLowerCase()) || sedda.has(k); sedda.add(k); return { ...x, dub }; });
     nya = mark.filter((x) => !x.dub);
     const dubbel = mark.length - nya.length;
-    $('#nrPrev').innerHTML = mark.length ? `<p class="mono" style="margin-bottom:8px">${nya.length} nya nummer${dubbel ? ` · ${dubbel} finns redan (hoppas över)` : ''}</p><div class="prev">${mark.map((x) => `<div class="${x.dub ? 'dub' : ''}"><span>${esc(x.namn)}${x.ort ? ` <span class="dim">· ${esc(x.ort)}</span>` : ''}</span><span class="mono">${esc(x.telefon)}</span></div>`).join('')}</div>` : '';
+    $('#nrPrev').innerHTML = mark.length ? `<p class="mono" style="margin-bottom:8px">${nya.length} nya nummer${dubbel ? ` · ${dubbel} finns redan (hoppas över)` : ''}</p><div class="prev">${mark.map((x) => `<div class="${x.dub ? 'dub' : ''}"><span>${esc(x.namn)}${x.ort ? ` <span class="dim">· ${esc(x.ort)}</span>` : ''}${x.bransch ? ` <span class="dim">· ${esc(x.bransch)}</span>` : ''}${x.betyg ? ` <span style="color:#ff9a66">· sajt ${esc(x.betyg)}/5</span>` : ''}</span><span class="mono">${esc(x.telefon)}</span></div>`).join('')}</div>` : '';
     $('#nrYes').disabled = !nya.length;
     $('#nrYes').textContent = nya.length ? `Lägg till ${nya.length} nummer` : 'Lägg till';
   };
@@ -1404,7 +1415,7 @@ function laggTillNummer() {
   $('#nrNo').onclick = stangModal;
   $('#nrYes').onclick = async () => {
     const nu = new Date().toISOString();
-    const lista = nya.map((x) => ({ id: nyId(), skapad: nu, status: 'att_ringa', samtal: [], ansvarig: '', namn: x.namn, telefon: x.telefon, ort: x.ort, bransch: '', kontakt: '', epost: '', webb: '' }));
+    const lista = nya.map((x) => ({ id: nyId(), skapad: nu, status: 'att_ringa', samtal: [], ansvarig: '', namn: x.namn, telefon: x.telefon, ort: x.ort, bransch: x.bransch || '', kontakt: '', epost: '', webb: x.webb || '', hemsidaBetyg: x.betyg || '', hemsidaNotis: x.notis || '' }));
     try { await db.importera(lista); stangModal(); render(false); toast(`${lista.length} nummer tillagda i Att ringa`); }
     catch (err) { toast(err.message, true); }
   };
