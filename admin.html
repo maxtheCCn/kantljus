@@ -471,6 +471,28 @@ a.ck-tile:hover{border-color:var(--glod)}
 .rr .vem b{display:inline;font-size:inherit;color:var(--ink);font-weight:600}
 .rr .nr .av{width:28px;height:28px;font-size:10px}
 /* ---------- ringlista (enkel) ---------- */
+.sk{display:grid;gap:16px;max-width:980px}
+.skc{background:var(--s1);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:grid}
+.skc-top{padding:22px 24px;display:grid;gap:10px}
+.skc-top h3{margin:0;font:600 24px/1.15 var(--sans);letter-spacing:-.03em}
+.skc-top p{margin:0;color:var(--mute);max-width:62ch}
+.skc-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.skc-prev{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-block:1px solid var(--line)}
+.skc-prev>div{padding:22px 24px 14px;display:grid;gap:4px;align-content:end;min-height:150px}
+.skc-prev small{font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;opacity:.6;margin-bottom:auto}
+.skc-mork{background:#0b0b0c;color:#c3cec5}
+.skc-ljus{background:#f4f1ea;color:#3a3a3a;border-left:1px solid var(--line)}
+.skc-fot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;border-top:1px solid currentColor;border-color:rgb(127 127 127/.25);padding-top:10px}
+.skc-sig{display:inline-flex;align-items:center;gap:2px;min-height:44px;color:inherit;text-decoration:none;margin-left:auto}
+.skc-sig span{font-size:11px;transform:translateY(3px)}
+.skc-sig:hover span{text-decoration:underline}
+.skc-sig img{display:block;width:90px;height:auto;mix-blend-mode:screen}
+.skc-ljus .skc-sig img{filter:invert(1);mix-blend-mode:multiply}
+.skc-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;padding:22px 24px}
+.skc-body h4{margin:0 0 10px;font:500 11.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--glod)}
+.skc-body ul,.skc-body ol{margin:0;padding-left:18px;display:grid;gap:6px;color:var(--mute);font-size:14px}
+.skc-body b{color:var(--ink);font-weight:600}
+@media (max-width:720px){.skc-prev,.skc-body{grid-template-columns:minmax(0,1fr)}.skc-ljus{border-left:0;border-top:1px solid var(--line)}.skc-top,.skc-body{padding:18px}}
 .mn{display:grid;gap:14px;max-width:860px}
 .mn-steg{background:var(--s1);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;display:grid;gap:12px;transition:opacity .25s,border-color .25s}
 .mn-nr{font:500 11.5px var(--mono);color:var(--glod);letter-spacing:.08em;text-transform:uppercase}
@@ -711,6 +733,7 @@ a.ck-tile:hover{border-color:var(--glod)}
 <symbol id="i-back" viewBox="0 0 24 24"><path d="M6.6 3.5h2.6l1.5 4-2 1.3a10.5 10.5 0 0 0 6.5 6.5l1.3-2 4 1.5v2.6a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z"/><path d="M14 3.5h6.5V10M20.5 3.5 14.5 9.5"/></symbol>
 <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
 <symbol id="i-script" viewBox="0 0 24 24"><path d="M6 3.5h9l3.5 3.5v13.5H6z"/><path d="M14.5 3.5V7.5h4M9 11.5h6M9 15h6M9 18h3.5"/></symbol>
+<symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M5 7.5h3.2a2.3 2.3 0 1 1 4.6 0H16a1 1 0 0 1 1 1v3.2a2.3 2.3 0 1 1 0 4.6V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8.5a1 1 0 0 1 1-1z"/></symbol>
 <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="1.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></symbol>
 </defs>
 </svg>
@@ -750,6 +773,7 @@ a.ck-tile:hover{border-color:var(--glod)}
       <button class="nv" data-view="kunder"><svg class="i"><use href="#i-star"/></svg>Kunder<span class="n" id="nKund"></span></button>
       <button class="nv" data-view="ekonomi"><svg class="i"><use href="#i-wallet"/></svg>Ekonomi</button>
       <button class="nv" data-view="promptar"><svg class="i"><use href="#i-spark"/></svg>Promptar</button>
+      <button class="nv" data-view="skills"><svg class="i"><use href="#i-puzzle"/></svg>Skills</button>
     </nav>
     <div class="grow"></div>
     <div class="demo-flag" id="demoFlag" hidden><span><b>Demoläge.</b> Påhittade företag. Inget sparas när du stänger fliken.</span></div>
@@ -838,7 +862,7 @@ const ST = {
 const FLODE = ['att_ringa', 'inget_svar', 'aterkom', 'intresserad', 'mote', 'offert', 'kund'];
 const UTFALL = ['inget_svar', 'aterkom', 'intresserad', 'mote', 'offert', 'kund', 'nej'];
 const TJANSTER = ['Hemsida', 'Webbshop', 'Logga', 'SEO', 'Drift'];
-const VIEWS = { oversikt: 'Översikt', ring: 'Att ringa', tillbaka: 'Ring tillbaka', manus: 'Manus', ringlista: 'Företag', samtal: 'Samtal', kunder: 'Kunder', ekonomi: 'Ekonomi', promptar: 'Promptar' };
+const VIEWS = { oversikt: 'Översikt', ring: 'Att ringa', tillbaka: 'Ring tillbaka', manus: 'Manus', ringlista: 'Företag', samtal: 'Samtal', kunder: 'Kunder', ekonomi: 'Ekonomi', promptar: 'Promptar', skills: 'Skills' };
 const BETALSATT = ['Swish', 'Faktura', 'Annat'];
 const GRUNDARE = ['Max', 'William', 'John-John'];
 
@@ -1162,7 +1186,7 @@ function render(anim = true) {
   $('#nSamtal').textContent = allaSamtal().length || '';
   $('#nKund').textContent = S.data.filter((f) => f.status === 'kund').length || '';
   const v = $('#view');
-  v.innerHTML = ({ oversikt: vyOversikt, ring: vyRing, tillbaka: vyTillbaka, manus: vyManus, ringlista: vyRinglista, samtal: vySamtal, kunder: vyKunder, ekonomi: vyEkonomi, promptar: vyPromptar })[S.view]();
+  v.innerHTML = ({ oversikt: vyOversikt, ring: vyRing, tillbaka: vyTillbaka, manus: vyManus, ringlista: vyRinglista, samtal: vySamtal, kunder: vyKunder, ekonomi: vyEkonomi, promptar: vyPromptar, skills: vySkills })[S.view]();
   if (anim) v.classList.remove('fade'), void v.offsetWidth, v.classList.add('fade');
   koppla(v);
 }
@@ -1906,6 +1930,33 @@ function vyManus() {
     <section class="mn-steg"><span class="mn-nr">Efter samtalet</span>
       <ul class="mn-tips"><li>Vill de ha en demo? Tryck på <b>Tackade ja</b> i Att ringa och fyll i kundformuläret.</li><li>Bad de dig ringa senare eller svarade inte? Tryck på <b>Svarade inte / Ring tillbaka</b>.</li><li>Sa de nej? Tryck på <b>Tackade nej</b> och tacka för deras tid.</li></ul></section>
   </div>`;
+}
+
+/* ================= SKILLS ================= */
+const SKILLS = [
+  {
+    id: 'kantljus-signatur', namn: 'Kantljus-signatur', tag: 'Signatur', fil: '/skills/kantljus-signatur.zip', storlek: '620 kB',
+    om: 'Lägger till ”Designat av: kantljus” längst ner till höger på varje hemsida vi bygger med Claude. Loggan och texten blir en länk till kantljus.se.',
+    gor: ['Sätter signaturen sist i sidfoten, på alla sidor och undersidor', 'Liten och diskret: 11 px text och en 90 px bred logga', 'Fungerar på både mörka och ljusa sidfötter', 'Rör inte kundens egen copyright eller logga'],
+  },
+];
+function vySkills() {
+  const sig = '<a class="skc-sig" href="https://kantljus.se/" target="_blank" rel="noopener"><span>Designat av:</span><img src="/skills/kantljus-outline.png" alt="Kantljus" width="360" height="120"></a>';
+  return `
+  <div class="ringtop"><div><h2>Skills</h2><p>Ladda ner och lägg in i Claude. Sen följer Claude våra regler automatiskt när ni bygger hemsidor.</p></div></div>
+  <div class="sk">${SKILLS.map((x) => `
+    <article class="skc">
+      <div class="skc-top"><span class="tag" style="justify-self:start">${esc(x.tag)}</span><h3>${esc(x.namn)}</h3><p>${esc(x.om)}</p>
+        <div class="skc-meta"><a class="btn pri" href="${x.fil}" download><svg class="i"><use href="#i-down"/></svg>Ladda ner skill</a><span class="mono dim">${esc(x.id)}.zip · ${x.storlek}</span></div></div>
+      ${x.id === 'kantljus-signatur' ? `<div class="skc-prev">
+        <div class="skc-mork"><small>Så ser det ut · mörk sidfot</small><div class="skc-fot"><span>© 2026 Salong Exempel</span>${sig}</div></div>
+        <div class="skc-ljus"><small>Så ser det ut · ljus sidfot</small><div class="skc-fot"><span>© 2026 Salong Exempel</span>${sig}</div></div>
+      </div>` : ''}
+      <div class="skc-body">
+        <div><h4>Vad den gör</h4><ul>${x.gor.map((g) => `<li>${esc(g)}</li>`).join('')}</ul></div>
+        <div><h4>Så lägger du in den</h4><ol><li>Tryck på <b>Ladda ner skill</b>. Packa inte upp zip-filen.</li><li>Öppna Claude, gå till inställningarna och leta upp <b>Skills</b>.</li><li>Ladda upp zip-filen och slå på den.</li><li>Be Claude bygga en hemsida. Signaturen kommer med automatiskt.</li></ol></div>
+      </div>
+    </article>`).join('')}</div>`;
 }
 
 function vyPromptar() {

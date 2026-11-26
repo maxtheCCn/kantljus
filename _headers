@@ -9,3 +9,5 @@
 /api/*
   X-Robots-Tag: noindex
   Cache-Control: no-store
+/skills/*
+  X-Robots-Tag: noindex, nofollow
