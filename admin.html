@@ -437,6 +437,14 @@ a.ck-tile:hover{border-color:var(--glod)}
 .cbtn.tb2{min-height:58px;background:var(--bg);color:var(--ink);border-color:rgb(158 230 247/.45)}
 .cbtn.tb2 svg{color:var(--kall)}
 .cbtn.tb2:hover,.cbtn.tb2.on{border-color:var(--kall);background:rgb(158 230 247/.1)}
+.lv-caller{position:relative}
+.lv-kill{display:grid;place-items:center;min-width:34px;height:34px;padding:0 10px;border-radius:999px;color:var(--mute);border:1px solid rgb(255 255 255/.12);background:rgb(0 0 0/.25);font:600 12.5px var(--sans);transition:all .2s}
+.lv-kill svg{width:16px;height:16px}
+.lv-kill:hover{color:#fff;border-color:var(--bad);background:rgb(232 128 111/.18)}
+.lv-kill.sure{color:#1a0802;background:var(--bad);border-color:var(--bad)}
+.lv-caller.ut{animation:callerUt .35s ease forwards}
+@keyframes callerUt{to{opacity:0;transform:translateX(30px) scale(.96)}}
+.lv-caller:has(.lv-kill){grid-template-columns:52px minmax(0,1fr) auto auto}
 /* ---------- ringlista (enkel) ---------- */
 .ringtop{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .ringtop h2{margin:0;font:600 clamp(26px,3vw,34px)/1.05 var(--sans);letter-spacing:-.035em}
@@ -2055,11 +2063,12 @@ function liveRita() {
     while (feed.children.length > 18) feed.lastElementChild.remove();
   }
   // --- ringer just nu
-  const now = $('#lvNow'), nyckel = ringer.map((f) => f.id + f.ringer.tid).join('|');
+  const now = $('#lvNow'), nyckel = (S.me || '') + ':' + ringer.map((f) => f.id + f.ringer.tid).join('|');
   if (now.dataset.k !== nyckel || LV.forst) {
     now.dataset.k = nyckel;
-    now.innerHTML = ringer.length ? ringer.map((f) => `<div class="lv-caller"><span class="lv-ring"><span class="av">${esc(ini(f.ringer.av))}</span></span><span class="who" style="min-width:0"><b>${esc(f.ringer.av)}</b><span>ringer ${esc(f.namn)}${f.bransch ? ' · ' + esc(f.bransch) : ''}</span></span><span class="tm" data-sedan="${f.ringer.tid}">0:00</span></div>`).join('')
+    now.innerHTML = ringer.length ? ringer.map((f) => `<div class="lv-caller"><span class="lv-ring"><span class="av">${esc(ini(f.ringer.av))}</span></span><span class="who" style="min-width:0"><b>${esc(f.ringer.av)}</b><span>ringer ${esc(f.namn)}${f.bransch ? ' · ' + esc(f.bransch) : ''}</span></span><span class="tm" data-sedan="${f.ringer.tid}">0:00</span>${S.me === 'Max' ? `<button class="lv-kill" data-avsluta="${f.id}" title="Avsluta samtalet" aria-label="Avsluta ${esc(f.ringer.av)}s samtal med ${esc(f.namn)}"><svg class="i"><use href="#i-x"/></svg></button>` : ''}</div>`).join('')
       : '<div class="lv-idle"><i></i>Ingen ringer just nu. Vem tar nästa?</div>';
+    $$('[data-avsluta]', now).forEach((b) => b.onclick = () => avslutaSamtal(b.dataset.avsluta, b));
     liveTick();
   }
   // --- topplista med animerade placeringar
@@ -2087,6 +2096,24 @@ function liveRita() {
     el.style.setProperty('--dur', Math.max(25, tk.length * 6) + 's');
   }
   LV.forst = false;
+}
+async function avslutaSamtal(id, knapp) {
+  const f = S.data.find((x) => x.id === id);
+  if (!f || S.me !== 'Max') return;
+  const kort = knapp.closest('.lv-caller');
+  if (!knapp.classList.contains('sure')) {
+    knapp.classList.add('sure'); knapp.innerHTML = 'Avsluta?';
+    setTimeout(() => { if (knapp.isConnected) { knapp.classList.remove('sure'); knapp.innerHTML = '<svg class="i"><use href="#i-x"/></svg>'; } }, 3000);
+    return;
+  }
+  knapp.disabled = true;
+  try {
+    if (S.demo) { f.ringer = null; }
+    else { const ut = await api(`/foretag/${id}/avsluta`, { method: 'POST' }); ersatt(ut); }
+    kort.classList.add('ut');
+    setTimeout(() => { $('#lvNow').dataset.k = ''; liveRita(); }, 350);
+    toast(`Samtalet med ${f.namn} är avslutat`);
+  } catch (err) { toast(err.message, true); knapp.disabled = false; }
 }
 function annonsera(e) { LV.ko.push(e); if (!LV.visar) nastaAnnons(); }
 function nastaAnnons() {

@@ -267,6 +267,17 @@ export async function onRequest({ request, env, params }) {
     const id = delar[1];
     if (!giltigtId(id)) return svar({ fel: 'Ogiltigt id' }, 400);
 
+    // POST /api/foretag/:id/avsluta – bara Max får avsluta ett pågående samtal
+    if (delar[2] === 'avsluta' && metod === 'POST') {
+      if (person !== 'Max') return svar({ fel: 'Bara Max kan avsluta samtal' }, 403);
+      const rec = await hamta(env, id);
+      if (!rec) return svar({ fel: 'Företaget finns inte' }, 404);
+      const vem = rec.ringer?.av || '';
+      rec.ringer = null;
+      rec.avslutade = [...(rec.avslutade || []), { tid: new Date().toISOString(), av: 'Max', ringare: vem }].slice(-20);
+      return svar(await spara(env, rec));
+    }
+
     // PUT /api/foretag/:id – skapa eller uppdatera
     if (delar.length === 2 && metod === 'PUT') {
       const rec = rensa(await request.json(), id);
