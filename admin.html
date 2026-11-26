@@ -1455,64 +1455,8 @@ Referens: vi har bland annat byggt hemsidan åt Westra Security.
 Så hittar vi kunder: vi ringer lokala småföretag, främst runt Östermalm i Stockholm, som har en dålig hemsida eller ingen alls, och erbjuder ett gratis möte där vi visar ett förslag.
 Kontakt: hej@kantljus.se, 070-939 98 96.
 Ton: rak, varm och enkel svenska. Inget säljsnack, inga överdrifter, inga engelska modeord.`;
-const listaNamn = (fn) => S.data.filter(fn).map((f) => '- ' + f.namn + (f.ort ? ' (' + f.ort + ')' : '')).join('\n') || '- (inga än)';
 const PROMPTAR = [
-  { id: 'hitta', kat: 'Hitta kunder', t: 'Hitta företag med dålig eller ingen hemsida', n: 'Ger en färdig lista som går att klistra in i Att ringa → Lägg till nummer.', p: () => `${OM_OSS()}
-
-DITT UPPDRAG
-Hitta så många små, lokala företag som möjligt som vi kan ringa och erbjuda en ny hemsida.
-
-OMRÅDE
-${PR.omrade}. Ta inget utanför området.
-
-VILKA FÖRETAG
-Fristående butiker och verksamheter där kunderna letar på mobilen innan de kommer: frisörer, barberare, naglar, fransar, skönhet, massage, skräddare, kemtvätt, skomakare, blommor, inredning, presentbutiker, klädbutiker, antikvariat, optiker, caféer, bagerier, delikatesser, cykelverkstäder, låssmeder, ramverkstäder och hantverkare.
-Inga kedjor, franchise eller stora bolag.
-
-KOLLA HEMSIDAN SJÄLV (VIKTIGAST)
-Du måste öppna varje företags hemsida och titta på den innan du bedömer den. Gissa aldrig utifrån namn eller sökresultat. Ta bara med betyg 1–3:
-1 = Ingen hemsida alls, bara Instagram, Facebook, Bokadirekt eller Google-profil.
-2 = Dålig hemsida: fungerar inte i mobilen, ser gammal ut, laddar långsamt, trasiga länkar eller bilder, saknar https, saknar öppettider, priser eller kontakt.
-3 = Fungerar men är svag: mallsajt, ingen bokning, lite text, svår att hitta på Google.
-Hoppa över betyg 4–5 (modern, snabb och snygg). Går sajten inte att öppna: skriv det och ge betyg 2.
-
-KRAV
-- Hitta aldrig på nummer eller adresser. Ta bara uppgifter du har sett i en källa (Google Maps, deras egen sida, Eniro, hitta.se, allabolag.se).
-- Bara företag som är öppna nu.
-- Företagets nummer, inga privata mobilnummer som inte hör till företaget.
-
-HOPPA ÖVER DE HÄR, DE FINNS REDAN HOS OSS
-${listaNamn(() => true)}
-
-SVARA EXAKT I DET HÄR FORMATET
-En rad per företag, kolumnerna avgränsade med |, inget annat i listan:
-Namn | Gatuadress | Telefon | Bransch | Hemsida | Betyg | Vad som är dåligt
-Hemsida = adressen eller "ingen". Betyg = bara siffran. Vad som är dåligt = en kort mening om vad du såg.
-
-Exempel:
-Salong Exempel | Karlavägen 12 | 08-661 22 33 | Frisör | salongexempel.se | 2 | Går inte att läsa i mobilen, ingen onlinebokning, copyright 2016.
-
-Sikta på minst 40 företag. Skriv sist, under listan, hur många du kollade och hur många du hoppade över för att sajten var bra.` },
-
-  { id: 'nummer', kat: 'Hitta kunder', t: 'Hitta nummer och adress till en lista med namn', n: 'När ni har namn på butiker men saknar telefonnummer.', p: () => `${OM_OSS()}
-
-DITT UPPDRAG
-Jag klistrar in namn på företag nedan. Leta upp telefonnummer, gatuadress och hemsida för varje företag och bedöm hemsidan.
-
-FÖR VARJE FÖRETAG
-1. Hitta rätt företag. Finns flera med samma namn, välj det i ${PR.omrade.split(',')[0]} och skriv det i kommentaren.
-2. Ta numret från Google Maps eller företagets egen sida. Hitta aldrig på något.
-3. Öppna hemsidan och ge betyg 1–5 (1 = ingen sajt, 5 = modern och bra).
-4. Om företaget verkar stängt, skriv "stängt" i kommentaren.
-
-SVARA EXAKT SÅ HÄR, en rad per företag:
-Namn | Gatuadress | Telefon | Bransch | Hemsida | Betyg | Kommentar
-Hittar du inget nummer: skriv "saknas" i Telefon.
-
-FÖRETAGEN
-[KLISTRA IN NAMNEN HÄR, ETT PER RAD]` },
-
-  { id: 'granska', kat: 'Hitta kunder', t: 'Granska en hemsida och ge säljargument', n: 'Inför ett samtal: vad är dåligt och vad säger man?', p: () => `${OM_OSS()}
+  { id: 'granska', kat: 'Ringa', t: 'Granska företagets hemsida innan du ringer', n: 'Ta ett företag från Att ringa: vad är dåligt med sajten och vad säger man?', p: () => `${OM_OSS()}
 
 DITT UPPDRAG
 Öppna och granska hemsidan nedan som om du vore en kund som letar på mobilen. Ge oss konkreta saker vi kan ta upp när vi ringer ägaren.
@@ -1735,8 +1679,7 @@ function vyPromptar() {
   const kat = ['alla', ...new Set(PROMPTAR.map((x) => x.kat))];
   const l = PROMPTAR.filter((x) => PR.kat === 'alla' || x.kat === PR.kat);
   return `
-  <div class="ringtop"><div><h2>Promptar</h2><p>Färdiga uppdrag att ge en AI. Allt om Kantljus står redan i varje prompt, och listor med företag vi redan har fylls i automatiskt.</p></div></div>
-  <label class="f pr-omr"><span>Område som används i promptarna</span><input class="in" id="prOmr" value="${esc(PR.omrade)}"></label>
+  <div class="ringtop"><div><h2>Promptar</h2><p>Färdiga uppdrag att ge en AI. Allt om Kantljus står redan i varje prompt. Företagen ni ringer tar ni från Att ringa.</p></div></div>
   <div class="chips">${kat.map((k) => `<button class="chip" data-prk="${esc(k)}" aria-pressed="${PR.kat === k}">${k === 'alla' ? 'Alla' : esc(k)}<span class="mono">${k === 'alla' ? PROMPTAR.length : PROMPTAR.filter((x) => x.kat === k).length}</span></button>`).join('')}</div>
   <div class="prgrid">${l.map((x) => `
     <article class="prc${PR.oppen === x.id ? ' open' : ''}" data-pr="${x.id}">
