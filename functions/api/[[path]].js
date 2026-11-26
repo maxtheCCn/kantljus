@@ -60,6 +60,7 @@ async function skapaTabeller(env) {
   await env.DB.batch([
     env.DB.prepare('CREATE TABLE IF NOT EXISTS foretag (id TEXT PRIMARY KEY, data TEXT NOT NULL, uppdaterad INTEGER NOT NULL)'),
     env.DB.prepare('CREATE TABLE IF NOT EXISTS inloggning_fel (ip TEXT NOT NULL, tid INTEGER NOT NULL)'),
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS poster (id TEXT PRIMARY KEY, data TEXT NOT NULL, datum TEXT NOT NULL)'),
   ]);
   tabellerKlara = true;
 }
@@ -72,6 +73,30 @@ function rensa(rec, id) {
   const json = JSON.stringify({ ...rec, id });
   if (json.length > 200_000) throw new Error('Posten är för stor');
   return JSON.parse(json);
+}
+
+// Ekonomi: en post är pengar in (intäkt) eller pengar ut (uttag)
+const BETALSATT = ['Swish', 'Faktura', 'Annat'];
+function rensaPost(p, id) {
+  if (!p || typeof p !== 'object' || Array.isArray(p)) throw new Error('Ogiltig post');
+  const typ = p.typ;
+  if (typ !== 'in' && typ !== 'ut') throw new Error('Typ måste vara in eller ut');
+  const belopp = Number(p.belopp);
+  if (!Number.isInteger(belopp) || belopp < 1 || belopp > 10_000_000) throw new Error('Beloppet måste vara ett heltal i kronor');
+  if (typeof p.datum !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(p.datum)) throw new Error('Ogiltigt datum');
+  const txt = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
+  const ut = {
+    id, typ, belopp, datum: p.datum,
+    kund_id: typ === 'in' && giltigtId(p.kund_id) ? p.kund_id : '',
+    kund_namn: typ === 'in' ? txt(p.kund_namn, 200) : '',
+    person: typ === 'ut' ? txt(p.person, 40) : '',
+    betalsatt: typ === 'in' ? (BETALSATT.includes(p.betalsatt) ? p.betalsatt : 'Swish') : '',
+    kommentar: txt(p.kommentar, 500),
+    skapad_av: txt(p.skapad_av, 40),
+    skapad_tid: typeof p.skapad_tid === 'string' && p.skapad_tid ? p.skapad_tid.slice(0, 40) : new Date().toISOString(),
+  };
+  if (typ === 'ut' && !ut.person) throw new Error('Välj vem som tar ut');
+  return ut;
 }
 
 async function hamta(env, id) {
@@ -137,6 +162,28 @@ export async function onRequest({ request, env, params }) {
     if (!(await inloggad(request, env))) return svar({ fel: 'Inte inloggad' }, 401);
 
     if (delar[0] === 'session' && metod === 'GET') return svar({ ok: true });
+
+    // ---------- ekonomi ----------
+    if (delar[0] === 'poster') {
+      if (delar.length === 1 && metod === 'GET') {
+        const { results } = await env.DB.prepare('SELECT data FROM poster ORDER BY datum DESC').all();
+        return svar(results.map((r) => JSON.parse(r.data)));
+      }
+      const pid = delar[1];
+      if (delar.length !== 2 || !giltigtId(pid)) return svar({ fel: 'Ogiltigt id' }, 400);
+      if (metod === 'PUT') {
+        const post = rensaPost(await request.json(), pid);
+        await env.DB.prepare(
+          'INSERT INTO poster (id, data, datum) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET data = excluded.data, datum = excluded.datum'
+        ).bind(pid, JSON.stringify(post), post.datum).run();
+        return svar(post);
+      }
+      if (metod === 'DELETE') {
+        await env.DB.prepare('DELETE FROM poster WHERE id = ?').bind(pid).run();
+        return svar({ ok: true });
+      }
+      return svar({ fel: 'Finns inte' }, 404);
+    }
 
     if (delar[0] !== 'foretag') return svar({ fel: 'Finns inte' }, 404);
 

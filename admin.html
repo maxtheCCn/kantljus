@@ -207,6 +207,36 @@ button.row:hover{background:var(--s2);border-radius:10px}
 .cc dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13.5px}
 .cc dt{color:var(--dim)}.cc dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
 
+/* ---------- ekonomi ---------- */
+.pengar{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.big{display:flex;align-items:center;justify-content:center;gap:12px;min-height:64px;border-radius:var(--r);font:600 17px var(--sans);letter-spacing:-.01em;border:1px solid var(--line2);background:var(--s1);transition:all .2s}
+.big:hover{border-color:var(--ink);transform:translateY(-1px)}
+.big.in{border:0;background:linear-gradient(120deg,#ffc061 0%,#ff7a2c 38%,#ff4a1c 72%,#e8341a 100%) 0 0/180% 100%;color:#1a0802;box-shadow:inset 0 1px 0 rgb(255 236 205/.6),0 0 0 1px rgb(255 140 70/.35),0 14px 34px -16px rgb(255 90 31/.9)}
+.big.in:hover{background-position:100% 0}
+.big b{font:600 22px/1 var(--mono)}
+.mon{display:flex;align-items:baseline;gap:10px;padding:16px 0 8px;border-bottom:1px solid var(--line)}
+.mon:first-child{padding-top:0}
+.mon h3{margin:0;font:600 15px var(--sans)}
+.mon .mono{margin-left:auto;font-size:13px;font-variant-numeric:tabular-nums}
+.post{display:grid;grid-template-columns:34px minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.mon+.post{border-top:0}
+.post .pi{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--s3);font:600 15px var(--mono)}
+.post .pi.pos{background:rgb(126 226 168/.12);color:var(--ok)}
+.post .t b{display:block;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.post .t small{display:block;color:var(--mute);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.amt{font:500 15px var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.amt.pos{color:var(--ok)}
+.num,.kpi .v,.cc dd,.amt{font-variant-numeric:tabular-nums}
+.pp{display:grid;gap:4px;margin-top:4px}
+.pp span{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;color:var(--mute)}
+.pp b{color:var(--ink);font:500 13.5px var(--mono);font-variant-numeric:tabular-nums}
+.seg{display:inline-flex;padding:3px;border:1px solid var(--line2);border-radius:999px;gap:2px;background:var(--bg)}
+.seg button{padding:6px 14px;border-radius:999px;font-size:13.5px;color:var(--mute);font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--s3);color:var(--ink)}
+.amtin{font:600 30px var(--mono)!important;text-align:right;min-height:60px!important;letter-spacing:-.02em}
+.paid{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:12px 14px;border-radius:12px;background:rgb(126 226 168/.07);border:1px solid rgb(126 226 168/.25)}
+.paid b{font:500 15px var(--mono)}
+
 /* ---------- samtalslogg ---------- */
 .day{font:500 12px var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.05em;padding:6px 0}
 
@@ -286,7 +316,7 @@ button.row:hover{background:var(--s2);border-radius:10px}
 .side .brand,.side .grow,.side .meBox,.side .sidefoot,.side .demo-flag{display:none}
 .nav{grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);width:100%}
 .row .pill{display:none}
-.kpi .v{font-size:34px}
+.kpi .v{font-size:28px}
 .nv{flex-direction:column;gap:3px;font-size:11px;padding:7px 4px;justify-content:center}
 .nv .n{display:none}
 .nv[aria-current="page"]{box-shadow:inset 0 2px 0 var(--glod)}
@@ -297,6 +327,11 @@ button.row:hover{background:var(--s2);border-radius:10px}
 .tr2 .co{grid-area:co}.tr2 .st{grid-area:st}.tr2 .said{grid-area:said}
 .tr2>:nth-child(4),.tr2 .who{display:none}
 .fgrid{grid-template-columns:1fr}
+.pengar{grid-template-columns:1fr 1fr;gap:10px}
+.big{min-height:56px;font-size:15px}
+.post{grid-template-columns:30px minmax(0,1fr) auto auto;gap:8px}
+.post .del .ico{width:28px}
+.kpis .pp span{font-size:12.5px}
 .search kbd{display:none}
 .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding-inline:16px}
 .chip{flex:none}
@@ -330,6 +365,7 @@ button.row:hover{background:var(--s2);border-radius:10px}
 <symbol id="i-arr" viewBox="0 0 16 16"><path d="M2 8h11M9 4l4 4-4 4"/></symbol>
 <symbol id="i-edit" viewBox="0 0 24 24"><path d="M15.5 5.5l3 3L8 19H5v-3z"/><path d="m13.5 7.5 3 3"/></symbol>
 <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 7h12l-3-3M17 17H5l3 3"/></symbol>
+<symbol id="i-wallet" viewBox="0 0 24 24"><path d="M4 7.5A1.5 1.5 0 0 1 5.5 6H18a1 1 0 0 1 1 1v2.5"/><path d="M4 7.5V17a1.5 1.5 0 0 0 1.5 1.5H19a1 1 0 0 0 1-1v-7a1 1 0 0 0-1-1H5.5A1.5 1.5 0 0 1 4 7.5z"/><circle cx="16" cy="14" r="1.1"/></symbol>
 <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
 <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="1.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></symbol>
 </defs>
@@ -364,6 +400,7 @@ button.row:hover{background:var(--s2);border-radius:10px}
       <button class="nv" data-view="ringlista"><svg class="i"><use href="#i-list"/></svg>Ringlista<span class="n" id="nRing"></span></button>
       <button class="nv" data-view="samtal"><svg class="i"><use href="#i-chat"/></svg>Samtal<span class="n" id="nSamtal"></span></button>
       <button class="nv" data-view="kunder"><svg class="i"><use href="#i-star"/></svg>Kunder<span class="n" id="nKund"></span></button>
+      <button class="nv" data-view="ekonomi"><svg class="i"><use href="#i-wallet"/></svg>Ekonomi</button>
     </nav>
     <div class="grow"></div>
     <div class="demo-flag" id="demoFlag" hidden><span><b>Demoläge.</b> Påhittade företag. Inget sparas när du stänger fliken.</span></div>
@@ -414,11 +451,13 @@ const ST = {
 const FLODE = ['att_ringa', 'inget_svar', 'aterkom', 'intresserad', 'mote', 'offert', 'kund'];
 const UTFALL = ['inget_svar', 'aterkom', 'intresserad', 'mote', 'offert', 'kund', 'nej'];
 const TJANSTER = ['Hemsida', 'Webbshop', 'Logga', 'SEO', 'Drift'];
-const VIEWS = { oversikt: 'Översikt', ringlista: 'Ringlista', samtal: 'Samtal', kunder: 'Kunder' };
+const VIEWS = { oversikt: 'Översikt', ringlista: 'Ringlista', samtal: 'Samtal', kunder: 'Kunder', ekonomi: 'Ekonomi' };
+const BETALSATT = ['Swish', 'Faktura', 'Annat'];
+const GRUNDARE = ['Max', 'William', 'John-John'];
 
 /* ================= tillstånd ================= */
 const S = {
-  data: [], demo: false, me: null, view: 'oversikt', open: null,
+  data: [], poster: [], period: 'manad', demo: false, me: null, view: 'oversikt', open: null,
   f: { q: '', st: 'alla', ans: 'alla', sort: 'aktivitet' },
   logPerson: 'alla', pick: null, nasta: '',
 };
@@ -434,6 +473,7 @@ const person = (n) => TEAM.find((p) => p.n === n);
 const ini = (n) => person(n)?.ini || (n || '?').slice(0, 2).toUpperCase();
 const pill = (s) => { const x = ST[s] || ST.att_ringa; return `<span class="pill" style="--c:${x.c}"><i></i>${x.t}</span>`; };
 const avatar = (n) => `<span class="av${n === S.me ? ' me' : ''}" title="${esc(person(n)?.full || n || '')}">${esc(ini(n))}</span>`;
+const kortDag = (iso) => new Date(iso + (iso.length === 10 ? 'T12:00' : '')).toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' }).replace('.', '').replace('.', '');
 const kr = (n) => new Intl.NumberFormat('sv-SE').format(Math.round(n || 0)) + ' kr';
 
 /* ================= datum ================= */
@@ -452,7 +492,7 @@ function nar(iso) {
   if (dagDiff === 0) return 'idag ' + klock(d);
   if (dagDiff === 1) return 'igår ' + klock(d);
   if (dagDiff < 7) return d.toLocaleDateString('sv-SE', { weekday: 'short' }) + ' ' + klock(d);
-  return d.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' });
+  return d.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' }).replace('.', '');
 }
 function dagNamn(iso) {
   const diff = Math.round((new Date(iso) - new Date(idag())) / 864e5);
@@ -467,13 +507,15 @@ function forfaller(nasta) {
   if (!nasta) return '';
   const diff = Math.round((new Date(nasta) - new Date(idag())) / 864e5);
   const cls = diff < 0 ? 'late' : diff === 0 ? 'today' : '';
-  const t = diff < 0 ? `${-diff} d sen` : diff === 0 ? 'Idag' : diff === 1 ? 'Imorgon' : new Date(nasta).toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' });
+  const t = diff < 0 ? `${-diff} d sen` : diff === 0 ? 'Idag' : diff === 1 ? 'Imorgon' : new Date(nasta).toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' }).replace('.', '');
   return `<span class="due ${cls}">${t}</span>`;
 }
 
 /* ================= härledda värden ================= */
 const senaste = (f) => (f.samtal || []).reduce((a, s) => (!a || s.tid > a.tid ? s : a), null);
 const aktivitet = (f) => senaste(f)?.tid || f.uppdaterad || f.skapad || '';
+const betalt = (id) => S.poster.filter((p) => p.typ === 'in' && p.kund_id === id).reduce((s, p) => s + p.belopp, 0);
+const betaltKunder = () => S.poster.filter((p) => p.typ === 'in' && p.kund_id && S.data.some((f) => f.id === p.kund_id && f.status === 'kund')).reduce((s, p) => s + p.belopp, 0);
 const allaSamtal = () => S.data.flatMap((f) => (f.samtal || []).map((s) => ({ ...s, f }))).sort((a, b) => (a.tid < b.tid ? 1 : -1));
 
 /* ================= API ================= */
@@ -514,6 +556,17 @@ const db = {
   async ta_bort(id) {
     if (!S.demo) await api('/foretag/' + id, { method: 'DELETE' });
     S.data = S.data.filter((x) => x.id !== id);
+  },
+  async poster() { if (S.demo) return S.poster; return api('/poster'); },
+  async sparaPost(post) {
+    const ut = S.demo ? post : await api('/poster/' + post.id, { method: 'PUT', body: JSON.stringify(post) });
+    const i = S.poster.findIndex((x) => x.id === ut.id);
+    if (i < 0) S.poster.unshift(ut); else S.poster[i] = ut;
+    return ut;
+  },
+  async taBortPost(id) {
+    if (!S.demo) await api('/poster/' + id, { method: 'DELETE' });
+    S.poster = S.poster.filter((x) => x.id !== id);
   },
   async importera(lista) {
     if (S.demo) { S.data.push(...lista); return; }
@@ -588,7 +641,7 @@ async function kollaSession() {
 
 $('#logout').onclick = async () => {
   if (!S.demo) { try { await api('/logout', { method: 'POST' }); } catch {} }
-  S.demo = false; S.data = [];
+  S.demo = false; S.data = []; S.poster = [];
   clearInterval(pollT);
   visaLogin('Du är utloggad.', true);
 };
@@ -600,7 +653,7 @@ async function startaApp() {
   $('#demoFlag').hidden = !S.demo;
   S.me = store.get('kl_me');
   if (!person(S.me)) S.me = null;
-  try { S.data = await db.lista(); setSync(true, S.demo ? 'Demo' : 'Synkad'); }
+  try { [S.data, S.poster] = await Promise.all([db.lista(), db.poster()]); setSync(true, S.demo ? 'Demo' : 'Synkad'); }
   catch (e) { if (e.message !== 'Inte inloggad') { setSync(false, 'Offline'); toast(e.message, true); } return; }
   const h = (location.hash || '').slice(1);
   S.view = VIEWS[h] ? h : 'oversikt';
@@ -612,7 +665,7 @@ async function startaApp() {
 async function uppdatera() {
   if (S.demo || document.hidden || $('#app').hidden) return;
   try {
-    S.data = await api('/foretag');
+    [S.data, S.poster] = await Promise.all([api('/foretag'), api('/poster')]);
     setSync(true, 'Synkad ' + klock(new Date()));
     const skriver = $('#drawer').contains(document.activeElement) || $('#modal').classList.contains('on');
     if (!skriver) { render(false); if (S.open) ritaLada(); }
@@ -621,7 +674,7 @@ async function uppdatera() {
 document.addEventListener('visibilitychange', () => { if (!document.hidden) uppdatera(); });
 
 function startaDemo() {
-  S.demo = true; S.data = demoData();
+  S.demo = true; S.data = demoData(); S.poster = demoPoster();
   $('#notice').hidden = true;
   startaApp();
 }
@@ -653,18 +706,19 @@ function ga(v) {
   window.scrollTo({ top: 0 });
 }
 $$('.nv').forEach((b) => b.onclick = () => ga(b.dataset.view));
-$('#addBtn').onclick = () => nyttForetag();
+$('#addBtn').onclick = () => (S.view === 'ekonomi' ? nyPost('in') : nyttForetag());
 
 function render(anim = true) {
   $$('.nv').forEach((b) => { if (b.dataset.view === S.view) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
   $('#title').textContent = VIEWS[S.view];
+  $('#addBtn').innerHTML = `<svg class="i"><use href="#i-plus"/></svg>${S.view === 'ekonomi' ? 'Ny post' : 'Nytt företag'}`;
   document.title = VIEWS[S.view] + ' · Admin · Kantljus';
   const aktiva = S.data.filter((f) => f.status !== 'kund' && f.status !== 'nej').length;
   $('#nRing').textContent = aktiva || '';
   $('#nSamtal').textContent = allaSamtal().length || '';
   $('#nKund').textContent = S.data.filter((f) => f.status === 'kund').length || '';
   const v = $('#view');
-  v.innerHTML = ({ oversikt: vyOversikt, ringlista: vyRinglista, samtal: vySamtal, kunder: vyKunder })[S.view]();
+  v.innerHTML = ({ oversikt: vyOversikt, ringlista: vyRinglista, samtal: vySamtal, kunder: vyKunder, ekonomi: vyEkonomi })[S.view]();
   if (anim) v.classList.remove('fade'), void v.offsetWidth, v.classList.add('fade');
   koppla(v);
 }
@@ -702,7 +756,7 @@ function vyOversikt() {
       <span class="s">${forra.length || denna.length ? `<span class="${diff >= 0 ? 'up' : 'down'}">${diff >= 0 ? '+' : '−'}${Math.abs(diff)}</span> mot förra veckan` : 'Inga samtal än'}</span></div>
     <div class="kpi"><span class="l">Ringda företag</span><span class="v">${ringda}</span><span class="s">av ${S.data.length} i listan</span></div>
     <div class="kpi"><span class="l">Möten & offerter</span><span class="v">${moten}</span><span class="s">${traff}% av ringda är intresserade</span></div>
-    <div class="kpi"><span class="l">Kunder</span><span class="v">${kunder.length}</span><span class="s">${kundVecka ? `<span class="up">+${kundVecka}</span> nya i veckan` : kr(kunder.reduce((s, f) => s + (+f.kund?.varde || 0), 0)) + ' totalt'}</span></div>
+    <div class="kpi"><span class="l">Kunder</span><span class="v">${kunder.length}</span><span class="s">${kundVecka ? `<span class="up">+${kundVecka}</span> nya i veckan` : kr(betaltKunder()) + ' totalt'}</span></div>
   </div>
 
   <div class="grid2">
@@ -804,11 +858,12 @@ function vySamtal() {
 function vyKunder() {
   const k = S.data.filter((f) => f.status === 'kund').sort((a, b) => ((a.kund?.sedan || '') < (b.kund?.sedan || '') ? 1 : -1));
   const total = k.reduce((s, f) => s + (+f.kund?.varde || 0), 0);
+  const inbetalt = betaltKunder();
   const manad = k.reduce((s, f) => s + (+f.kund?.manad || 0), 0);
   return `
   <div class="kpis">
-    <div class="kpi hot"><span class="l">Kunder</span><span class="v">${k.length}</span><span class="s">${S.data.filter((f) => f.status === 'offert').length} offerter ute</span></div>
-    <div class="kpi"><span class="l">Ordervärde</span><span class="v" style="font-size:32px">${kr(total)}</span><span class="s">engångsbelopp totalt</span></div>
+    <div class="kpi hot"><span class="l">Kunder</span><span class="v">${k.length}</span><span class="s">${kr(inbetalt)} totalt</span></div>
+    <div class="kpi"><span class="l">Betalt av kunder</span><span class="v" style="font-size:32px">${kr(inbetalt)}</span><span class="s">från Ekonomi · ordervärde ${kr(total)}</span></div>
     <div class="kpi"><span class="l">Löpande / mån</span><span class="v" style="font-size:32px">${kr(manad)}</span><span class="s">drift och support</span></div>
     <div class="kpi"><span class="l">Snitt per kund</span><span class="v" style="font-size:32px">${kr(k.length ? total / k.length : 0)}</span><span class="s">ordervärde</span></div>
   </div>
@@ -817,14 +872,132 @@ function vyKunder() {
       <div><h3>${esc(f.namn)}</h3><span class="mute" style="font-size:13.5px">${esc([f.bransch, f.ort].filter(Boolean).join(' · '))}</span></div>
       <div class="meta">${(f.kund?.tjanster || []).map((t) => `<span class="tag">${esc(t)}</span>`).join('') || '<span class="dim" style="font-size:13px">Inga tjänster valda</span>'}</div>
       <dl>
-        <dt>Kund sedan</dt><dd>${f.kund?.sedan ? new Date(f.kund.sedan).toLocaleDateString('sv-SE', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}</dd>
+        <dt>Kund sedan</dt><dd>${f.kund?.sedan ? new Date(f.kund.sedan).toLocaleDateString('sv-SE', { day: 'numeric', month: 'short', year: 'numeric' }).replace('.', '') : '—'}</dd>
         <dt>Kontakt</dt><dd>${esc(f.kontakt || '—')}</dd>
+        <dt>Betalt</dt><dd>${betalt(f.id) ? kr(betalt(f.id)) : '0 kr'}</dd>
         <dt>Ordervärde</dt><dd>${f.kund?.varde ? kr(f.kund.varde) : '—'}</dd>
         ${f.kund?.manad ? `<dt>Per månad</dt><dd>${kr(f.kund.manad)}</dd>` : ''}
       </dl>
       <span style="display:flex;align-items:center;justify-content:space-between;gap:8px">${avatar(f.ansvarig)}<span class="mono dim">${f.webb ? esc(f.webb.replace(/^https?:\/\//, '')) : ''}</span></span>
     </button>`).join('')}</div>`
   : `<section class="card"><div class="empty"><b>Inga kunder än</b>När ett samtal slutar med ”Kund” hamnar företaget här.</div></section>`}`;
+}
+
+/* ================= EKONOMI ================= */
+const manadNyckel = (d) => d.slice(0, 7);
+function periodGrans(period, bakat = 0) {
+  const nu = new Date();
+  if (period === 'manad') {
+    const a = new Date(nu.getFullYear(), nu.getMonth() - bakat, 1), b = new Date(nu.getFullYear(), nu.getMonth() - bakat + 1, 1);
+    return [isoDag(a), isoDag(b)];
+  }
+  if (period === 'ar') return [`${nu.getFullYear() - bakat}-01-01`, `${nu.getFullYear() - bakat + 1}-01-01`];
+  return ['0000-01-01', '9999-12-31'];
+}
+const iPeriod = (p, [a, b]) => p.datum >= a && p.datum < b;
+const summa = (l, typ) => l.filter((p) => p.typ === typ).reduce((s, p) => s + p.belopp, 0);
+const manadNamn = (ym) => { const t = new Date(ym + '-15').toLocaleDateString('sv-SE', { month: 'long', year: 'numeric' }); return t[0].toUpperCase() + t.slice(1); };
+const postTitel = (p) => p.typ === 'in'
+  ? (S.data.find((f) => f.id === p.kund_id)?.namn || p.kund_namn || 'Intäkt')
+  : `Uttag · ${p.person}`;
+
+function vyEkonomi() {
+  const alla = [...S.poster].sort((a, b) => (a.datum === b.datum ? (a.skapad_tid < b.skapad_tid ? 1 : -1) : a.datum < b.datum ? 1 : -1));
+  const g = periodGrans(S.period);
+  const iP = alla.filter((p) => iPeriod(p, g));
+  const saldo = summa(alla, 'in') - summa(alla, 'ut');
+  const intjanat = summa(iP, 'in'), uttaget = summa(iP, 'ut');
+  let jamfor = '';
+  if (S.period !== 'allt') {
+    const forra = summa(alla.filter((p) => iPeriod(p, periodGrans(S.period, 1))), 'in');
+    const d = intjanat - forra;
+    jamfor = `<span class="${d >= 0 ? 'up' : 'down'}">${d >= 0 ? '+' : '−'}${kr(Math.abs(d))}</span> mot förra ${S.period === 'manad' ? 'månaden' : 'året'}`;
+  } else jamfor = `${alla.filter((p) => p.typ === 'in').length} inbetalningar totalt`;
+  const perPerson = GRUNDARE.concat(TEAM.map((t) => t.n).filter((n) => !GRUNDARE.includes(n)))
+    .map((n) => ({ n, b: iP.filter((p) => p.typ === 'ut' && p.person === n).reduce((s, p) => s + p.belopp, 0) }))
+    .filter((x) => x.b || GRUNDARE.includes(x.n));
+  const manader = [];
+  for (const p of alla) {
+    const m = manadNyckel(p.datum), sista = manader[manader.length - 1];
+    if (sista && sista.m === m) sista.l.push(p); else manader.push({ m, l: [p] });
+  }
+  const tecken = (n) => (n < 0 ? '−' : '+') + kr(Math.abs(n));
+  return `
+  <div class="tools"><div class="seg" role="group" aria-label="Period">${[['manad', 'Denna månad'], ['ar', 'I år'], ['allt', 'Allt']].map(([k, t]) => `<button type="button" data-period="${k}" aria-pressed="${S.period === k}">${t}</button>`).join('')}</div></div>
+  <div class="kpis">
+    <div class="kpi hot"><span class="l">Kvar i företaget</span><span class="v">${saldo < 0 ? '−' : ''}${kr(Math.abs(saldo))}</span><span class="s">intäkter minus uttag, totalt</span></div>
+    <div class="kpi"><span class="l">Intjänat</span><span class="v">${kr(intjanat)}</span><span class="s">${jamfor}</span></div>
+    <div class="kpi"><span class="l">Uttaget</span><span class="v">${kr(uttaget)}</span><span class="s">${iP.filter((p) => p.typ === 'ut').length} uttag ${S.period === 'manad' ? 'denna månad' : S.period === 'ar' ? 'i år' : 'totalt'}</span></div>
+    <div class="kpi"><span class="l">Uttag per person</span><div class="pp">${perPerson.map((x) => `<span>${esc(x.n)}<b>${kr(x.b)}</b></span>`).join('')}</div></div>
+  </div>
+  <div class="pengar">
+    <button class="big in" data-ny="in"><b>+</b>Pengar in</button>
+    <button class="big" data-ny="ut"><b>−</b>Ta ut</button>
+  </div>
+  <section class="card">${manader.length ? manader.map(({ m, l }) => {
+    const netto = summa(l, 'in') - summa(l, 'ut');
+    return `<div class="mon"><h3>${manadNamn(m)}</h3><span class="mono" style="color:${netto >= 0 ? 'var(--ok)' : 'var(--bad)'}">netto ${tecken(netto)}</span></div>` +
+      l.map((p) => `
+      <div class="post">
+        <span class="pi ${p.typ === 'in' ? 'pos' : 'neg'}">${p.typ === 'in' ? '+' : '−'}</span>
+        <span class="t"><b>${esc(postTitel(p))}</b><small>${kortDag(p.datum)}${p.typ === 'in' ? ' · ' + esc(p.betalsatt) : ''}${p.kommentar ? ' · ' + esc(p.kommentar) : ''}${p.skapad_av ? ` · av ${esc(p.skapad_av)}` : ''}</small></span>
+        <span class="amt ${p.typ === 'in' ? 'pos' : 'neg'}">${p.typ === 'in' ? '+' : '−'}${kr(p.belopp)}</span>
+        <span class="del" data-delpost="${p.id}"><button type="button" class="ico" aria-label="Ta bort posten" data-delq><svg class="i"><use href="#i-x"/></svg></button></span>
+      </div>`).join('');
+  }).join('') : `<div class="empty"><b>Inga poster ännu</b>Tryck på Pengar in när en kund har Swishat.</div>`}</section>`;
+}
+
+function nyPost(typ, kund) {
+  const kunder = S.data.filter((f) => f.status === 'kund');
+  const st = { typ, bs: 'Swish' };
+  modal(`<form id="pForm" style="display:grid;gap:16px" autocomplete="off">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><h2 id="pRub"></h2>
+      <div class="seg" role="group" aria-label="Typ"><button type="button" data-typ="in">+ Pengar in</button><button type="button" data-typ="ut">− Ta ut</button></div></div>
+    <label class="f"><span>Belopp (kr)</span><input class="in amtin" name="belopp" inputmode="numeric" placeholder="0" required autofocus></label>
+    <div class="fgrid">
+      <label class="f" data-in><span>Kund</span><input class="in" name="kund" list="kundlista" placeholder="Välj kund eller skriv fritt" value="${esc(kund?.namn || '')}"></label>
+      <label class="f" data-ut><span>Vem tar ut?</span><select class="in" name="person">${TEAM.map((p) => `<option ${p.n === (S.me || 'Max') ? 'selected' : ''}>${p.n}</option>`).join('')}</select></label>
+      <label class="f"><span>Datum</span><input class="in" type="date" name="datum" value="${idag()}" required></label>
+      <div class="f full" data-in><span>Betalsätt</span><div class="seg" role="group" aria-label="Betalsätt">${BETALSATT.map((b) => `<button type="button" data-bs="${b}">${b}</button>`).join('')}</div></div>
+      <label class="f full"><span>Kommentar (valfri)</span><input class="in" name="kommentar" placeholder="T.ex. första delbetalningen"></label>
+    </div>
+    <datalist id="kundlista">${kunder.map((f) => `<option value="${esc(f.namn)}">`).join('')}</datalist>
+    <div class="mact"><button type="button" class="btn ghost" id="pNo">Avbryt</button><button type="submit" class="btn pri" id="pYes">Spara</button></div>
+  </form>`);
+  const fm = $('#pForm');
+  const rita = () => {
+    $('#pRub').textContent = st.typ === 'in' ? 'Pengar in' : 'Ta ut';
+    $$('[data-typ]', fm).forEach((b) => b.setAttribute('aria-pressed', b.dataset.typ === st.typ));
+    $$('[data-bs]', fm).forEach((b) => b.setAttribute('aria-pressed', b.dataset.bs === st.bs));
+    $$('[data-in]', fm).forEach((el) => (el.hidden = st.typ !== 'in'));
+    $$('[data-ut]', fm).forEach((el) => (el.hidden = st.typ !== 'ut'));
+    $('#pYes').textContent = st.typ === 'in' ? 'Spara intäkt' : 'Spara uttag';
+  };
+  $$('[data-typ]', fm).forEach((b) => b.onclick = () => { st.typ = b.dataset.typ; rita(); });
+  $$('[data-bs]', fm).forEach((b) => b.onclick = () => { st.bs = b.dataset.bs; rita(); });
+  const bel = fm.belopp;
+  bel.oninput = () => { const n = bel.value.replace(/\D/g, ''); bel.value = n ? new Intl.NumberFormat('sv-SE').format(+n) : ''; };
+  $('#pNo').onclick = stangModal;
+  fm.onsubmit = async (e) => {
+    e.preventDefault();
+    const belopp = parseInt(bel.value.replace(/\D/g, ''), 10);
+    if (!belopp) { toast('Skriv ett belopp i hela kronor', true); bel.focus(); return; }
+    const namn = fm.kund.value.trim();
+    const k = st.typ === 'in' ? S.data.find((f) => f.namn.toLowerCase() === namn.toLowerCase()) : null;
+    const post = {
+      id: nyId(), typ: st.typ, belopp, datum: fm.datum.value || idag(),
+      kund_id: k?.id || '', kund_namn: st.typ === 'in' ? (k ? k.namn : namn) : '',
+      person: st.typ === 'ut' ? fm.person.value : '', betalsatt: st.typ === 'in' ? st.bs : '',
+      kommentar: fm.kommentar.value.trim(), skapad_av: S.me || '', skapad_tid: new Date().toISOString(),
+    };
+    $('#pYes').disabled = true;
+    try {
+      await db.sparaPost(post);
+      stangModal(); render(false); if (S.open) ritaLada();
+      toast(st.typ === 'in' ? `+${kr(belopp)} sparat` : `Uttag på ${kr(belopp)} sparat`);
+    } catch (err) { toast(err.message, true); $('#pYes').disabled = false; }
+  };
+  rita();
 }
 
 /* ================= HÄNDELSER I VYN ================= */
@@ -837,6 +1010,17 @@ function koppla(v) {
   $$('[data-filter]', v).forEach((b) => b.onclick = () => { S.f.st = b.dataset.filter; ga('ringlista'); });
   $$('[data-st]', v).forEach((b) => b.onclick = () => { S.f.st = b.dataset.st; render(false); });
   $$('[data-lp]', v).forEach((b) => b.onclick = () => { S.logPerson = b.dataset.lp; render(false); });
+  $$('[data-period]', v).forEach((b) => b.onclick = () => { S.period = b.dataset.period; render(false); });
+  $$('[data-ny]', v).forEach((b) => b.onclick = () => nyPost(b.dataset.ny));
+  $$('[data-delpost]', v).forEach((z) => {
+    $('[data-delq]', z).onclick = () => {
+      z.innerHTML = `<span style="display:inline-flex;gap:6px;align-items:center"><span style="color:var(--bad);font-size:13px">Ta bort?</span><button type="button" class="btn ghost sm" data-nej>Nej</button><button type="button" class="btn danger sm" data-ja>Ja</button></span>`;
+      $('[data-nej]', z).onclick = () => render(false);
+      $('[data-ja]', z).onclick = async () => {
+        try { await db.taBortPost(z.dataset.delpost); render(false); toast('Posten är borttagen'); } catch (err) { toast(err.message, true); }
+      };
+    };
+  });
   const q = $('#q', v);
   if (q) {
     q.oninput = () => { S.f.q = q.value; const pos = q.selectionStart; render(false); const n = $('#q'); n.focus(); n.setSelectionRange(pos, pos); };
@@ -905,6 +1089,7 @@ function ritaLada() {
     ${f.nasta ? `<div class="box" style="grid-template-columns:auto 1fr auto;align-items:center"><svg class="i"><use href="#i-cal"/></svg><span><b style="font-weight:500">Uppföljning ${dagNamn(f.nasta).toLowerCase()}</b>${f.nastaNotis ? `<br><span class="mute" style="font-size:13.5px">${esc(f.nastaNotis)}</span>` : ''}</span><button class="btn ghost sm" id="clearNasta">Klar</button></div>` : ''}
 
     ${f.status === 'kund' ? `
+    <div class="paid"><span><span class="mono dim" style="display:block">BETALT HITTILLS</span><b>${kr(betalt(f.id))}</b></span><button type="button" class="btn pri sm" id="regPay"><svg class="i"><use href="#i-plus"/></svg>Registrera betalning</button></div>
     <form class="box" id="kundForm">
       <h3><svg class="i" style="color:var(--ok)"><use href="#i-star"/></svg>Kunduppgifter</h3>
       <div class="svc">${TJANSTER.map((t) => `<button type="button" class="chip" data-t="${t}" aria-pressed="${(k.tjanster || []).includes(t)}">${t}</button>`).join('')}</div>
@@ -944,6 +1129,7 @@ function ritaLada() {
       try { await db.ta_bort(f.id); stangLada(); render(false); toast('Företaget är borttaget'); } catch (err) { toast(err.message, true); }
     };
   };
+  $('#regPay', d)?.addEventListener('click', () => nyPost('in', f));
   const kf = $('#kundForm', d);
   if (kf) {
     $$('[data-t]', kf).forEach((b) => b.onclick = () => b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'));
@@ -984,7 +1170,7 @@ async function loggaSamtal(f) {
     if (!f.ansvarig) await db.spara({ ...S.data.find((x) => x.id === f.id), ansvarig: S.me });
     S.pick = null; S.nasta = '';
     ritaLada(); render(false);
-    toast(utfall === 'kund' ? 'Ny kund! Snyggt jobbat 🎉' : 'Samtalet är sparat');
+    toast(utfall === 'kund' ? 'Ny kund! Registrera betalningen när de har Swishat.' : 'Samtalet är sparat');
   } catch (err) { toast(err.message, true); b.disabled = false; }
 }
 
@@ -1016,6 +1202,7 @@ function nyttForetag(f) {
     const dubbel = ny && S.data.find((x) => x.namn.toLowerCase() === v.namn.toLowerCase() || (v.telefon && x.telefon && x.telefon.replace(/\D/g, '') === v.telefon.replace(/\D/g, '')));
     if (dubbel && !e.target.dataset.ok) { e.target.dataset.ok = 1; toast(`${dubbel.namn} finns redan. Tryck Spara igen för att lägga till ändå.`, true); return; }
     const rec = ny ? { id: nyId(), skapad: new Date().toISOString(), samtal: [], ...v } : { ...f, ...v };
+    if (rec.status === 'kund' && !rec.kund?.sedan) rec.kund = { ...(rec.kund || {}), sedan: idag() };
     try {
       await db.spara(rec);
       stangModal(); render(false);
@@ -1066,7 +1253,7 @@ document.addEventListener('keydown', (e) => {
   if (skriver || e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key === '/') { e.preventDefault(); if (S.view !== 'ringlista') ga('ringlista'); $('#q')?.focus(); }
   if (e.key === 'n' || e.key === 'N') { e.preventDefault(); nyttForetag(); }
-  if (['1', '2', '3', '4'].includes(e.key)) ga(Object.keys(VIEWS)[+e.key - 1]);
+  if (['1', '2', '3', '4', '5'].includes(e.key)) ga(Object.keys(VIEWS)[+e.key - 1]);
 });
 
 /* ================= DEMODATA (påhittad) ================= */
@@ -1118,6 +1305,21 @@ function demoData() {
     F('Snickeri Ek & Furu', 'Snickare', 'Lidingö', '070-123 98 76', 'Olof Ek', 'inget_svar', 'John-John', [
       s(3, 15, 20, 'John-John', 'inget_svar', 'Röstbrevlåda.'),
     ]),
+  ];
+}
+
+function demoPoster() {
+  const kund = (n) => S.data.find((f) => f.namn === n);
+  const d = (dagar) => plusDagar(-dagar);
+  const P = (typ, belopp, dagar, extra) => ({ id: nyId(), typ, belopp, datum: d(dagar), kund_id: '', kund_namn: '', person: '', betalsatt: typ === 'in' ? 'Swish' : '', kommentar: '', skapad_av: 'Max', skapad_tid: new Date().toISOString(), ...extra });
+  const bag = kund('Bageri Sötdeg'), el = kund('Elektriker Nord AB'), yo = kund('Yogastudion Andas');
+  return [
+    P('in', 7450, 8, { kund_id: bag?.id, kund_namn: bag?.namn, kommentar: 'Halva i förskott' }),
+    P('in', 18500, 16, { kund_id: el?.id, kund_namn: el?.namn, betalsatt: 'Faktura' }),
+    P('ut', 3000, 5, { person: 'William' }),
+    P('ut', 2500, 5, { person: 'Max' }),
+    P('in', 9900, 38, { kund_id: yo?.id, kund_namn: yo?.namn }),
+    P('ut', 4000, 35, { person: 'John-John', kommentar: 'Ny skärm' }),
   ];
 }
 
