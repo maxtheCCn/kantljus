@@ -1214,7 +1214,7 @@ async function startaApp() {
     try {
       const ses = await api('/session');
       if (ses.person !== S.me) await api('/person', { method: 'POST', body: JSON.stringify({ namn: S.me }) });
-    } catch (e) { if (e.message === 'Inte inloggad') return; S.me = null; }
+    } catch (e) { if (e.message === 'Inte inloggad') return; if (e.j?.krav) S.kodFor = S.me; S.me = null; }
   }
   try { [S.data, S.poster] = await Promise.all([db.lista(), db.poster(), hamtaJobbar()]); setSync(true, S.demo ? 'Demo' : 'Synkad'); }
   catch (e) { if (e.message !== 'Inte inloggad') { setSync(false, 'Offline'); toast(e.message, true); } return; }
@@ -1222,7 +1222,7 @@ async function startaApp() {
   S.view = VIEWS[h] ? h : 'oversikt';
   visaMig(); render();
   if (h === 'live') oppnaLive();
-  if (!S.me) valjPerson();
+  if (!S.me) { if (S.kodFor) personKod(S.kodFor); else valjPerson(); S.kodFor = null; }
   clearInterval(pollT);
   if (!S.demo) pollT = setInterval(uppdatera, 20000);
 }
@@ -1260,7 +1260,7 @@ function visaMig() {
 }
 function valjPerson() {
   modal(`<h2>Vem är du?</h2><p>Dina samtal loggas i ditt namn. Du kan byta när som helst.</p>
-  <div class="who4">${TEAM.map((p) => `<button type="button" data-me="${p.n}"><span class="av">${p.ini}</span><span><b>${p.full}</b><small>${p.roll}</small></span>${p.n === 'Max' ? '<svg class="i" style="margin-left:auto;color:var(--dim)" aria-label="Kräver kod"><use href="#i-lock"/></svg>' : ''}</button>`).join('')}</div>`);
+  <div class="who4">${TEAM.map((p) => `<button type="button" data-me="${p.n}"><span class="av">${p.ini}</span><span><b>${p.full}</b><small>${p.roll}</small></span>${S.demo ? '' : '<svg class="i" style="margin-left:auto;color:var(--dim)" aria-label="Kräver kod"><use href="#i-lock"/></svg>'}</button>`).join('')}</div>`);
   $$('[data-me]').forEach((b) => b.onclick = () => bliPerson(b.dataset.me));
 }
 function satMig(namn) {

@@ -56,12 +56,10 @@ async function inloggad(request, env) {
 }
 
 // ---------- personkod (t.ex. Max) ----------
-// Max kräver alltid en egen kod (secret KOD_MAX). Andra kan få det genom att
-// lägga in KOD_<NAMN>, t.ex. KOD_WILLIAM.
-const PCOOKIE = 'kl_person';
-const KRAVER_KOD = ['Max'];
+// Alla kräver en egen kod: secret KOD_<NAMN>, t.ex. KOD_MAX, KOD_WILLIAM, KOD_JOHNJOHN.
+// Saknas koden kan ingen välja det namnet. (kl_person2: gamla kakor utan kod gäller inte längre.)
+const PCOOKIE = 'kl_person2';
 const kodNyckel = (namn) => 'KOD_' + String(namn).toUpperCase().replace(/[ÅÄ]/g, 'A').replace(/Ö/g, 'O').replace(/[^A-Z]/g, '');
-const personKrav = (env, namn) => KRAVER_KOD.includes(namn) || !!env[kodNyckel(namn)];
 const giltigtNamn = (n) => typeof n === 'string' && /^[A-Za-zÅÄÖåäö-]{2,30}$/.test(n);
 
 async function verifieradPerson(request, env) {
@@ -70,11 +68,12 @@ async function verifieradPerson(request, env) {
   if (!m) return null;
   const [namn, exp, sig] = decodeURIComponent(m[1]).split('.');
   if (!namn || !exp || !sig || Number(exp) < Date.now() / 1000) return null;
-  return lika(sig, await hmac(hemlighet(env), 'person.' + namn + '.' + exp)) ? namn : null;
+  if (!env[kodNyckel(namn)]) return null;
+  return lika(sig, await hmac(hemlighet(env), 'person2.' + namn + '.' + exp)) ? namn : null;
 }
 async function personCookie(env, namn) {
   const exp = Math.floor(Date.now() / 1000) + TTL;
-  const v = encodeURIComponent(namn + '.' + exp + '.' + (await hmac(hemlighet(env), 'person.' + namn + '.' + exp)));
+  const v = encodeURIComponent(namn + '.' + exp + '.' + (await hmac(hemlighet(env), 'person2.' + namn + '.' + exp)));
   return `${PCOOKIE}=${v}; Path=/api; Max-Age=${TTL}; HttpOnly; Secure; SameSite=Strict`;
 }
 
@@ -231,7 +230,6 @@ export async function onRequest({ request, env, params }) {
     if (delar[0] === 'person' && metod === 'POST') {
       const { namn, kod } = await request.json().catch(() => ({}));
       if (!giltigtNamn(namn)) return svar({ fel: 'Ogiltigt namn' }, 400);
-      if (!personKrav(env, namn)) return svar({ ok: true, person: namn }, 200, { 'set-cookie': await personCookie(env, namn) });
       const nyckel = kodNyckel(namn);
       if (!env[nyckel]) return svar({ fel: 'saknar_kod', saknas: [nyckel] }, 503);
       if (typeof kod !== 'string' || !kod) return svar({ krav: true }, 401);
