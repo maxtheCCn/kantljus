@@ -221,7 +221,7 @@ export async function onRequest({ request, env, params }) {
 
     const person = viaNyckel || (await verifieradPerson(request, env));
     // Den som loggar något i ett kodskyddat namn måste ha låst upp det namnet
-    const far = (namn) => !namn || !personKrav(env, namn) || person === namn;
+    const far = (namn) => !namn || person === namn;
     const nekad = (namn) => svar({ fel: `Välj ${namn} igen och skriv koden för ${namn}` }, 403);
 
     if (delar[0] === 'session' && metod === 'GET') return svar({ ok: true, person });

@@ -1616,20 +1616,19 @@ function ringKort(id) {
           <b>Svarade de inte, eller bad de dig att ringa tillbaka?</b>
           <div class="ck-two">
             <button class="cbtn tb2" data-svar="inget"><svg class="i"><use href="#i-phone"/></svg>Svarade inte</button>
-            <button class="cbtn tb2" data-aterkom><svg class="i"><use href="#i-back"/></svg>Bad mig ringa tillbaka</button>
+            <button class="cbtn tb2" data-nar="${plusDagar(1)}"><svg class="i"><use href="#i-back"/></svg>Bad mig ringa tillbaka</button>
           </div>
-        </div>
-        <div class="ck-when" id="ckWhen" hidden>
-          <span class="mono">När vill de bli uppringda?</span>
-          <div class="chips">
-            <button class="chip" data-nar="${idag()}">Senare idag</button>
-            <button class="chip" data-nar="${plusDagar(1)}">Imorgon</button>
-            <button class="chip" data-nar="${plusDagar(2)}">Om två dagar</button>
-            <button class="chip" data-nar="${plusDagar(7)}">Nästa vecka</button>
-            <input class="in" type="date" id="ckNarDag" min="${idag()}" aria-label="Välj dag">
+          <div class="ck-when">
+            <span class="mono">Sa de en annan dag? Tryck på den i stället:</span>
+            <div class="chips">
+              <button class="chip" data-nar="${idag()}">Senare idag</button>
+              <button class="chip" data-nar="${plusDagar(2)}">Om två dagar</button>
+              <button class="chip" data-nar="${plusDagar(7)}">Nästa vecka</button>
+              <input class="in" type="date" id="ckNarDag" min="${idag()}" aria-label="Välj dag">
+            </div>
           </div>
+          <p class="ck-hint">Ett tryck räcker. Företaget sparas direkt i <em>Ring tillbaka</em> och försvinner från Att ringa och kartan.</p>
         </div>
-        <p class="ck-hint">Båda svaren flyttar företaget till fliken <em>Ring tillbaka</em>.</p>
         <label class="f"><span>Anteckning (valfri, sparas med svaret)</span><textarea class="in" id="ckNot" rows="3" placeholder="Vad sa de? T.ex. &quot;Ägaren heter Sara, vill ha bokning online, ring efter lunch&quot;"></textarea></label>
       </section>
       <section class="ck-info">
@@ -1672,8 +1671,7 @@ function ringKort(id) {
     await sparaFalt(S.data.find((x) => x.id === id), { telefon: t }); ringKort(id);
   });
   $$('[data-svar]', m).forEach((b) => b.onclick = () => (b.dataset.svar === 'ja' ? jaFormular(id, $('#ckNot', m)?.value.trim() || '') : ringSvar(id, b.dataset.svar, $('#ckNot', m)?.value.trim() || '')));
-  $('[data-tb]', m).onclick = (e) => { const a = $('#ckAsk', m); a.hidden = !a.hidden; e.currentTarget.classList.toggle('on', !a.hidden); if (a.hidden) $('#ckWhen', m).hidden = true; else a.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
-  $('[data-aterkom]', m).onclick = (e) => { const w = $('#ckWhen', m); w.hidden = !w.hidden; e.currentTarget.classList.toggle('on', !w.hidden); if (!w.hidden) w.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
+  $('[data-tb]', m).onclick = (e) => { const a = $('#ckAsk', m); a.hidden = !a.hidden; e.currentTarget.classList.toggle('on', !a.hidden); if (!a.hidden) a.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
   $$('[data-nar]', m).forEach((b) => b.onclick = () => ringSvar(id, 'aterkom', $('#ckNot', m)?.value.trim() || '', b.dataset.nar));
   $('#ckNarDag', m).onchange = (e) => { if (e.target.value) ringSvar(id, 'aterkom', $('#ckNot', m)?.value.trim() || '', e.target.value); };
 }
@@ -1753,7 +1751,7 @@ async function ringSvar(id, svar, notis = '', narDag = '') {
     });
     await db.spara({ ...ut, ringer: null, ansvarig: ut.ansvarig || S.me });
     stangModal(); render(false);
-    toast(svar === 'ja' ? `${f.namn} tackade ja! Ligger nu under Att följa upp.` : svar === 'nej' ? `${f.namn}: Nej tack, flyttad till Samtal` : svar === 'aterkom' ? `${f.namn} flyttad till Ring tillbaka (${dagNamn(narDag).toLowerCase()})` : `${f.namn} flyttad till Ring tillbaka`);
+    toast(svar === 'ja' ? `${f.namn} tackade ja! Ligger nu under Att följa upp.` : svar === 'nej' ? `${f.namn}: Nej tack, flyttad till Samtal` : svar === 'aterkom' ? `${f.namn} ligger i Ring tillbaka, ring ${dagNamn(narDag).toLowerCase()}` : `${f.namn} svarade inte, ligger i Ring tillbaka`);
   } catch (err) { toast(err.message, true); $$('#mbox button').forEach((b) => (b.disabled = false)); }
 }
 
