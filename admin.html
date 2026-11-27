@@ -527,6 +527,57 @@ a.ck-tile:hover{border-color:var(--glod)}
 .kfot{margin:0;font-size:11.5px;color:var(--dim)}
 .kfot a{color:var(--mute)}
 @media (max-width:1080px){.kwrap{grid-template-columns:minmax(0,1fr)}.kside{max-height:none}.khost,.kmap{height:62dvh;min-height:360px}}
+.ja-snabb{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:22px 28px 6px}
+.mbox.wide.jaw{min-height:0}
+.mbox.jaw .ja-mer{max-height:none}
+.btn.pri.ja-stor{min-height:56px;padding:0 28px;font-size:17px;flex:1 1 260px;justify-content:center;background:linear-gradient(135deg,#9ff0c0,#45c97f);color:#06210f;box-shadow:0 16px 40px -18px rgb(69 201 127/.9)}
+.ja-stor:hover{filter:brightness(1.05)}
+.jaf.ja-mer{flex:none;margin:14px 28px 28px;border:1px solid var(--line);border-radius:14px;padding:0 18px}
+.ja-mer>summary{cursor:pointer;padding:14px 0;font-weight:500}
+.jaf.ja-mer[open]{padding-bottom:18px}
+.ja-nere{display:flex;justify-content:flex-end;margin-top:14px}
+.exup{cursor:pointer}
+.exdrop{position:relative;min-height:300px;border-radius:var(--r)}
+.exdrop-hint{display:none}
+.exdrop.over{outline:2px dashed var(--glod);outline-offset:6px;background:rgb(255 90 31/.05)}
+.exdrop.over .exdrop-hint{display:grid;place-items:center;position:absolute;inset:0;font:600 20px var(--sans);color:var(--ink);background:rgb(12 12 13/.7);border-radius:var(--r);pointer-events:none}
+.exgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.exk{display:grid;text-align:left;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--s1);transition:border-color .2s,transform .2s,box-shadow .2s}
+.exk:hover{border-color:rgb(255 255 255/.2);transform:translateY(-2px);box-shadow:0 18px 40px -24px #000}
+.exk-bild{aspect-ratio:4/3;background:#0d0d0f;display:grid;place-items:center;overflow:hidden;border-bottom:1px solid var(--line)}
+.exk-bild img{width:100%;height:100%;object-fit:cover;object-position:top}
+.exk-bild.pdf{background:radial-gradient(240px 160px at 30% 20%,rgb(255 90 31/.18),transparent),#121214}
+.exk-bild.pdf b{font:700 26px var(--mono);letter-spacing:.06em;color:#ff9a62;border:2px solid rgb(255 122 44/.5);border-radius:10px;padding:14px 18px}
+.exk-t{display:grid;gap:3px;padding:12px 14px}
+.exk-t b{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exk-t small{color:var(--dim);font-size:12.5px}
+.extom{display:grid;justify-items:center;gap:10px;text-align:center;padding:70px 20px;border:1.5px dashed var(--line2);border-radius:var(--r);color:var(--mute);cursor:pointer;transition:border-color .2s,background .2s}
+.extom:hover{border-color:rgb(255 122 44/.6);background:rgb(255 90 31/.04)}
+.extom b{font-size:18px;color:var(--ink)}
+.extom .lk-plus{width:52px;height:52px;border-radius:14px}
+.extom .lk-plus .i{width:26px;height:26px}
+.exupp{display:grid;gap:8px;margin-bottom:16px}
+.exupp>div{position:relative;display:flex;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--s1)}
+.exupp span{display:grid;position:relative;z-index:1}
+.exupp b{font-size:14px;font-weight:600}
+.exupp small{color:var(--mute);font-size:12.5px}
+.exupp i{position:absolute;left:0;bottom:0;height:3px;width:var(--p);background:var(--glod);transition:width .2s}
+.exupp i.fel{background:#ff6b6b;width:100%}
+.mbox.exbox{width:min(1200px,100%);height:min(860px,calc(100dvh - 40px));padding:0;display:block}
+.exv{display:grid;grid-template-columns:minmax(0,1fr) 320px;height:100%}
+.exv-yta{background:#0b0b0c;display:grid;place-items:center;overflow:auto;min-height:0}
+.exv-yta img{max-width:100%;max-height:100%;object-fit:contain}
+.exv-yta iframe{width:100%;height:100%;border:0;background:#fff}
+.exv-sida{position:relative;display:grid;gap:14px;align-content:start;padding:24px 22px;border-left:1px solid var(--line);overflow:auto}
+.exv-sida h2{margin:6px 40px 0 0;font-size:22px;letter-spacing:-.02em}
+.exv-x{position:absolute;top:14px;right:14px}
+.exv-b{margin:0;color:var(--mute);font-size:14px;white-space:pre-wrap}
+.exv-knappar{display:grid;gap:8px}
+.exv-knappar .btn{justify-content:center}
+.exv-bort{color:#ff8a8a}
+.exv-av{margin:0;font-size:12.5px;color:var(--dim)}
+.exv-form{display:grid;gap:12px;margin-top:34px}
+@media (max-width:820px){.exv{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto}.exv-sida{border-left:0;border-top:1px solid var(--line);max-height:45dvh}.exgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
 .lk-side{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:14px;font:600 15.5px var(--sans);letter-spacing:-.01em;color:var(--ink);text-align:left;border:1px solid rgb(255 122 44/.45);background:radial-gradient(260px 90px at 0 0,rgb(255 122 44/.2),transparent),rgb(255 255 255/.02);transition:border-color .2s,box-shadow .2s,transform .2s}
 .lk-side:hover{border-color:rgb(255 122 44/.85);box-shadow:0 12px 34px -18px rgb(255 90 31/.9);transform:translateY(-1px)}
 .lk-side .lk-plus{width:36px;height:36px;border-radius:10px}
@@ -869,6 +920,7 @@ button.jb:hover{background:rgb(255 255 255/.04)}
 <symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M5 7.5h3.2a2.3 2.3 0 1 1 4.6 0H16a1 1 0 0 1 1 1v3.2a2.3 2.3 0 1 1 0 4.6V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8.5a1 1 0 0 1 1-1z"/></symbol>
 <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></symbol>
 <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4.5 3.5 6.5v13l5.5-2 6 2 5.5-2v-13l-5.5 2z"/><path d="M9 4.5v13M15 6.5v13"/></symbol>
+<symbol id="i-bild" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="m4 17.5 5-4.5 4 3.5 3-2.5 4.5 3.5"/></symbol>
 <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="1.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></symbol>
 </defs>
 </svg>
@@ -907,6 +959,7 @@ button.jb:hover{background:rgb(255 255 255/.04)}
       <button class="nv" data-view="ringlista"><svg class="i"><use href="#i-list"/></svg>Företag<span class="n" id="nRing"></span></button>
       <button class="nv" data-view="samtal"><svg class="i"><use href="#i-chat"/></svg>Samtal<span class="n" id="nSamtal"></span></button>
       <button class="nv" data-view="kunder"><svg class="i"><use href="#i-star"/></svg>Kunder<span class="n" id="nKund"></span></button>
+      <button class="nv" data-view="exempel"><svg class="i"><use href="#i-bild"/></svg>Exempel</button>
       <button class="nv" data-view="ekonomi"><svg class="i"><use href="#i-wallet"/></svg>Ekonomi</button>
       <button class="nv" data-view="promptar"><svg class="i"><use href="#i-spark"/></svg>Promptar</button>
       <button class="nv" data-view="skills"><svg class="i"><use href="#i-puzzle"/></svg>Skills</button>
@@ -999,7 +1052,7 @@ const ST = {
 const FLODE = ['att_ringa', 'inget_svar', 'aterkom', 'intresserad', 'mote', 'offert', 'kund'];
 const UTFALL = ['inget_svar', 'aterkom', 'intresserad', 'mote', 'offert', 'kund', 'nej'];
 const TJANSTER = ['Hemsida', 'Webbshop', 'Logga', 'SEO', 'Drift'];
-const VIEWS = { oversikt: 'Översikt', ring: 'Att ringa', tillbaka: 'Ring tillbaka', karta: 'Karta', manus: 'Manus', ringlista: 'Företag', samtal: 'Samtal', kunder: 'Kunder', ekonomi: 'Ekonomi', promptar: 'Promptar', skills: 'Skills' };
+const VIEWS = { oversikt: 'Översikt', ring: 'Att ringa', tillbaka: 'Ring tillbaka', karta: 'Karta', manus: 'Manus', ringlista: 'Företag', samtal: 'Samtal', kunder: 'Kunder', exempel: 'Exempel', ekonomi: 'Ekonomi', promptar: 'Promptar', skills: 'Skills' };
 const BETALSATT = ['Swish', 'Faktura', 'Annat'];
 const GRUNDARE = ['Max', 'William', 'John-John'];
 
@@ -1338,7 +1391,7 @@ function render(anim = true) {
   $('#nSamtal').textContent = allaSamtal().length || '';
   $('#nKund').textContent = S.data.filter((f) => f.status === 'kund').length || '';
   const v = $('#view');
-  v.innerHTML = ({ oversikt: vyOversikt, ring: vyRing, tillbaka: vyTillbaka, karta: vyKarta, manus: vyManus, ringlista: vyRinglista, samtal: vySamtal, kunder: vyKunder, ekonomi: vyEkonomi, promptar: vyPromptar, skills: vySkills })[S.view]();
+  v.innerHTML = ({ oversikt: vyOversikt, ring: vyRing, tillbaka: vyTillbaka, karta: vyKarta, manus: vyManus, ringlista: vyRinglista, samtal: vySamtal, kunder: vyKunder, exempel: vyExempel, ekonomi: vyEkonomi, promptar: vyPromptar, skills: vySkills })[S.view]();
   if (anim) v.classList.remove('fade'), void v.offsetWidth, v.classList.add('fade');
   koppla(v);
 }
@@ -1684,16 +1737,20 @@ function jaFormular(id, notis = '') {
   const valda = new Set(['Hemsida']);
   modal(`<form class="ck" id="jaForm" autocomplete="off">
     <header class="ck-head" style="background:radial-gradient(120% 140% at 0% 0%,rgb(126 226 168/.16),transparent 55%)">
-      <div class="ck-title"><div class="ck-tags"><span class="pill" style="--c:${ST.kund.c}"><i></i>Ny kund</span><span class="mono dim">Fyll i det du vet, resten kan vänta</span></div>
-        <h2>${esc(f.namn)} tackade ja!</h2><p>Kolla uppgifterna och spara. Företaget hamnar under Kunder.</p></div>
+      <div class="ck-title"><div class="ck-tags"><span class="pill" style="--c:${ST.kund.c}"><i></i>Ny kund</span></div>
+        <h2>${esc(f.namn)} tackade ja!</h2><p>Tryck på Spara som kund, så är det klart. Allt annat är valfritt.</p></div>
       <button type="button" class="ico" id="jaStang" aria-label="Tillbaka"><svg class="i"><use href="#i-x"/></svg></button>
     </header>
-    <div class="jaf">
+    <div class="ja-snabb">
+      <button type="submit" class="btn pri ja-stor" id="jaSpara"><svg class="i"><use href="#i-star"/></svg>Spara som kund</button>
+      <button type="button" class="btn ghost" id="jaTillbaka">Tillbaka till samtalet</button>
+    </div>
+    <details class="jaf ja-mer"><summary>Fyll i mer <span class="dim">(valfritt, går att göra senare)</span></summary>
       <div class="fgrid">
-        <label class="f full"><span>Företagets namn *</span><input class="in" name="namn" required value="${esc(f.namn)}"></label>
+        <label class="f full"><span>Företagets namn</span><input class="in" name="namn" value="${esc(f.namn)}"></label>
         <label class="f"><span>Telefon</span><input class="in" name="telefon" type="tel" value="${esc(f.telefon || '')}"></label>
         <label class="f"><span>Adress</span><input class="in" name="ort" value="${esc(f.ort || '')}" placeholder="Gatuadress"></label>
-        <label class="f"><span>Kontaktperson</span><input class="in" name="kontakt" value="${esc(f.kontakt || '')}" placeholder="Vem pratade du med?" autofocus></label>
+        <label class="f"><span>Kontaktperson</span><input class="in" name="kontakt" value="${esc(f.kontakt || '')}" placeholder="Vem pratade du med?"></label>
         <label class="f"><span>E-post</span><input class="in" name="epost" type="email" value="${esc(f.epost || '')}" placeholder="namn@foretag.se"></label>
         <label class="f"><span>Bransch</span><input class="in" name="bransch" value="${esc(f.bransch || '')}"></label>
         <label class="f"><span>Nuvarande hemsida</span><input class="in" name="webb" value="${esc(f.webb || '')}" placeholder="foretag.se eller tomt"></label>
@@ -1703,9 +1760,11 @@ function jaFormular(id, notis = '') {
         <label class="f"><span>Tid</span><input class="in" name="motetid" type="time" step="900"></label>
         <label class="f full"><span>Anteckning</span><textarea class="in" name="ant" rows="3" placeholder="Vad sa de? Vad behöver de?">${esc(notis)}</textarea></label>
       </div>
-    </div>
-    <footer class="jaf-foot"><button type="button" class="btn ghost" id="jaTillbaka">Tillbaka till samtalet</button><button type="submit" class="btn pri" id="jaSpara"><svg class="i"><use href="#i-star"/></svg>Spara som kund</button></footer>
-  </form>`, 'wide');
+      <div class="ja-nere"><button type="submit" class="btn pri"><svg class="i"><use href="#i-star"/></svg>Spara som kund</button></div>
+    </details>
+  </form>`, 'wide jaw');
+  $('#jaForm').noValidate = true;
+  setTimeout(() => $('#jaSpara')?.focus(), 40);
   const fm = $('#jaForm');
   prisFormat(fm.pris);
   $$('[data-tj]', fm).forEach((b) => b.onclick = () => { const t = b.dataset.tj; valda.has(t) ? valda.delete(t) : valda.add(t); b.setAttribute('aria-pressed', valda.has(t)); });
@@ -1714,8 +1773,9 @@ function jaFormular(id, notis = '') {
   fm.onsubmit = async (e) => {
     e.preventDefault();
     const v = Object.fromEntries([...new FormData(fm).entries()].map(([k, x]) => [k, String(x).trim()]));
-    if (!v.namn) return;
-    $('#jaSpara').disabled = true;
+    v.namn = v.namn || f.namn;
+    if (v.epost && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.epost)) v.epost = '';
+    $$('#jaForm [type=submit]').forEach((b) => (b.disabled = true));
     const mote = v.motedag ? `Möte ${dagNamn(v.motedag).toLowerCase()}${v.motetid ? ' kl ' + v.motetid : ''}` : '';
     try {
       const ut = await db.samtal(id, {
@@ -1732,7 +1792,7 @@ function jaFormular(id, notis = '') {
       });
       stangModal(); render(false);
       toast(`${v.namn} är nu kund! 🎉`);
-    } catch (err) { toast(err.message, true); $('#jaSpara').disabled = false; }
+    } catch (err) { toast(err.message, true); $$('#jaForm [type=submit]').forEach((b) => (b.disabled = false)); }
   };
 }
 
@@ -2727,6 +2787,20 @@ function koppla(v) {
     art.classList.toggle('open', oppna); b.setAttribute('aria-expanded', oppna);
     $('.skc-fold', art).toggleAttribute('inert', !oppna);
   });
+  if (S.view === 'exempel') {
+    const inp = $('#exFil', v);
+    if (inp) inp.onchange = () => { const f = [...inp.files]; inp.value = ''; if (f.length) laddaUppExempel(f); };
+    $$('[data-extagg]', v).forEach((b) => b.onclick = () => { EXV.tagg = b.dataset.extagg; render(false); });
+    $$('[data-exvisa]', v).forEach((b) => b.onclick = () => exVisa(b.dataset.exvisa));
+    const zon = $('#exDrop', v);
+    if (zon) {
+      let djup = 0;
+      zon.ondragenter = (e) => { if ([...(e.dataTransfer?.types || [])].includes('Files')) { e.preventDefault(); djup++; zon.classList.add('over'); } };
+      zon.ondragover = (e) => { if (zon.classList.contains('over')) e.preventDefault(); };
+      zon.ondragleave = () => { if (--djup <= 0) { djup = 0; zon.classList.remove('over'); } };
+      zon.ondrop = (e) => { e.preventDefault(); djup = 0; zon.classList.remove('over'); const f = [...(e.dataTransfer?.files || [])]; if (f.length) laddaUppExempel(f); };
+    }
+  }
   if (S.view === 'karta') {
     $$('[data-kf]', v).forEach((b) => b.onclick = () => { KA.filter = b.dataset.kf; KA.anpassad = false; render(false); });
     $$('[data-kadress]', v).forEach((b) => b.onclick = () => nyttForetag(S.data.find((x) => x.id === b.dataset.kadress)));
@@ -3065,6 +3139,139 @@ async function kartaSattPlats(id, ll) {
 function kartaFlytta(id) {
   KA.flytta = id; kartaRita();
   toast('Dra pricken dit företaget ligger.');
+}
+
+/* ================= EXEMPEL ================= */
+// PDF:er och bilder på sajter vi gjort. Filerna ligger i databasen (POST /api/exempel).
+const EXV = { lista: null, hamtar: false, tagg: '', upp: [], saker: '' };
+const EX_OK = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp', 'image/gif'];
+const exUrl = (m, ladda) => m._url || `/api/exempel/${m.id}/fil${ladda ? '?ladda=1' : ''}`;
+const mb = (n) => (n >= 1048576 ? (n / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(n / 1024)) + ' kB');
+async function hamtaExempel() {
+  if (S.demo) { EXV.lista = EXV.lista || []; return; }
+  if (EXV.hamtar) return;
+  EXV.hamtar = true;
+  try { EXV.lista = await api('/exempel'); } catch (e) { EXV.lista = EXV.lista || []; toast(e.message, true); }
+  EXV.hamtar = false;
+  if (S.view === 'exempel') render(false);
+}
+function vyExempel() {
+  if (EXV.lista === null) setTimeout(hamtaExempel);
+  const l = EXV.lista || [];
+  const taggar = [...new Set(l.map((x) => x.tagg).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'sv'));
+  if (EXV.tagg && !taggar.includes(EXV.tagg)) EXV.tagg = '';
+  const visa = l.filter((x) => !EXV.tagg || x.tagg === EXV.tagg);
+  const kort = (m) => `<button class="exk" data-exvisa="${m.id}">
+      <span class="exk-bild${m.typ === 'application/pdf' && !m.thumb ? ' pdf' : ''}">${m.thumb ? `<img src="${m.thumb}" alt="" loading="lazy">` : m.typ === 'application/pdf' ? '<b>PDF</b>' : `<img src="${exUrl(m)}" alt="" loading="lazy">`}</span>
+      <span class="exk-t"><b>${esc(m.titel)}</b><small>${[m.tagg, m.typ === 'application/pdf' ? 'PDF' : 'Bild', mb(m.storlek)].filter(Boolean).map(esc).join(' · ')}</small></span></button>`;
+  return `
+  <div class="ringtop"><div><h2>Exempel</h2><p>PDF:er och bilder på sajter vi har gjort. Visa dem när ni ringer eller träffar en kund.</p></div>
+    <label class="btn pri exup"><svg class="i"><use href="#i-plus"/></svg>Ladda upp<input type="file" id="exFil" multiple accept=".pdf,image/png,image/jpeg,image/webp,image/gif" hidden></label></div>
+  <div class="exdrop" id="exDrop">
+    ${EXV.upp.length ? `<div class="exupp">${EXV.upp.map((u) => `<div><span><b>${esc(u.namn)}</b><small>${u.fel ? esc(u.fel) : u.klar ? 'Klar' : 'Laddar upp … ' + u.pct + ' %'}</small></span><i style="--p:${u.pct}%" class="${u.fel ? 'fel' : ''}"></i></div>`).join('')}</div>` : ''}
+    ${taggar.length ? `<div class="chips" style="margin-bottom:14px"><button class="chip" data-extagg="" aria-pressed="${!EXV.tagg}">Alla <span class="mono dim">${l.length}</span></button>${taggar.map((t) => `<button class="chip" data-extagg="${esc(t)}" aria-pressed="${EXV.tagg === t}">${esc(t)} <span class="mono dim">${l.filter((x) => x.tagg === t).length}</span></button>`).join('')}</div>` : ''}
+    ${EXV.lista === null ? '<div class="tom"><b>Hämtar exempel …</b></div>'
+      : l.length ? `<div class="exgrid">${visa.map(kort).join('')}</div>`
+      : `<label class="extom" for="exFil"><span class="lk-plus"><svg class="i"><use href="#i-bild"/></svg></span><b>Inga exempel än</b><span>Dra hit PDF:er eller bilder, eller tryck här för att välja filer.<br>Max 25 MB per fil.</span></label>`}
+    <div class="exdrop-hint">Släpp filerna för att ladda upp</div>
+  </div>`;
+}
+async function bildTill(fil, max, kvalitet, typ) {
+  const url = URL.createObjectURL(fil);
+  try {
+    const img = await new Promise((ok, fel) => { const i = new Image(); i.onload = () => ok(i); i.onerror = fel; i.src = url; });
+    const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+    const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+    return { canvas: c, krympt: k < 1, blob: await new Promise((ok) => c.toBlob(ok, typ, kvalitet)) };
+  } finally { URL.revokeObjectURL(url); }
+}
+async function laddaUppExempel(filer) {
+  if (!S.me && !S.demo) return valjPerson();
+  for (const fil of filer) {
+    const u = { namn: fil.name, pct: 0 };
+    EXV.upp.push(u); render(false);
+    try {
+      if (!EX_OK.includes(fil.type)) throw new Error('Bara PDF och bilder går att ladda upp');
+      let data = fil, typ = fil.type, thumb = '';
+      if (typ.startsWith('image/') && typ !== 'image/gif') {
+        const st = await bildTill(fil, 2600, 0.86, 'image/webp');
+        if (st.blob && (st.krympt || fil.size > 1.5e6) && st.blob.size < fil.size) { data = st.blob; typ = 'image/webp'; }
+        const tn = await bildTill(fil, 520, 0.75, 'image/jpeg');
+        for (const q of [0.75, 0.6, 0.45, 0.3]) { thumb = tn.canvas.toDataURL('image/jpeg', q); if (thumb.length < 110_000) break; }
+        if (thumb.length >= 110_000) thumb = '';
+      }
+      if (data.size > 25 * 1024 * 1024) throw new Error('Filen är för stor (max 25 MB)');
+      const filnamn = typ === 'image/webp' && fil.type !== 'image/webp' ? fil.name.replace(/\.[a-z0-9]+$/i, '') + '.webp' : fil.name;
+      let meta;
+      if (S.demo) {
+        meta = { id: 'ex' + nyId(), titel: fil.name.replace(/\.[a-z0-9]+$/i, ''), tagg: '', beskrivning: '', lank: '', filnamn, typ, storlek: data.size, av: S.me, tid: new Date().toISOString(), thumb, _url: URL.createObjectURL(data) };
+      } else {
+        meta = await new Promise((ok, fel) => {
+          const x = new XMLHttpRequest();
+          x.open('POST', '/api/exempel');
+          x.setRequestHeader('x-meta', encodeURIComponent(JSON.stringify({ filnamn, typ })));
+          x.upload.onprogress = (e) => { if (e.lengthComputable) { u.pct = Math.round((e.loaded / e.total) * 100); render(false); } };
+          x.onload = () => { let j = null; try { j = JSON.parse(x.responseText); } catch {} if (x.status === 200 && j) ok(j); else fel(new Error(j?.fel || 'Uppladdningen misslyckades')); };
+          x.onerror = () => fel(new Error('Ingen kontakt med servern'));
+          x.send(data);
+        });
+        if (thumb) meta = await api('/exempel/' + meta.id, { method: 'POST', body: JSON.stringify({ thumb }) });
+      }
+      EXV.lista = [meta, ...(EXV.lista || [])];
+      u.pct = 100; u.klar = true;
+    } catch (e) { u.fel = e.message; }
+    render(false);
+  }
+  setTimeout(() => { EXV.upp = EXV.upp.filter((u) => !u.klar && !u.fel); if (S.view === 'exempel') render(false); }, 4000);
+}
+function exVisa(id, redigera = false) {
+  const m = (EXV.lista || []).find((x) => x.id === id);
+  if (!m) return;
+  const pdf = m.typ === 'application/pdf';
+  const egen = S.demo || m.av === S.me || S.me === 'Max';
+  modal(`<div class="exv">
+    <div class="exv-yta">${pdf ? `<iframe src="${exUrl(m)}#view=FitH" title="${esc(m.titel)}"></iframe>` : `<img src="${exUrl(m)}" alt="${esc(m.titel)}">`}</div>
+    <aside class="exv-sida">
+      <button type="button" class="ico exv-x" id="exStang" aria-label="Stäng"><svg class="i"><use href="#i-x"/></svg></button>
+      ${redigera ? `<form id="exForm" class="exv-form">
+        <label class="f"><span>Titel</span><input class="in" name="titel" value="${esc(m.titel)}" required></label>
+        <label class="f"><span>Bransch eller tagg</span><input class="in" name="tagg" value="${esc(m.tagg || '')}" placeholder="Frisör" list="exTaggar"></label>
+        <label class="f"><span>Länk till sajten</span><input class="in" name="lank" value="${esc(m.lank || '')}" placeholder="exempel.se"></label>
+        <label class="f"><span>Beskrivning</span><textarea class="in" name="beskrivning" rows="4" placeholder="Vad är bra med den här sajten?">${esc(m.beskrivning || '')}</textarea></label>
+        <datalist id="exTaggar">${[...new Set((EXV.lista || []).map((x) => x.tagg).filter(Boolean))].map((t) => `<option value="${esc(t)}">`).join('')}</datalist>
+        <div class="mact"><button type="button" class="btn ghost" id="exAvbryt">Avbryt</button><button class="btn pri" type="submit">Spara</button></div>
+      </form>` : `
+      <div><span class="mono dim">${pdf ? 'PDF' : 'Bild'} · ${mb(m.storlek)}</span><h2>${esc(m.titel)}</h2>${m.tagg ? `<span class="intr" style="margin:6px 0 0">${esc(m.tagg)}</span>` : ''}</div>
+      ${m.beskrivning ? `<p class="exv-b">${esc(m.beskrivning)}</p>` : ''}
+      ${m.lank ? `<a class="lank" href="${esc(m.lank)}" target="_blank" rel="noopener">${esc(m.lank.replace(/^https?:\/\//, ''))} ↗</a>` : ''}
+      <div class="exv-knappar">
+        <a class="btn pri" href="${exUrl(m)}" target="_blank" rel="noopener">Öppna i ny flik</a>
+        <a class="btn ghost" href="${exUrl(m, true)}" download="${esc(m.filnamn)}">Ladda ner</a>
+        <button class="btn ghost" id="exRed">Redigera</button>
+        ${egen ? `<button class="btn ghost exv-bort" id="exBort">${EXV.saker === m.id ? 'Säker? Ta bort' : 'Ta bort'}</button>` : ''}
+      </div>
+      <p class="exv-av">Uppladdad av ${esc(m.av || '?')} · ${nar(m.tid)}</p>`}
+    </aside></div>`, 'exbox');
+  $('#exStang').onclick = () => { EXV.saker = ''; stangModal(); };
+  $('#exRed')?.addEventListener('click', () => exVisa(id, true));
+  $('#exAvbryt')?.addEventListener('click', () => exVisa(id));
+  $('#exBort')?.addEventListener('click', async () => {
+    if (EXV.saker !== id) { EXV.saker = id; return exVisa(id); }
+    EXV.saker = '';
+    try { if (!S.demo) await api('/exempel/' + id, { method: 'DELETE' }); EXV.lista = EXV.lista.filter((x) => x.id !== id); stangModal(); render(false); toast('Exemplet är borttaget.'); } catch (e) { toast(e.message, true); }
+  });
+  const fm = $('#exForm');
+  if (fm) fm.onsubmit = async (e) => {
+    e.preventDefault();
+    const v = Object.fromEntries([...new FormData(fm).entries()].map(([k, x]) => [k, String(x).trim()]));
+    try {
+      const ny = S.demo ? { ...m, ...v } : await api('/exempel/' + id, { method: 'POST', body: JSON.stringify(v) });
+      if (S.demo && ny.lank && !/^https?:/.test(ny.lank)) ny.lank = 'https://' + ny.lank;
+      EXV.lista = EXV.lista.map((x) => (x.id === id ? { ...ny, _url: x._url } : x));
+      render(false); exVisa(id); toast('Sparat.');
+    } catch (err) { toast(err.message, true); }
+  };
 }
 
 /* ================= LÄGG TILL EN KUND ================= */

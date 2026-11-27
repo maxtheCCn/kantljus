@@ -85,6 +85,8 @@ async function skapaTabeller(env) {
     env.DB.prepare('CREATE TABLE IF NOT EXISTS poster (id TEXT PRIMARY KEY, data TEXT NOT NULL, datum TEXT NOT NULL)'),
     env.DB.prepare('CREATE TABLE IF NOT EXISTS nycklar (hash TEXT PRIMARY KEY, person TEXT NOT NULL, skapad TEXT NOT NULL, senast TEXT, aktiv INTEGER NOT NULL DEFAULT 1)'),
     env.DB.prepare('CREATE TABLE IF NOT EXISTS jobbar (person TEXT PRIMARY KEY, data TEXT NOT NULL, tid INTEGER NOT NULL)'),
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS exempel (id TEXT PRIMARY KEY, meta TEXT NOT NULL, skapad INTEGER NOT NULL)'),
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS exempel_delar (id TEXT NOT NULL, nr INTEGER NOT NULL, data TEXT NOT NULL, PRIMARY KEY (id, nr))'),
   ]);
   tabellerKlara = true;
 }
@@ -143,6 +145,34 @@ async function nyckelPerson(request, env) {
   return rad.person;
 }
 const JOBBAR_TTL = 4 * 60 * 60 * 1000; // "jobbar just nu" försvinner efter 4 timmar utan nytt
+
+// ---------- exempel (PDF:er och bilder) ----------
+// Filerna sparas i D1 som base64 i bitar om 1,4 MB (en rad får vara högst 2 MB).
+const EX_TYPER = { 'application/pdf': 'pdf', 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/gif': 'gif' };
+const EX_MAX = 25 * 1024 * 1024;
+const EX_BIT = 1_400_000;
+function tillB64(u8) {
+  let s = '';
+  for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+function franB64(t) {
+  const s = atob(t), u = new Uint8Array(s.length);
+  for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i);
+  return u;
+}
+function rensaExMeta(m, gammal = {}) {
+  const txt = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
+  const lank = txt(m.lank, 300);
+  return {
+    ...gammal,
+    titel: txt(m.titel, 120) || gammal.titel || 'Exempel',
+    tagg: txt(m.tagg, 40),
+    beskrivning: txt(m.beskrivning, 600),
+    lank: /^https?:\/\//i.test(lank) ? lank : lank ? 'https://' + lank.replace(/^\/+/, '') : '',
+    thumb: typeof m.thumb === 'string' && /^data:image\/(jpeg|webp|png);base64,/.test(m.thumb) && m.thumb.length < 120_000 ? m.thumb : gammal.thumb || '',
+  };
+}
 
 // Vad vi söker på för att hitta företaget på kartan: adressen, plus Stockholm om ingen ort står med
 function platsFraga(rec) {
@@ -312,6 +342,70 @@ export async function onRequest({ request, env, params }) {
         if (forra?.foretag_id) await logga(forra.foretag_id, { tid: nu, av: person, typ: 'klar', vad: txt(kropp.notis, 500) || forra.vad });
         await env.DB.prepare('DELETE FROM jobbar WHERE person = ?').bind(person).run();
         return svar({ ok: true, var: forra });
+      }
+      return svar({ fel: 'Finns inte' }, 404);
+    }
+
+    // ---------- exempel ----------
+    if (delar[0] === 'exempel') {
+      if (delar.length === 1 && metod === 'GET') {
+        const { results } = await env.DB.prepare('SELECT meta FROM exempel ORDER BY skapad DESC').all();
+        return svar(results.map((r) => JSON.parse(r.meta)));
+      }
+      if (delar.length === 1 && metod === 'POST') {
+        if (!person) return svar({ fel: 'Välj vem du är först' }, 403);
+        let m = {};
+        try { m = JSON.parse(decodeURIComponent(request.headers.get('x-meta') || '{}')); } catch { return svar({ fel: 'Ogiltig fil' }, 400); }
+        const typ = String(m.typ || '');
+        if (!EX_TYPER[typ]) return svar({ fel: 'Bara PDF och bilder (PNG, JPG, WEBP, GIF) går att ladda upp' }, 400);
+        const u8 = new Uint8Array(await request.arrayBuffer());
+        if (!u8.length) return svar({ fel: 'Filen är tom' }, 400);
+        if (u8.length > EX_MAX) return svar({ fel: 'Filen är för stor (max 25 MB)' }, 413);
+        const id = 'ex' + Date.now().toString(36) + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
+        let nr = 0;
+        for (let i = 0; i < u8.length; i += EX_BIT, nr++) {
+          await env.DB.prepare('INSERT INTO exempel_delar (id, nr, data) VALUES (?, ?, ?)').bind(id, nr, tillB64(u8.subarray(i, i + EX_BIT))).run();
+        }
+        const filnamn = String(m.filnamn || 'fil').replace(/[\\/:*?"<>|\r\n]/g, '').slice(0, 120) || 'fil';
+        const meta = { id, ...rensaExMeta(m, { titel: filnamn.replace(/\.[a-z0-9]+$/i, '') }), filnamn, typ, storlek: u8.length, delar: nr, av: person, tid: new Date().toISOString() };
+        await env.DB.prepare('INSERT INTO exempel (id, meta, skapad) VALUES (?, ?, ?)').bind(id, JSON.stringify(meta), Date.now()).run();
+        return svar(meta);
+      }
+      const exId = delar[1];
+      if (!/^ex[a-z0-9]{6,30}$/.test(exId || '')) return svar({ fel: 'Ogiltigt id' }, 400);
+      const rad = await env.DB.prepare('SELECT meta FROM exempel WHERE id = ?').bind(exId).first();
+      if (!rad) return svar({ fel: 'Exemplet finns inte' }, 404);
+      const meta = JSON.parse(rad.meta);
+      if (delar[2] === 'fil' && metod === 'GET') {
+        let bit = 0;
+        const strom = new ReadableStream({
+          async pull(c) {
+            if (bit >= meta.delar) return c.close();
+            const d = await env.DB.prepare('SELECT data FROM exempel_delar WHERE id = ? AND nr = ?').bind(exId, bit++).first();
+            if (!d) return c.close();
+            c.enqueue(franB64(d.data));
+          },
+        });
+        const ned = new URL(request.url).searchParams.has('ladda');
+        return new Response(strom, { headers: {
+          'content-type': meta.typ, 'content-length': String(meta.storlek),
+          'content-disposition': `${ned ? 'attachment' : 'inline'}; filename*=UTF-8''${encodeURIComponent(meta.filnamn)}`,
+          'cache-control': 'private, max-age=86400', 'x-content-type-options': 'nosniff', 'x-robots-tag': 'noindex',
+        } });
+      }
+      if (delar.length === 2 && metod === 'POST') {
+        if (!person) return svar({ fel: 'Välj vem du är först' }, 403);
+        const ny = { ...rensaExMeta(await request.json().catch(() => ({})), meta), id: exId };
+        await env.DB.prepare('UPDATE exempel SET meta = ? WHERE id = ?').bind(JSON.stringify(ny), exId).run();
+        return svar(ny);
+      }
+      if (delar.length === 2 && metod === 'DELETE') {
+        if (meta.av !== person && person !== 'Max') return svar({ fel: 'Bara den som laddade upp eller Max kan ta bort' }, 403);
+        await env.DB.batch([
+          env.DB.prepare('DELETE FROM exempel_delar WHERE id = ?').bind(exId),
+          env.DB.prepare('DELETE FROM exempel WHERE id = ?').bind(exId),
+        ]);
+        return svar({ ok: true });
       }
       return svar({ fel: 'Finns inte' }, 404);
     }
