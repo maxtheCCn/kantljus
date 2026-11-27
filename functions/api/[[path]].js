@@ -146,6 +146,16 @@ async function nyckelPerson(request, env) {
 }
 // Valvet: företag som bara Max och John-John ser. Servern döljer dem för alla andra.
 const VALV = ['Max', 'John-John'];
+// Vilka företag som ligger i valvet (id → telefon). Fylls på av GET /api/foretag, som ändå läser allt.
+let valvCache = { ids: new Map(), tid: 0 };
+async function valvIds(env) {
+  if (Date.now() - valvCache.tid < 120_000) return valvCache.ids;
+  const { results } = await env.DB.prepare(`SELECT data FROM foretag WHERE instr(data, '"valv":true') > 0`).all();
+  const ids = new Map();
+  for (const r of results) { const d = JSON.parse(r.data); if (d.valv) ids.set(d.id, String(d.telefon || '').replace(/\D/g, '')); }
+  valvCache = { ids, tid: Date.now() };
+  return ids;
+}
 const JOBBAR_TTL = 4 * 60 * 60 * 1000; // "jobbar just nu" försvinner efter 4 timmar utan nytt
 
 // ---------- exempel (PDF:er och bilder) ----------
@@ -315,7 +325,9 @@ export async function onRequest({ request, env, params }) {
       if (delar.length === 1 && metod === 'GET') {
         await env.DB.prepare('DELETE FROM jobbar WHERE tid < ?').bind(Date.now() - JOBBAR_TTL).run();
         const { results } = await env.DB.prepare('SELECT data FROM jobbar ORDER BY tid DESC').all();
-        return svar(results.map((r) => JSON.parse(r.data)));
+        const lista = results.map((r) => JSON.parse(r.data));
+        const dolda = iValv ? new Map() : await valvIds(env);
+        return svar(lista.filter((j) => !dolda.has(j.foretag_id)));
       }
       if (!person) return svar({ fel: 'Välj vem du är först' }, 403);
       const kropp = await request.json().catch(() => ({}));
@@ -418,7 +430,8 @@ export async function onRequest({ request, env, params }) {
     if (delar[0] === 'poster') {
       if (delar.length === 1 && metod === 'GET') {
         const { results } = await env.DB.prepare('SELECT data FROM poster ORDER BY datum DESC').all();
-        return svar(results.map((r) => JSON.parse(r.data)));
+        const dolda = iValv ? new Map() : await valvIds(env);
+        return svar(results.map((r) => JSON.parse(r.data)).map((p) => (dolda.has(p.kund_id) ? { ...p, kund_id: '', kund_namn: 'Intäkt' } : p)));
       }
       const pid = delar[1];
       if (delar.length !== 2 || !giltigtId(pid)) return svar({ fel: 'Ogiltigt id' }, 400);
@@ -442,7 +455,9 @@ export async function onRequest({ request, env, params }) {
     // GET /api/foretag – alla företag
     if (delar.length === 1 && metod === 'GET') {
       const { results } = await env.DB.prepare('SELECT data FROM foretag ORDER BY uppdaterad DESC').all();
-      return svar(results.map((r) => JSON.parse(r.data)).filter(syns));
+      const alla = results.map((r) => JSON.parse(r.data));
+      valvCache = { ids: new Map(alla.filter((f) => f.valv).map((f) => [f.id, String(f.telefon || '').replace(/\D/g, '')])), tid: Date.now() };
+      return svar(alla.filter(syns));
     }
 
     // POST /api/foretag/import – många på en gång
@@ -450,10 +465,11 @@ export async function onRequest({ request, env, params }) {
       const lista = await request.json();
       if (!Array.isArray(lista) || lista.length > 500) return svar({ fel: 'Max 500 rader per import' }, 400);
       const nu = new Date().toISOString();
+      const valvTel = new Set([...(await valvIds(env)).values()].filter((t) => t.length >= 6));
       const poster = lista.map((r) => {
         if (!giltigtId(r.id)) throw new Error('Ogiltigt id');
         return { ...rensa(r, r.id), valv: false, uppdaterad: nu };
-      });
+      }).filter((p) => !valvTel.has(String(p.telefon || '').replace(/\D/g, '')));
       if (poster.length) {
         await env.DB.batch(poster.map((p) =>
           env.DB.prepare('INSERT OR IGNORE INTO foretag (id, data, uppdaterad) VALUES (?, ?, ?)').bind(p.id, JSON.stringify(p), Date.now())
@@ -475,7 +491,14 @@ export async function onRequest({ request, env, params }) {
       iDb.valv = !!inValv;
       iDb.ringer = null;
       iDb.valvLogg = [...(iDb.valvLogg || []), { tid: new Date().toISOString(), av: person, in: !!inValv }].slice(-20);
-      return svar(await spara(env, iDb));
+      const sparad = await spara(env, iDb);
+      if (inValv) valvCache.ids.set(id, String(iDb.telefon || '').replace(/\D/g, '')); else valvCache.ids.delete(id);
+      // Ta bort "jobbar just nu" som pekar på företaget, så det inte syns på Översikt eller i Live
+      if (inValv) {
+        const { results } = await env.DB.prepare('SELECT person, data FROM jobbar').all();
+        for (const r of results) if (JSON.parse(r.data).foretag_id === id) await env.DB.prepare('DELETE FROM jobbar WHERE person = ?').bind(r.person).run();
+      }
+      return svar(sparad);
     }
 
     // POST /api/foretag/:id/plats – hitta företaget på kartan (OpenStreetMap / Nominatim)

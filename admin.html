@@ -1203,6 +1203,12 @@ function ersatt(rec) {
 // Valvet: företag som bara Max och John-John ser. De ligger i S.valv och syns inte i någon annan lista.
 const VALV_PERS = ['Max', 'John-John'];
 const kanValv = () => VALV_PERS.includes(S.me);
+// Stänger det som är öppet om företaget har försvunnit (t.ex. flyttats till valvet av någon annan)
+function stadaBort() {
+  const finns = (id) => S.data.some((x) => x.id === id);
+  if (S.open && !finns(S.open)) stangLada();
+  if (S.ckId && $('#modal').classList.contains('on') && !finns(S.ckId)) { stangModal(); toast('Företaget du hade öppet finns inte längre i listan.'); }
+}
 function delaValv(l) { S.valv = l.filter((f) => f.valv); return l.filter((f) => !f.valv); }
 async function hamtaForetag() { return delaValv(await api('/foretag')); }
 
@@ -1215,7 +1221,7 @@ function toast(t, err) {
 }
 function setSync(ok, t) { $('#sync').classList.toggle('off', !ok); $('#syncT').textContent = t; }
 function modal(html, cls) { const b = $('#mbox'); b.className = 'mbox' + (cls ? ' ' + cls : ''); b.innerHTML = html; $('#modal').classList.add('on'); setTimeout(() => $('#mbox [autofocus]')?.focus(), 30); }
-function stangModal() { $('#modal').classList.remove('on'); }
+function stangModal() { S.ckId = null; $('#modal').classList.remove('on'); }
 $('#modal').addEventListener('mousedown', (e) => { if (e.target.id === 'modal' && S.me) stangModal(); });
 
 /* ================= INLOGGNING ================= */
@@ -1303,6 +1309,7 @@ async function uppdatera() {
   try {
     [S.data, S.poster] = await Promise.all([hamtaForetag(), api('/poster'), hamtaJobbar()]);
     setSync(true, 'Synkad ' + klock(new Date()));
+    stadaBort();
     const skriver = $('#drawer').contains(document.activeElement) || $('#modal').classList.contains('on');
     if (LV.pa) liveRita();
     else if (!skriver) { render(false); if (S.open) ritaLada(); }
@@ -1658,6 +1665,7 @@ function vyTillbaka() {
 function ringKort(id) {
   const f = S.data.find((x) => x.id === id);
   if (!f) return;
+  S.ckId = id;
   const tel = siffror(f.telefon);
   const upptagen = ringerAktiv(f) && f.ringer.av !== S.me;
   const min = ringerAktiv(f) && f.ringer.av === S.me;
@@ -1791,6 +1799,7 @@ function jaFormular(id, notis = '') {
   if (!S.me) { valjPerson(); return; }
   const f = S.data.find((x) => x.id === id);
   if (!f) return;
+  S.ckId = id;
   const valda = new Set(['Hemsida']);
   modal(`<form class="ck" id="jaForm" autocomplete="off">
     <header class="ck-head" style="background:radial-gradient(120% 140% at 0% 0%,rgb(126 226 168/.16),transparent 55%)">
@@ -2505,7 +2514,7 @@ function stangLive() {
 }
 async function liveHamta() {
   if (!LV.pa || S.demo || document.hidden) return;
-  try { [S.data, S.poster] = await Promise.all([hamtaForetag(), api('/poster'), LV.jt++ % 5 ? null : hamtaJobbar()]); liveRita(); } catch {}
+  try { [S.data, S.poster] = await Promise.all([hamtaForetag(), api('/poster'), LV.jt++ % 5 ? null : hamtaJobbar()]); stadaBort(); liveRita(); } catch {}
 }
 function liveTick() {
   const nu = new Date();
