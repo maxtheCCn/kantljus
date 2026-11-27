@@ -144,6 +144,8 @@ async function nyckelPerson(request, env) {
   await env.DB.prepare('UPDATE nycklar SET senast = ? WHERE hash = ?').bind(new Date().toISOString(), hash).run();
   return rad.person;
 }
+// Valvet: företag som bara Max och John-John ser. Servern döljer dem för alla andra.
+const VALV = ['Max', 'John-John'];
 const JOBBAR_TTL = 4 * 60 * 60 * 1000; // "jobbar just nu" försvinner efter 4 timmar utan nytt
 
 // ---------- exempel (PDF:er och bilder) ----------
@@ -253,6 +255,8 @@ export async function onRequest({ request, env, params }) {
     // Den som loggar något i ett kodskyddat namn måste ha låst upp det namnet
     const far = (namn) => !namn || person === namn;
     const nekad = (namn) => svar({ fel: `Välj ${namn} igen och skriv koden för ${namn}` }, 403);
+    const iValv = VALV.includes(person);
+    const syns = (rec) => !!rec && (!rec.valv || iValv);
 
     if (delar[0] === 'session' && metod === 'GET') return svar({ ok: true, person });
 
@@ -322,7 +326,7 @@ export async function onRequest({ request, env, params }) {
       const logga = async (fid, rad) => {
         if (!giltigtId(fid)) return null;
         const rec = await hamta(env, fid);
-        if (!rec) return null;
+        if (!syns(rec)) return null;
         rec.arbete = [...(rec.arbete || []), rad].slice(-40);
         await spara(env, rec);
         return rec;
@@ -438,7 +442,7 @@ export async function onRequest({ request, env, params }) {
     // GET /api/foretag – alla företag
     if (delar.length === 1 && metod === 'GET') {
       const { results } = await env.DB.prepare('SELECT data FROM foretag ORDER BY uppdaterad DESC').all();
-      return svar(results.map((r) => JSON.parse(r.data)));
+      return svar(results.map((r) => JSON.parse(r.data)).filter(syns));
     }
 
     // POST /api/foretag/import – många på en gång
@@ -448,7 +452,7 @@ export async function onRequest({ request, env, params }) {
       const nu = new Date().toISOString();
       const poster = lista.map((r) => {
         if (!giltigtId(r.id)) throw new Error('Ogiltigt id');
-        return { ...rensa(r, r.id), uppdaterad: nu };
+        return { ...rensa(r, r.id), valv: false, uppdaterad: nu };
       });
       if (poster.length) {
         await env.DB.batch(poster.map((p) =>
@@ -460,6 +464,19 @@ export async function onRequest({ request, env, params }) {
 
     const id = delar[1];
     if (!giltigtId(id)) return svar({ fel: 'Ogiltigt id' }, 400);
+    const iDb = await hamta(env, id);
+    if (iDb && !syns(iDb)) return svar({ fel: 'Företaget finns inte' }, 404);
+
+    // POST /api/foretag/:id/valv – flytta in i eller ut ur valvet (bara Max och John-John)
+    if (delar[2] === 'valv' && metod === 'POST') {
+      if (!iValv) return svar({ fel: 'Finns inte' }, 404);
+      if (!iDb) return svar({ fel: 'Företaget finns inte' }, 404);
+      const { in: inValv } = await request.json().catch(() => ({}));
+      iDb.valv = !!inValv;
+      iDb.ringer = null;
+      iDb.valvLogg = [...(iDb.valvLogg || []), { tid: new Date().toISOString(), av: person, in: !!inValv }].slice(-20);
+      return svar(await spara(env, iDb));
+    }
 
     // POST /api/foretag/:id/plats – hitta företaget på kartan (OpenStreetMap / Nominatim)
     // Med { lat, lng } i kroppen flyttas pricken för hand. Annars slås adressen upp en gång och sparas.
@@ -524,6 +541,8 @@ export async function onRequest({ request, env, params }) {
       // Samtal sparas bara via /samtal, så två som ringer samtidigt inte skriver över varandra
       rec.samtal = gammal ? gammal.samtal || [] : Array.isArray(rec.samtal) ? rec.samtal : [];
       rec.arbete = gammal ? gammal.arbete || [] : [];
+      rec.valv = gammal ? !!gammal.valv : false;
+      rec.valvLogg = gammal ? gammal.valvLogg || [] : [];
       return svar(await spara(env, rec));
     }
 
