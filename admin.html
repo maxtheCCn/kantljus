@@ -471,6 +471,21 @@ a.ck-tile:hover{border-color:var(--glod)}
 .rr .vem b{display:inline;font-size:inherit;color:var(--ink);font-weight:600}
 .rr .nr .av{width:28px;height:28px;font-size:10px}
 /* ---------- ringlista (enkel) ---------- */
+.prisf{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch}
+.prisin{position:relative;flex:1 1 180px;display:block}
+.prisin .in{padding-right:38px;font-variant-numeric:tabular-nums}
+.prisin span{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--mute);font-size:14px;pointer-events:none}
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:12px;padding:3px;gap:3px;background:rgb(255 255 255/.02)}
+.seg label{display:flex}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:grid;place-items:center;padding:0 12px;min-height:36px;border-radius:9px;font-size:13.5px;color:var(--mute);cursor:pointer;transition:background .15s,color .15s;white-space:nowrap}
+.seg input:checked+span{background:rgb(255 90 31/.16);color:var(--ink);box-shadow:inset 0 0 0 1px rgb(255 90 31/.5)}
+.seg input:focus-visible+span{outline:2px solid var(--glod);outline-offset:1px}
+.ct.pris{grid-column:1/-1}
+.ct.pris b{font-size:17px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.lank{color:var(--glod);font-size:14px;text-align:left;padding:0}
+.lank:hover{text-decoration:underline}
+.prisx{display:block;margin-top:4px;font:500 12px var(--mono);color:var(--mute)}
 .lk-side{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:14px;font:600 15.5px var(--sans);letter-spacing:-.01em;color:var(--ink);text-align:left;border:1px solid rgb(255 122 44/.45);background:radial-gradient(260px 90px at 0 0,rgb(255 122 44/.2),transparent),rgb(255 255 255/.02);transition:border-color .2s,box-shadow .2s,transform .2s}
 .lk-side:hover{border-color:rgb(255 122 44/.85);box-shadow:0 12px 34px -18px rgb(255 90 31/.9);transform:translateY(-1px)}
 .lk-side .lk-plus{width:36px;height:36px;border-radius:10px}
@@ -486,7 +501,7 @@ a.ck-tile:hover{border-color:var(--glod)}
 .lk{display:grid;gap:20px}
 .lk h2{margin:0;font-size:26px}
 .lk-sub{margin:4px 0 0;color:var(--mute)}
-.lk>.f>span{display:flex;align-items:center;gap:8px;font:500 14.5px var(--sans);letter-spacing:0;text-transform:none;color:var(--ink)}
+.lk>.f>span,.lk .lk-lbl{display:flex;align-items:center;gap:8px;font:500 14.5px var(--sans);letter-spacing:0;text-transform:none;color:var(--ink)}
 .lk em{color:var(--glod);font-style:normal}
 .lk-nr{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:rgb(255 122 44/.16);color:#ffb37a;font:600 12px var(--mono)}
 .lk-in{min-height:52px;font-size:17px}
@@ -966,6 +981,11 @@ const pill = (s) => { const x = ST[s] || ST.att_ringa; return `<span class="pill
 const avatar = (n) => `<span class="av${n === S.me ? ' me' : ''}" title="${esc(person(n)?.full || n || '')}">${esc(ini(n))}</span>`;
 const kortDag = (iso) => new Date(iso + (iso.length === 10 ? 'T12:00' : '')).toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' }).replace('.', '').replace('.', '');
 const kr = (n) => new Intl.NumberFormat('sv-SE').format(Math.round(n || 0)) + ' kr';
+const prisTal = (x) => { const n = parseInt(String(x ?? '').replace(/[^\d]/g, ''), 10); return n > 0 ? Math.min(n, 10_000_000) : 0; };
+const prisText = (f) => (f.pris ? kr(f.pris) + (f.prisTyp === 'manad' ? '/mån' : '') : '');
+const prisFalt = (pris = '', typ = 'engang') => `<div class="prisf"><label class="prisin"><input class="in" name="pris" inputmode="numeric" autocomplete="off" placeholder="Till exempel 8 000" value="${pris ? new Intl.NumberFormat('sv-SE').format(pris) : ''}"><span>kr</span></label>
+  <div class="seg" role="radiogroup" aria-label="Typ av pris"><label><input type="radio" name="prisTyp" value="engang" ${typ !== 'manad' ? 'checked' : ''}><span>Engångspris</span></label><label><input type="radio" name="prisTyp" value="manad" ${typ === 'manad' ? 'checked' : ''}><span>Per månad</span></label></div></div>`;
+const prisFormat = (inp) => inp && (inp.oninput = () => { const n = prisTal(inp.value); const pos = inp.value.length - inp.selectionStart; inp.value = n ? new Intl.NumberFormat('sv-SE').format(n) : ''; const p = Math.max(0, inp.value.length - pos); inp.setSelectionRange(p, p); });
 
 /* ================= datum ================= */
 const pad = (n) => String(n).padStart(2, '0');
@@ -1386,7 +1406,7 @@ function vyRinglista() {
     ${l.length ? l.map((f) => { const s = senaste(f); return `
     <div class="tr2" role="row" tabindex="0" data-open="${f.id}">
       <span class="co"><b>${esc(f.namn)}</b><small>${esc([f.bransch, f.ort].filter(Boolean).join(' · ') || f.telefon || '—')}</small></span>
-      <span class="st">${pill(f.status)}${intrTag(f)}</span>
+      <span class="st">${pill(f.status)}${intrTag(f)}${f.pris ? `<span class="prisx">${prisText(f)}</span>` : ''}</span>
       <span class="said">${s ? `<span class="mono">${esc(s.av)} · ${nar(s.tid)}</span>${esc(s.sa) || '<span class="dim">Ingen anteckning</span>'}` : '<span class="dim">Inte ringd än</span>'}</span>
       <span>${f.nasta ? forfaller(f.nasta) : '<span class="dim">—</span>'}</span>
       <span class="who">${f.telefon ? `<a href="tel:${esc(f.telefon.replace(/[^\d+]/g, ''))}" title="Ring ${esc(f.telefon)}" data-stop><svg class="i"><use href="#i-phone"/></svg></a>` : ''}${f.ansvarig ? avatar(f.ansvarig) : ''}</span>
@@ -1432,7 +1452,7 @@ function vyKunder() {
         <dt>Kund sedan</dt><dd>${f.kund?.sedan ? new Date(f.kund.sedan).toLocaleDateString('sv-SE', { day: 'numeric', month: 'short', year: 'numeric' }).replace('.', '') : '—'}</dd>
         <dt>Kontakt</dt><dd>${esc(f.kontakt || '—')}</dd>
         <dt>Betalt</dt><dd>${betalt(f.id) ? kr(betalt(f.id)) : '0 kr'}</dd>
-        <dt>Ordervärde</dt><dd>${f.kund?.varde ? kr(f.kund.varde) : '—'}</dd>
+        <dt>Ordervärde</dt><dd>${f.kund?.varde ? kr(f.kund.varde) : f.pris && f.prisTyp !== 'manad' ? kr(f.pris) : '—'}</dd>
         ${f.kund?.manad ? `<dt>Per månad</dt><dd>${kr(f.kund.manad)}</dd>` : ''}
       </dl>
       <span style="display:flex;align-items:center;justify-content:space-between;gap:8px">${avatar(f.ansvarig)}<span class="mono dim">${f.webb ? esc(f.webb.replace(/^https?:\/\//, '')) : ''}</span></span>
@@ -1637,6 +1657,7 @@ function jaFormular(id, notis = '') {
         <label class="f"><span>Bransch</span><input class="in" name="bransch" value="${esc(f.bransch || '')}"></label>
         <label class="f"><span>Nuvarande hemsida</span><input class="in" name="webb" value="${esc(f.webb || '')}" placeholder="foretag.se eller tomt"></label>
         <div class="f full"><span>Vad vill de ha?</span><div class="svc">${TJANSTER.map((t) => `<button type="button" class="chip" data-tj="${t}" aria-pressed="${valda.has(t)}">${t}</button>`).join('')}</div></div>
+        <div class="f full"><span>Diskuterat pris (valfritt)</span>${prisFalt(f.pris, f.prisTyp)}</div>
         <label class="f"><span>Möte bokat (valfritt)</span><input class="in" name="motedag" type="date" min="${idag()}"></label>
         <label class="f"><span>Tid</span><input class="in" name="motetid" type="time" step="900"></label>
         <label class="f full"><span>Anteckning</span><textarea class="in" name="ant" rows="3" placeholder="Vad sa de? Vad behöver de?">${esc(notis)}</textarea></label>
@@ -1645,6 +1666,7 @@ function jaFormular(id, notis = '') {
     <footer class="jaf-foot"><button type="button" class="btn ghost" id="jaTillbaka">Tillbaka till samtalet</button><button type="submit" class="btn pri" id="jaSpara"><svg class="i"><use href="#i-star"/></svg>Spara som kund</button></footer>
   </form>`, 'wide');
   const fm = $('#jaForm');
+  prisFormat(fm.pris);
   $$('[data-tj]', fm).forEach((b) => b.onclick = () => { const t = b.dataset.tj; valda.has(t) ? valda.delete(t) : valda.add(t); b.setAttribute('aria-pressed', valda.has(t)); });
   $('#jaStang').onclick = () => ringKort(id);
   $('#jaTillbaka').onclick = () => ringKort(id);
@@ -1664,7 +1686,8 @@ function jaFormular(id, notis = '') {
       await db.spara({
         ...ut, ringer: null, ansvarig: ut.ansvarig || S.me,
         namn: v.namn, telefon: v.telefon, ort: v.ort, kontakt: v.kontakt, epost: v.epost, bransch: v.bransch, webb: v.webb,
-        kund: { ...(ut.kund || {}), tjanster: [...valda], sedan: ut.kund?.sedan || idag(), ant: v.ant },
+        kund: { ...(ut.kund || {}), tjanster: [...valda], sedan: ut.kund?.sedan || idag(), ant: v.ant, ...(prisTal(v.pris) ? (v.prisTyp === 'manad' ? { manad: prisTal(v.pris) } : { varde: prisTal(v.pris) }) : {}) },
+        ...(prisTal(v.pris) ? { pris: prisTal(v.pris), prisTyp: v.prisTyp === 'manad' ? 'manad' : 'engang' } : {}),
       });
       stangModal(); render(false);
       toast(`${v.namn} är nu kund! 🎉`);
@@ -2738,6 +2761,7 @@ function ritaLada() {
       <div class="ct"><small>Kontaktperson</small><span>${esc(f.kontakt || '—')}</span></div>
       <div class="ct"><small>E-post</small>${f.epost ? `<a href="mailto:${esc(f.epost)}">${esc(f.epost)}</a>` : '<span class="dim">—</span>'}</div>
       <div class="ct"><small>Webbplats</small>${f.webb ? `<a href="${esc(/^https?:/.test(f.webb) ? f.webb : 'https://' + f.webb)}" target="_blank" rel="noopener">${esc(f.webb.replace(/^https?:\/\//, ''))}</a>` : '<span class="dim">—</span>'}</div>
+      <div class="ct pris"><small>Diskuterat pris</small>${f.pris ? `<b>${prisText(f)}</b>` : `<button class="lank" id="dPris">Lägg till pris</button>`}</div>
     </div>
 
     <form class="log" id="logForm">
@@ -2785,6 +2809,7 @@ function ritaLada() {
 
   $('#close', d).onclick = stangLada;
   $('#edit', d).onclick = () => nyttForetag(f);
+  $('#dPris', d)?.addEventListener('click', () => { nyttForetag(f); setTimeout(() => $('#fForm')?.pris?.focus(), 60); });
   $('#dStatus', d).onchange = async (e) => { await sparaFalt(f, { status: e.target.value, ...(e.target.value === 'kund' && !f.kund?.sedan ? { kund: { ...(f.kund || {}), sedan: idag() } } : {}) }); };
   $('#dAns', d).onchange = (e) => sparaFalt(f, { ansvarig: e.target.value });
   $$('[data-u]', d).forEach((b) => b.onclick = () => { S.pick = S.pick === b.dataset.u ? null : b.dataset.u; $$('[data-u]', d).forEach((x) => x.setAttribute('aria-pressed', x.dataset.u === S.pick)); });
@@ -2877,6 +2902,7 @@ function laggTillKund() {
         ${[[1, 'Imorgon'], [3, 'Om 3 dagar'], [7, 'Om en vecka'], [30, 'Om en månad']].map(([d, t]) => `<button type="button" class="chip" data-nar="${d}">${t}</button>`).join('')}
         <input class="in lk-dat" type="date" id="lkDat" aria-label="Välj datum"></div>
     </fieldset>
+    <div class="f"><span class="lk-lbl"><b class="lk-nr">4</b>Diskuterat pris <span class="dim">(valfritt)</span></span>${prisFalt()}</div>
     <details class="lk-mer"><summary>Fler uppgifter <span class="dim">(valfritt)</span></summary>
       <div class="fgrid">
         <label class="f"><span>Kontaktperson</span><input class="in" name="kontakt" placeholder="Anna Svensson"></label>
@@ -2891,6 +2917,7 @@ function laggTillKund() {
     <button type="submit" class="btn pri lk-spara"><svg class="i"><use href="#i-plus"/></svg>Lägg till kund</button>
   </form>`, 'lkbox');
   const F = $('#lkForm');
+  prisFormat(F.pris);
   let egenSt = 'intresserad';
   const niva = () => NIVAER.find((n) => n.k === val);
   const behoverDatum = () => !!niva()?.nar || (val === 'egen' && ['aterkom', 'mote'].includes(egenSt));
@@ -2927,11 +2954,13 @@ function laggTillKund() {
     const n = niva();
     const status = val === 'egen' ? egenSt : n.st;
     const etikett = val === 'egen' ? egen : n.t;
-    const { ant, ...falt } = v;
+    const { ant, pris: prisIn, prisTyp, ...falt } = v;
+    const pris = prisTal(prisIn);
     const rec = { id: nyId(), skapad: new Date().toISOString(), samtal: [], ansvarig: S.me || '', ...falt, status, intresse: etikett, intresseStatus: status };
+    if (pris) { rec.pris = pris; rec.prisTyp = prisTyp === 'manad' ? 'manad' : 'engang'; }
     if (ant) rec.hemsidaNotis = ant;
     if (behoverDatum()) { rec.nasta = nar; rec.nastaNotis = ant || etikett; }
-    if (status === 'kund') rec.kund = { sedan: idag() };
+    if (status === 'kund') rec.kund = { sedan: idag(), ...(pris ? (rec.prisTyp === 'manad' ? { manad: pris } : { varde: pris }) : {}) };
     try {
       await db.spara(rec);
       stangModal(); render(false);
@@ -2953,6 +2982,7 @@ function nyttForetag(f) {
       <label class="f"><span>Ort</span><input class="in" name="ort" value="${esc(f.ort || '')}" placeholder="Södermalm"></label>
       <label class="f"><span>E-post</span><input class="in" name="epost" type="email" value="${esc(f.epost || '')}"></label>
       <label class="f"><span>Nuvarande sajt</span><input class="in" name="webb" value="${esc(f.webb || '')}" placeholder="foretaget.se"></label>
+      <div class="f full"><span>Diskuterat pris</span>${prisFalt(f.pris, f.prisTyp)}</div>
       ${ny ? `<label class="f"><span>Status</span><select class="in" name="status">${[...FLODE, 'nej'].map((s) => `<option value="${s}" ${f.status === s ? 'selected' : ''}>${ST[s].t}</option>`).join('')}</select></label>
       <label class="f"><span>Ansvarig</span><select class="in" name="ansvarig"><option value="">Ingen</option>${TEAM.map((p) => `<option ${f.ansvarig === p.n ? 'selected' : ''}>${p.n}</option>`).join('')}</select></label>` : ''}
     </div>
@@ -2960,10 +2990,12 @@ function nyttForetag(f) {
     <div class="mact"><button type="button" class="btn ghost" id="fCancel">Avbryt</button>${ny ? '<button type="submit" class="btn" name="ring" value="1">Spara och logga samtal</button>' : ''}<button type="submit" class="btn pri">Spara</button></div>
   </form>`);
   $('#fCancel').onclick = stangModal;
+  prisFormat($('#fForm').pris);
   $('#fForm').onsubmit = async (e) => {
     e.preventDefault();
     const fd = new FormData(e.target);
     const v = Object.fromEntries([...fd.entries()].map(([k, x]) => [k, String(x).trim()]));
+    v.pris = prisTal(v.pris); v.prisTyp = v.prisTyp === 'manad' ? 'manad' : 'engang';
     const dubbel = ny && S.data.find((x) => x.namn.toLowerCase() === v.namn.toLowerCase() || (v.telefon && x.telefon && x.telefon.replace(/\D/g, '') === v.telefon.replace(/\D/g, '')));
     if (dubbel && !e.target.dataset.ok) { e.target.dataset.ok = 1; toast(`${dubbel.namn} finns redan. Tryck Spara igen för att lägga till ändå.`, true); return; }
     const rec = ny ? { id: nyId(), skapad: new Date().toISOString(), samtal: [], ...v } : { ...f, ...v };
