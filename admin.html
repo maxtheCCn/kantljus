@@ -471,6 +471,48 @@ a.ck-tile:hover{border-color:var(--glod)}
 .rr .vem b{display:inline;font-size:inherit;color:var(--ink);font-weight:600}
 .rr .nr .av{width:28px;height:28px;font-size:10px}
 /* ---------- ringlista (enkel) ---------- */
+.lk-side{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:14px;font:600 15.5px var(--sans);letter-spacing:-.01em;color:var(--ink);text-align:left;border:1px solid rgb(255 122 44/.45);background:radial-gradient(260px 90px at 0 0,rgb(255 122 44/.2),transparent),rgb(255 255 255/.02);transition:border-color .2s,box-shadow .2s,transform .2s}
+.lk-side:hover{border-color:rgb(255 122 44/.85);box-shadow:0 12px 34px -18px rgb(255 90 31/.9);transform:translateY(-1px)}
+.lk-side .lk-plus{width:36px;height:36px;border-radius:10px}
+@media (min-width:821px){#addBtn.lkdup{display:none}}
+@media (max-width:820px){.lk-side{display:none}}
+.lk-stor{display:flex;align-items:center;gap:16px;width:100%;padding:18px 20px;border-radius:var(--r);text-align:left;border:1px solid rgb(255 122 44/.45);background:radial-gradient(500px 120px at 0 0,rgb(255 122 44/.16),transparent),var(--s1);transition:border-color .2s,transform .2s,box-shadow .2s;margin-bottom:16px}
+.lk-stor:hover{border-color:rgb(255 122 44/.8);box-shadow:0 14px 40px -22px rgb(255 90 31/.9);transform:translateY(-1px)}
+.lk-stor b{display:block;font:600 19px/1.2 var(--sans);letter-spacing:-.02em;color:var(--ink)}
+.lk-stor small{color:var(--mute);font-size:13.5px}
+.lk-plus{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex:none;background:linear-gradient(135deg,#ffc061,#ff4a1c);color:#1a0802}
+.lk-plus .i{width:22px;height:22px;stroke-width:2.2}
+.mbox.lkbox{width:min(680px,100%);gap:20px}
+.lk{display:grid;gap:20px}
+.lk h2{margin:0;font-size:26px}
+.lk-sub{margin:4px 0 0;color:var(--mute)}
+.lk>.f>span{display:flex;align-items:center;gap:8px;font:500 14.5px var(--sans);letter-spacing:0;text-transform:none;color:var(--ink)}
+.lk em{color:var(--glod);font-style:normal}
+.lk-nr{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:rgb(255 122 44/.16);color:#ffb37a;font:600 12px var(--mono)}
+.lk-in{min-height:52px;font-size:17px}
+.lk-fs{border:0;padding:0;margin:0;display:grid;gap:12px;min-width:0}
+.lk-fs legend{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:500;margin-bottom:10px;padding:0}
+.lk-niva{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px}
+.lkn{display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:center;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:rgb(255 255 255/.02);transition:border-color .15s,background .15s}
+.lkn i{width:8px;height:8px;border-radius:50%;background:var(--c,var(--mute));grid-row:span 2}
+.lkn b{font-size:14px;font-weight:600;color:var(--ink)}
+.lkn small{grid-column:2;font-size:12px;color:var(--dim)}
+.lkn:hover{border-color:rgb(255 255 255/.25)}
+.lkn[aria-pressed="true"]{border-color:var(--glod);background:rgb(255 90 31/.12);box-shadow:0 0 0 1px rgb(255 90 31/.4)}
+.lkn.egen{border-style:dashed}
+.lk-egen{display:grid;gap:10px}
+.lk-egenst,.lk-nar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px}
+.lk-egenst .chip i,.lk-nar .chip i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.lk-egenst .chip[aria-pressed="true"],.lk-nar .chip[aria-pressed="true"]{border-color:var(--glod);color:var(--ink);background:rgb(255 90 31/.12)}
+.lk-nar[hidden],.lk-egen[hidden]{display:none}
+.lk-dat{width:auto;min-height:34px;padding:0 10px;font-size:13px}
+.lk-mer{border:1px solid var(--line);border-radius:12px;padding:0 14px}
+.lk-mer summary{cursor:pointer;padding:12px 0;font-weight:500;font-size:14.5px;list-style-position:inside}
+.lk-mer[open]{padding-bottom:14px}
+.lk-spara{min-height:54px;font-size:16.5px;width:100%;justify-content:center}
+.intr{display:inline-flex;align-items:center;margin-left:6px;padding:3px 9px;border-radius:999px;font-size:12px;color:var(--ink);background:rgb(255 255 255/.06);border:1px solid var(--line2);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.dh .intr{margin-left:0}
+@media (max-width:640px){.lk-niva{grid-template-columns:repeat(2,minmax(0,1fr))}.lk-stor{padding:14px 16px}.lk-stor b{font-size:17px}}
 .jobb{border:1px solid rgb(90 200 255/.3);background:linear-gradient(100deg,rgb(90 200 255/.08),transparent 70%),var(--s1);border-radius:var(--r);padding:14px 16px;display:grid;gap:8px}
 .jobb h3{margin:0;display:flex;align-items:center;gap:8px;font:500 11.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#7ad7ff}
 .jprick{width:7px;height:7px;border-radius:50%;background:#5ac8ff;animation:mnblink 1.6s infinite}
@@ -812,6 +854,7 @@ button.jb:hover{background:rgb(255 255 255/.04)}
       <button class="nv" data-view="skills"><svg class="i"><use href="#i-puzzle"/></svg>Skills</button>
     </nav>
     <div class="grow"></div>
+    <button class="lk-side" id="lkSide"><span class="lk-plus"><svg class="i"><use href="#i-plus"/></svg></span>Lägg till en kund</button>
     <div class="demo-flag" id="demoFlag" hidden><span><b>Demoläge.</b> Påhittade företag. Inget sparas när du stänger fliken.</span></div>
     <div class="meBox"><span class="av me" id="meAv">?</span><span><b id="meName">–</b><small>Inloggad</small></span><button class="ico" id="meSwitch" title="Byt person" aria-label="Byt person"><svg class="i"><use href="#i-swap"/></svg></button></div>
     <div class="sidefoot"><a class="btn ghost sm" href="./">Till sajten</a><button class="btn ghost sm" id="logout"><svg class="i"><use href="#i-out"/></svg>Logga ut</button></div>
@@ -918,6 +961,7 @@ const store = {
 };
 const person = (n) => TEAM.find((p) => p.n === n);
 const ini = (n) => person(n)?.ini || (n || '?').slice(0, 2).toUpperCase();
+const intrTag = (f) => (f.intresse && f.intresseStatus === f.status && f.intresse !== ST[f.status]?.t ? `<span class="intr">${esc(f.intresse)}</span>` : '');
 const pill = (s) => { const x = ST[s] || ST.att_ringa; return `<span class="pill" style="--c:${x.c}"><i></i>${x.t}</span>`; };
 const avatar = (n) => `<span class="av${n === S.me ? ' me' : ''}" title="${esc(person(n)?.full || n || '')}">${esc(ini(n))}</span>`;
 const kortDag = (iso) => new Date(iso + (iso.length === 10 ? 'T12:00' : '')).toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' }).replace('.', '').replace('.', '');
@@ -1214,12 +1258,14 @@ function ga(v) {
 }
 $$('.nv[data-view]').forEach((b) => b.onclick = () => ga(b.dataset.view));
 $('[data-livenav]').onclick = oppnaLive;
-$('#addBtn').onclick = () => (S.view === 'ekonomi' ? nyPost('in') : S.view === 'ring' ? laggTillNummer() : nyttForetag());
+$('#lkSide').onclick = () => laggTillKund();
+$('#addBtn').onclick = () => (S.view === 'ekonomi' ? nyPost('in') : S.view === 'ring' ? laggTillNummer() : laggTillKund());
 
 function render(anim = true) {
   $$('.nv[data-view]').forEach((b) => { if (b.dataset.view === S.view) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
   $('#title').textContent = VIEWS[S.view];
-  $('#addBtn').innerHTML = `<svg class="i"><use href="#i-plus"/></svg>${S.view === 'ekonomi' ? 'Ny post' : S.view === 'ring' ? 'Lägg till nummer' : 'Nytt företag'}`;
+  $('#addBtn').innerHTML = `<svg class="i"><use href="#i-plus"/></svg>${S.view === 'ekonomi' ? 'Ny post' : S.view === 'ring' ? 'Lägg till nummer' : 'Lägg till en kund'}`;
+  $('#addBtn').classList.toggle('lkdup', S.view !== 'ekonomi' && S.view !== 'ring');
   document.title = VIEWS[S.view] + ' · Admin · Kantljus';
   const aktiva = S.data.filter((f) => f.status !== 'kund' && f.status !== 'nej').length;
   $('#nRing').textContent = aktiva || '';
@@ -1340,7 +1386,7 @@ function vyRinglista() {
     ${l.length ? l.map((f) => { const s = senaste(f); return `
     <div class="tr2" role="row" tabindex="0" data-open="${f.id}">
       <span class="co"><b>${esc(f.namn)}</b><small>${esc([f.bransch, f.ort].filter(Boolean).join(' · ') || f.telefon || '—')}</small></span>
-      <span class="st">${pill(f.status)}</span>
+      <span class="st">${pill(f.status)}${intrTag(f)}</span>
       <span class="said">${s ? `<span class="mono">${esc(s.av)} · ${nar(s.tid)}</span>${esc(s.sa) || '<span class="dim">Ingen anteckning</span>'}` : '<span class="dim">Inte ringd än</span>'}</span>
       <span>${f.nasta ? forfaller(f.nasta) : '<span class="dim">—</span>'}</span>
       <span class="who">${f.telefon ? `<a href="tel:${esc(f.telefon.replace(/[^\d+]/g, ''))}" title="Ring ${esc(f.telefon)}" data-stop><svg class="i"><use href="#i-phone"/></svg></a>` : ''}${f.ansvarig ? avatar(f.ansvarig) : ''}</span>
@@ -1391,7 +1437,7 @@ function vyKunder() {
       </dl>
       <span style="display:flex;align-items:center;justify-content:space-between;gap:8px">${avatar(f.ansvarig)}<span class="mono dim">${f.webb ? esc(f.webb.replace(/^https?:\/\//, '')) : ''}</span></span>
     </button>`).join('')}</div>`
-  : `<section class="card"><div class="empty"><b>Inga kunder än</b>När ett samtal slutar med ”Kund” hamnar företaget här.</div></section>`}`;
+  : `<section class="card"><div class="empty"><b>Inga kunder än</b>Tryck på Lägg till en kund och välj ”Ja, blir kund”, eller logga ett samtal som slutar med ”Kund”.</div></section>`}`;
 }
 
 /* ================= RINGLISTA (enkel) ================= */
@@ -2678,7 +2724,7 @@ function ritaLada() {
   const k = f.kund || {};
   d.innerHTML = `
   <div class="dh">
-    <div class="r1"><div><h2>${esc(f.namn)}</h2><div class="sub">${esc([f.bransch, f.ort].filter(Boolean).join(' · ') || 'Ingen bransch angiven')}</div></div><span class="sp"></span>
+    <div class="r1"><div><h2>${esc(f.namn)}</h2><div class="sub">${esc([f.bransch, f.ort].filter(Boolean).join(' · ') || 'Ingen bransch angiven')}</div>${intrTag(f) ? `<div style="margin-top:8px">${intrTag(f)}</div>` : ''}</div><span class="sp"></span>
       <button class="ico" id="edit" title="Redigera uppgifter" aria-label="Redigera"><svg class="i"><use href="#i-edit"/></svg></button>
       <button class="ico" id="close" aria-label="Stäng"><svg class="i"><use href="#i-x"/></svg></button></div>
     <div class="r2">
@@ -2800,6 +2846,100 @@ async function loggaSamtal(f) {
 }
 
 /* ================= NYTT / REDIGERA ================= */
+/* ================= LÄGG TILL EN KUND ================= */
+const NIVAER = [
+  { k: 'ring', t: 'Ring tillbaka', h: 'Ring dem ett annat datum', st: 'aterkom', nar: 1 },
+  { k: 'demo', t: 'Vill se en demo', h: 'Gör en demo åt dem', st: 'intresserad' },
+  { k: 'intr', t: 'Intresserad', h: 'Låter positiva', st: 'intresserad' },
+  { k: 'mejl', t: 'Vill ha info på mejl', h: 'Skicka mer info', st: 'intresserad' },
+  { k: 'vmote', t: 'Vill träffas', h: 'Boka ett möte', st: 'intresserad' },
+  { k: 'mote', t: 'Möte bokat', h: 'Datum är bestämt', st: 'mote', nar: 2 },
+  { k: 'voffert', t: 'Vill ha offert', h: 'Skicka ett pris', st: 'intresserad' },
+  { k: 'offert', t: 'Offert skickad', h: 'Väntar på svar', st: 'offert' },
+  { k: 'kund', t: 'Ja, blir kund', h: 'Klart!', st: 'kund' },
+  { k: 'senare', t: 'Kanske senare', h: 'Hör av dig om ett tag', st: 'aterkom', nar: 30 },
+  { k: 'inget', t: 'Svarade inte', h: 'Ring igen', st: 'inget_svar' },
+  { k: 'nej', t: 'Inte intresserad', h: 'Sa nej tack', st: 'nej' },
+];
+const dagOm = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return isoDag(d); };
+function laggTillKund() {
+  let val = 'ring', nar = dagOm(1);
+  modal(`<form id="lkForm" class="lk" novalidate>
+    <div><h2>Lägg till en kund</h2><p class="lk-sub">Bara namnet behövs. Allt annat kan du fylla i nu eller senare.</p></div>
+    <label class="f"><span><b class="lk-nr">1</b>Vad heter företaget? <em>*</em></span><input class="in lk-in" name="namn" required autofocus placeholder="Till exempel Salong Vera" autocomplete="off"></label>
+    <label class="f"><span><b class="lk-nr">2</b>Telefonnummer</span><input class="in lk-in" name="telefon" type="tel" placeholder="08-123 45 67" autocomplete="off"></label>
+    <fieldset class="lk-fs"><legend><b class="lk-nr">3</b>Hur intresserade är de?</legend>
+      <div class="lk-niva">${NIVAER.map((n) => `<button type="button" class="lkn" data-niva="${n.k}" aria-pressed="${n.k === val}"><i style="--c:${ST[n.st].c}"></i><b>${n.t}</b><small>${n.h}</small></button>`).join('')}
+        <button type="button" class="lkn egen" data-niva="egen" aria-pressed="false"><i></i><b>Egen …</b><small>Skriv själv</small></button></div>
+      <div class="lk-egen" hidden><input class="in" id="lkEgen" maxlength="60" placeholder="Till exempel: Vill vänta tills efter jul">
+        <div class="lk-egenst"><span class="dim">Hamnar under</span>${['att_ringa', 'aterkom', 'intresserad', 'mote', 'offert', 'kund', 'nej'].map((x) => `<button type="button" class="chip" data-egenst="${x}" aria-pressed="${x === 'intresserad'}"><i style="--c:${ST[x].c}"></i>${ST[x].t}</button>`).join('')}</div></div>
+      <div class="lk-nar"><span class="dim" id="lkNarT">När?</span>
+        ${[[1, 'Imorgon'], [3, 'Om 3 dagar'], [7, 'Om en vecka'], [30, 'Om en månad']].map(([d, t]) => `<button type="button" class="chip" data-nar="${d}">${t}</button>`).join('')}
+        <input class="in lk-dat" type="date" id="lkDat" aria-label="Välj datum"></div>
+    </fieldset>
+    <details class="lk-mer"><summary>Fler uppgifter <span class="dim">(valfritt)</span></summary>
+      <div class="fgrid">
+        <label class="f"><span>Kontaktperson</span><input class="in" name="kontakt" placeholder="Anna Svensson"></label>
+        <label class="f"><span>E-post</span><input class="in" name="epost" type="email" placeholder="anna@foretaget.se"></label>
+        <label class="f"><span>Bransch</span><input class="in" name="bransch" placeholder="Frisör" list="branscher"></label>
+        <label class="f"><span>Adress eller område</span><input class="in" name="ort" placeholder="Karlavägen 3"></label>
+        <label class="f full"><span>Nuvarande hemsida</span><input class="in" name="webb" placeholder="foretaget.se"></label>
+        <label class="f full"><span>Anteckning</span><textarea class="in" name="ant" rows="2" placeholder="Vad sa de? Något att komma ihåg?"></textarea></label>
+      </div>
+      <datalist id="branscher">${[...new Set(S.data.map((x) => x.bransch).filter(Boolean))].map((b) => `<option value="${esc(b)}">`).join('')}</datalist>
+    </details>
+    <button type="submit" class="btn pri lk-spara"><svg class="i"><use href="#i-plus"/></svg>Lägg till kund</button>
+  </form>`, 'lkbox');
+  const F = $('#lkForm');
+  let egenSt = 'intresserad';
+  const niva = () => NIVAER.find((n) => n.k === val);
+  const behoverDatum = () => !!niva()?.nar || (val === 'egen' && ['aterkom', 'mote'].includes(egenSt));
+  const ritaVal = () => {
+    $$('[data-niva]', F).forEach((b) => b.setAttribute('aria-pressed', b.dataset.niva === val));
+    $('.lk-egen', F).hidden = val !== 'egen';
+    const n = niva(), medDatum = behoverDatum();
+    $('.lk-nar', F).hidden = !medDatum;
+    if (medDatum) {
+      $('#lkNarT').textContent = (n?.k === 'mote' || (val === 'egen' && egenSt === 'mote')) ? 'När är mötet?' : 'När ska vi höra av oss?';
+      $('#lkDat').value = nar;
+      $$('[data-nar]', F).forEach((b) => b.setAttribute('aria-pressed', dagOm(+b.dataset.nar) === nar));
+    }
+    $$('[data-egenst]', F).forEach((b) => b.setAttribute('aria-pressed', b.dataset.egenst === egenSt));
+  };
+  $$('[data-niva]', F).forEach((b) => b.onclick = () => {
+    val = b.dataset.niva; const n = niva();
+    if (n?.nar) nar = dagOm(n.nar);
+    ritaVal(); if (val === 'egen') $('#lkEgen').focus();
+  });
+  $$('[data-nar]', F).forEach((b) => b.onclick = () => { nar = dagOm(+b.dataset.nar); ritaVal(); });
+  $('#lkDat').onchange = (e) => { if (e.target.value) { nar = e.target.value; ritaVal(); } };
+  $$('[data-egenst]', F).forEach((b) => b.onclick = () => { egenSt = b.dataset.egenst; if (behoverDatum()) nar = dagOm(7); ritaVal(); });
+  ritaVal();
+  let varnad = false;
+  F.onsubmit = async (e) => {
+    e.preventDefault();
+    const v = Object.fromEntries([...new FormData(F).entries()].map(([k, x]) => [k, String(x).trim()]));
+    if (!v.namn) { toast('Skriv vad företaget heter.', true); F.namn.focus(); return; }
+    const egen = $('#lkEgen').value.trim();
+    if (val === 'egen' && !egen) { toast('Skriv vilken intressenivå du menar, eller välj en av knapparna.', true); $('#lkEgen').focus(); return; }
+    const dubbel = S.data.find((x) => x.namn.toLowerCase() === v.namn.toLowerCase() || (v.telefon && x.telefon && x.telefon.replace(/\D/g, '') === v.telefon.replace(/\D/g, '')));
+    if (dubbel && !varnad) { varnad = true; toast(`${dubbel.namn} finns redan. Tryck Lägg till kund igen för att lägga till ändå.`, true); return; }
+    const n = niva();
+    const status = val === 'egen' ? egenSt : n.st;
+    const etikett = val === 'egen' ? egen : n.t;
+    const { ant, ...falt } = v;
+    const rec = { id: nyId(), skapad: new Date().toISOString(), samtal: [], ansvarig: S.me || '', ...falt, status, intresse: etikett, intresseStatus: status };
+    if (ant) rec.hemsidaNotis = ant;
+    if (behoverDatum()) { rec.nasta = nar; rec.nastaNotis = ant || etikett; }
+    if (status === 'kund') rec.kund = { sedan: idag() };
+    try {
+      await db.spara(rec);
+      stangModal(); render(false);
+      toast(`${rec.namn} är tillagt som ”${etikett}”`);
+    } catch (err) { toast(err.message, true); }
+  };
+}
+
 function nyttForetag(f) {
   const ny = !f;
   f = f || { status: 'att_ringa', ansvarig: S.me || '' };
@@ -2879,7 +3019,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { if ($('#modal').classList.contains('on') && S.me) return stangModal(); if (S.open) return stangLada(); }
   if (skriver || e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key === '/') { e.preventDefault(); if (S.view !== 'ringlista') ga('ringlista'); $('#q')?.focus(); }
-  if (e.key === 'n' || e.key === 'N') { e.preventDefault(); nyttForetag(); }
+  if (e.key === 'n' || e.key === 'N') { e.preventDefault(); laggTillKund(); }
   if (e.key === 'l' || e.key === 'L') { e.preventDefault(); oppnaLive(); }
   if (['1', '2', '3', '4', '5', '6', '7', '8'].includes(e.key)) ga(Object.keys(VIEWS)[+e.key - 1]);
 });
