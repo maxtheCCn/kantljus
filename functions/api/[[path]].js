@@ -145,6 +145,13 @@ async function nyckelPerson(request, env) {
 }
 const JOBBAR_TTL = 4 * 60 * 60 * 1000; // "jobbar just nu" försvinner efter 4 timmar utan nytt
 
+// Vad vi söker på för att hitta företaget på kartan: adressen, plus Stockholm om ingen ort står med
+function platsFraga(rec) {
+  const a = typeof rec.ort === 'string' ? rec.ort.trim().slice(0, 160) : '';
+  if (!a) return '';
+  return /\d{3}\s?\d{2}|stockholm|solna|sundbyberg|nacka|lidingö|danderyd|täby|sollentuna|huddinge|bromma|sverige/i.test(a) ? a : a + ', Stockholm';
+}
+
 async function hamta(env, id) {
   const rad = await env.DB.prepare('SELECT data FROM foretag WHERE id = ?').bind(id).first();
   return rad ? JSON.parse(rad.data) : null;
@@ -361,6 +368,31 @@ export async function onRequest({ request, env, params }) {
 
     const id = delar[1];
     if (!giltigtId(id)) return svar({ fel: 'Ogiltigt id' }, 400);
+
+    // POST /api/foretag/:id/plats – hitta företaget på kartan (OpenStreetMap / Nominatim)
+    // Med { lat, lng } i kroppen flyttas pricken för hand. Annars slås adressen upp en gång och sparas.
+    if (delar[2] === 'plats' && metod === 'POST') {
+      const rec = await hamta(env, id);
+      if (!rec) return svar({ fel: 'Företaget finns inte' }, 404);
+      const kropp = await request.json().catch(() => ({}));
+      const q = platsFraga(rec);
+      if (Number.isFinite(kropp.lat) && Number.isFinite(kropp.lng)) {
+        if (Math.abs(kropp.lat - 59.33) > 3 || Math.abs(kropp.lng - 18.07) > 6) return svar({ fel: 'Pricken hamnade för långt bort' }, 400);
+        rec.plats = { lat: +kropp.lat.toFixed(6), lng: +kropp.lng.toFixed(6), q, manuell: true, av: person || '', tid: new Date().toISOString() };
+        return svar(await spara(env, rec));
+      }
+      if (!q) return svar({ fel: 'Företaget saknar adress' }, 400);
+      if (rec.plats && rec.plats.q === q && !kropp.igen) return svar(rec);
+      const u = new URL('https://nominatim.openstreetmap.org/search');
+      u.search = new URLSearchParams({ q, format: 'jsonv2', limit: '1', countrycodes: 'se', viewbox: '17.75,59.45,18.35,59.2', bounded: '0', 'accept-language': 'sv' });
+      const r = await fetch(u, { headers: { 'User-Agent': 'kantljus-admin/1 (https://kantljus.se)', Referer: 'https://kantljus.se/' } }).catch(() => null);
+      if (!r || !r.ok) return svar({ fel: 'Kartsöket svarar inte just nu. Försök igen om en stund.' }, 502);
+      const [hit] = await r.json();
+      rec.plats = hit
+        ? { lat: +(+hit.lat).toFixed(6), lng: +(+hit.lon).toFixed(6), q, namn: String(hit.display_name || '').slice(0, 160), tid: new Date().toISOString() }
+        : { fel: true, q, tid: new Date().toISOString() };
+      return svar(await spara(env, rec));
+    }
 
     // POST /api/foretag/:id/avsluta – bara Max får avsluta ett pågående samtal
     if (delar[2] === 'avsluta' && metod === 'POST') {

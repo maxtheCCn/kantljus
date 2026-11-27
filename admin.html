@@ -486,6 +486,47 @@ a.ck-tile:hover{border-color:var(--glod)}
 .lank{color:var(--glod);font-size:14px;text-align:left;padding:0}
 .lank:hover{text-decoration:underline}
 .prisx{display:block;margin-top:4px;font:500 12px var(--mono);color:var(--mute)}
+.kchips{margin-bottom:14px}
+.kwrap{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:16px;align-items:start}
+.khost,.kmap{height:calc(100dvh - 270px);min-height:420px;border-radius:var(--r);overflow:hidden}
+.khost{border:1px solid var(--line);background:#0d0d0f}
+.kmap,.kmap.leaflet-container{background:#121214}
+.kmap .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.88) saturate(.35)}
+.kmap .leaflet-control-zoom{border:1px solid var(--line2)!important;border-radius:10px;overflow:hidden}
+.kmap .leaflet-control-zoom a{background:#17171a;color:var(--ink);border-color:var(--line)!important}
+.kmap .leaflet-control-zoom a:hover{background:#222226}
+.kp-wrap{background:none;border:0}
+.kp{display:block;width:16px;height:16px;margin:3px;border-radius:50%;background:var(--c);border:2px solid #0c0c0d;box-shadow:0 0 0 1.5px var(--c),0 0 16px var(--c);cursor:pointer;transition:transform .15s}
+.kp:hover{transform:scale(1.35)}
+.kp.puls::after{content:"";position:absolute;inset:3px;border-radius:50%;border:2px solid var(--c);animation:kpuls 2.4s infinite;pointer-events:none}
+@keyframes kpuls{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.6);opacity:0}}
+.kp.flytt{transform:scale(1.5);box-shadow:0 0 0 3px #fff,0 0 22px var(--c);cursor:grab}
+.kjag{display:block;width:14px;height:14px;margin:3px;border-radius:50%;background:#4aa3ff;border:3px solid #fff;box-shadow:0 0 0 6px rgb(74 163 255/.25)}
+.kpopup .leaflet-popup-content-wrapper{background:#151517;color:var(--ink);border:1px solid var(--line2);border-radius:14px;box-shadow:0 20px 50px -20px #000}
+.kpopup .leaflet-popup-tip{background:#151517}
+.kpopup .leaflet-popup-content{margin:14px 16px;font:14px/1.45 var(--sans)}
+.kpopup a.leaflet-popup-close-button{color:var(--mute)}
+.kpop{display:grid;gap:6px}
+.kpop b{font-size:16px;letter-spacing:-.01em}
+.kpop small{color:var(--mute);font-size:12.5px}
+.kpop p{margin:0;color:var(--mute);font-size:13px}
+.kpop-st{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.kpop-st .intr{margin-left:0}
+.kpop-b{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.kside{display:grid;gap:12px;align-content:start;max-height:calc(100dvh - 230px);overflow:auto}
+.kstat{display:grid;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--s1)}
+.kstat b{font:600 30px/1 var(--sans);letter-spacing:-.03em}
+.kstat span{color:var(--mute);font-size:13.5px;margin-top:4px}
+.kletar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13.5px;color:#7ad7ff;padding:10px 12px;border:1px solid rgb(90 200 255/.3);border-radius:12px;background:rgb(90 200 255/.06)}
+.kside h4{margin:4px 0 0;font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.klist{display:grid;gap:2px}
+.klist>div{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 2px;border-bottom:1px solid var(--line)}
+.klist span{display:grid;min-width:0}
+.klist b{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.klist small{font-size:12px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kfot{margin:0;font-size:11.5px;color:var(--dim)}
+.kfot a{color:var(--mute)}
+@media (max-width:1080px){.kwrap{grid-template-columns:minmax(0,1fr)}.kside{max-height:none}.khost,.kmap{height:62dvh;min-height:360px}}
 .lk-side{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:14px;font:600 15.5px var(--sans);letter-spacing:-.01em;color:var(--ink);text-align:left;border:1px solid rgb(255 122 44/.45);background:radial-gradient(260px 90px at 0 0,rgb(255 122 44/.2),transparent),rgb(255 255 255/.02);transition:border-color .2s,box-shadow .2s,transform .2s}
 .lk-side:hover{border-color:rgb(255 122 44/.85);box-shadow:0 12px 34px -18px rgb(255 90 31/.9);transform:translateY(-1px)}
 .lk-side .lk-plus{width:36px;height:36px;border-radius:10px}
@@ -827,6 +868,7 @@ button.jb:hover{background:rgb(255 255 255/.04)}
 <symbol id="i-script" viewBox="0 0 24 24"><path d="M6 3.5h9l3.5 3.5v13.5H6z"/><path d="M14.5 3.5V7.5h4M9 11.5h6M9 15h6M9 18h3.5"/></symbol>
 <symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M5 7.5h3.2a2.3 2.3 0 1 1 4.6 0H16a1 1 0 0 1 1 1v3.2a2.3 2.3 0 1 1 0 4.6V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8.5a1 1 0 0 1 1-1z"/></symbol>
 <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></symbol>
+<symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4.5 3.5 6.5v13l5.5-2 6 2 5.5-2v-13l-5.5 2z"/><path d="M9 4.5v13M15 6.5v13"/></symbol>
 <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="1.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></symbol>
 </defs>
 </svg>
@@ -860,6 +902,7 @@ button.jb:hover{background:rgb(255 255 255/.04)}
       <button class="nv nv-live" data-livenav><svg class="i"><use href="#i-live"/></svg>Live<span class="n"><i class="livedot"></i></span></button>
       <button class="nv" data-view="ring"><svg class="i"><use href="#i-phone"/></svg>Att ringa<span class="n" id="nAtt"></span></button>
       <button class="nv" data-view="tillbaka"><svg class="i"><use href="#i-back"/></svg>Ring tillbaka<span class="n" id="nTb"></span></button>
+      <button class="nv" data-view="karta"><svg class="i"><use href="#i-map"/></svg>Karta</button>
       <button class="nv" data-view="manus"><svg class="i"><use href="#i-script"/></svg>Manus</button>
       <button class="nv" data-view="ringlista"><svg class="i"><use href="#i-list"/></svg>Företag<span class="n" id="nRing"></span></button>
       <button class="nv" data-view="samtal"><svg class="i"><use href="#i-chat"/></svg>Samtal<span class="n" id="nSamtal"></span></button>
@@ -956,7 +999,7 @@ const ST = {
 const FLODE = ['att_ringa', 'inget_svar', 'aterkom', 'intresserad', 'mote', 'offert', 'kund'];
 const UTFALL = ['inget_svar', 'aterkom', 'intresserad', 'mote', 'offert', 'kund', 'nej'];
 const TJANSTER = ['Hemsida', 'Webbshop', 'Logga', 'SEO', 'Drift'];
-const VIEWS = { oversikt: 'Översikt', ring: 'Att ringa', tillbaka: 'Ring tillbaka', manus: 'Manus', ringlista: 'Företag', samtal: 'Samtal', kunder: 'Kunder', ekonomi: 'Ekonomi', promptar: 'Promptar', skills: 'Skills' };
+const VIEWS = { oversikt: 'Översikt', ring: 'Att ringa', tillbaka: 'Ring tillbaka', karta: 'Karta', manus: 'Manus', ringlista: 'Företag', samtal: 'Samtal', kunder: 'Kunder', ekonomi: 'Ekonomi', promptar: 'Promptar', skills: 'Skills' };
 const BETALSATT = ['Swish', 'Faktura', 'Annat'];
 const GRUNDARE = ['Max', 'William', 'John-John'];
 
@@ -1295,7 +1338,7 @@ function render(anim = true) {
   $('#nSamtal').textContent = allaSamtal().length || '';
   $('#nKund').textContent = S.data.filter((f) => f.status === 'kund').length || '';
   const v = $('#view');
-  v.innerHTML = ({ oversikt: vyOversikt, ring: vyRing, tillbaka: vyTillbaka, manus: vyManus, ringlista: vyRinglista, samtal: vySamtal, kunder: vyKunder, ekonomi: vyEkonomi, promptar: vyPromptar, skills: vySkills })[S.view]();
+  v.innerHTML = ({ oversikt: vyOversikt, ring: vyRing, tillbaka: vyTillbaka, karta: vyKarta, manus: vyManus, ringlista: vyRinglista, samtal: vySamtal, kunder: vyKunder, ekonomi: vyEkonomi, promptar: vyPromptar, skills: vySkills })[S.view]();
   if (anim) v.classList.remove('fade'), void v.offsetWidth, v.classList.add('fade');
   koppla(v);
 }
@@ -2686,6 +2729,22 @@ function koppla(v) {
     art.classList.toggle('open', oppna); b.setAttribute('aria-expanded', oppna);
     $('.skc-fold', art).toggleAttribute('inert', !oppna);
   });
+  if (S.view === 'karta') {
+    $$('[data-kf]', v).forEach((b) => b.onclick = () => { KA.filter = b.dataset.kf; KA.anpassad = false; render(false); });
+    $$('[data-kadress]', v).forEach((b) => b.onclick = () => nyttForetag(S.data.find((x) => x.id === b.dataset.kadress)));
+    $$('[data-kplacera]', v).forEach((b) => b.onclick = () => { KA.placera = b.dataset.kplacera; render(false); toast('Tryck på kartan där företaget ligger.'); });
+    $$('[data-kavbryt]', v).forEach((b) => b.onclick = () => { KA.placera = ''; render(false); });
+    $$('[data-kjag]', v).forEach((b) => b.onclick = () => {
+      if (!navigator.geolocation) return toast('Din webbläsare kan inte visa var du är.', true);
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const ll = [pos.coords.latitude, pos.coords.longitude];
+        if (!KA.map) return;
+        if (KA.jag) KA.jag.setLatLng(ll); else KA.jag = L.marker(ll, { icon: L.divIcon({ className: 'kp-wrap', html: '<span class="kjag"></span>', iconSize: [20, 20], iconAnchor: [10, 10] }), interactive: false, zIndexOffset: 1000 }).addTo(KA.map);
+        KA.map.flyTo(ll, 16);
+      }, () => toast('Kunde inte hitta var du är. Tillåt platsåtkomst i webbläsaren.', true), { enableHighAccuracy: true, timeout: 10000 });
+    });
+    kartaMontera(v);
+  }
   $$('[data-minskill]', v).forEach((b) => b.onclick = laddaNerMinSkill);
   $$('[data-stang]', v).forEach((b) => b.onclick = () => stangNyckel(b.dataset.stang));
   $$('[data-mnsvar]', v).forEach((b) => b.onclick = () => { MN.svar = MN.svar === b.dataset.mnsvar ? null : (b.dataset.mnsvar || null); render(false); });
@@ -2871,6 +2930,145 @@ async function loggaSamtal(f) {
 }
 
 /* ================= NYTT / REDIGERA ================= */
+/* ================= KARTA ================= */
+// Leaflet laddas bara när kartan öppnas. Kartbilder från OpenStreetMap.
+// Adresser slås upp på servern (POST /api/foretag/:id/plats) en gång och sparas på företaget.
+const KA = { miss: new Set(), filter: 'ring', el: null, map: null, lager: null, mark: new Map(), ko: [], kor: false, flytta: '', placera: '', jag: null, anpassad: false };
+const KFILTER = {
+  ring: { t: 'Att ringa', f: (f) => iRinglistan(f) },
+  tillbaka: { t: 'Ring tillbaka', f: (f) => iTillbaka(f) },
+  ja: { t: 'Ja', f: (f) => ['intresserad', 'mote', 'offert'].includes(f.status) },
+  kund: { t: 'Kunder', f: (f) => f.status === 'kund' },
+  alla: { t: 'Alla', f: () => true },
+};
+const platsFraga = (f) => {
+  const a = (f.ort || '').trim().slice(0, 160);
+  if (!a) return '';
+  return /\d{3}\s?\d{2}|stockholm|solna|sundbyberg|nacka|lidingö|danderyd|täby|sollentuna|huddinge|bromma|sverige/i.test(a) ? a : a + ', Stockholm';
+};
+const harPlats = (f) => f.plats && Number.isFinite(f.plats.lat) && (f.plats.manuell || f.plats.q === platsFraga(f));
+const demoPlats = (f) => { let h = 0; for (const c of f.id) h = (h * 31 + c.charCodeAt(0)) >>> 0; return { lat: 59.333 + ((h % 1000) / 1000 - 0.5) * 0.03, lng: 18.083 + (((h >> 10) % 1000) / 1000 - 0.5) * 0.06 }; };
+function laddaLeaflet() {
+  if (window.L) return Promise.resolve();
+  if (KA.laddar) return KA.laddar;
+  const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = '/vendor/leaflet/leaflet.css'; document.head.appendChild(css);
+  KA.laddar = new Promise((ok, fel) => { const sc = document.createElement('script'); sc.src = '/vendor/leaflet/leaflet.js'; sc.onload = ok; sc.onerror = () => fel(new Error('Kartan kunde inte laddas')); document.head.appendChild(sc); });
+  return KA.laddar;
+}
+function vyKarta() {
+  const lista = S.data.filter(KFILTER[KA.filter].f);
+  const plats = (f) => (S.demo ? true : harPlats(f));
+  const utan = lista.filter((f) => !plats(f));
+  const saknar = utan.filter((f) => !platsFraga(f));
+  const hittas = utan.filter((f) => platsFraga(f) && f.plats?.fel && f.plats.q === platsFraga(f));
+  const missade = utan.filter((f) => KA.miss.has(f.id) && platsFraga(f) && !hittas.includes(f));
+  const letar = utan.length - saknar.length - hittas.length - missade.length;
+  const n = (k) => S.data.filter(KFILTER[k].f).length;
+  return `
+  <div class="ringtop"><div><h2>Karta</h2><p>${KA.filter === 'ring' ? 'Företagen i Att ringa. Tryck på en prick för att ringa.' : 'Tryck på en prick för att se företaget.'}</p></div>
+    <button class="btn ghost sm" data-kjag><svg class="i"><use href="#i-map"/></svg>Var är jag?</button></div>
+  <div class="chips kchips">${Object.entries(KFILTER).map(([k, x]) => `<button class="chip" data-kf="${k}" aria-pressed="${KA.filter === k}">${x.t} <span class="mono dim">${n(k)}</span></button>`).join('')}</div>
+  <div class="kwrap">
+    <div id="kartaHost" class="khost"></div>
+    <aside class="kside">
+      <div class="kstat"><b>${lista.length - utan.length}</b><span>av ${lista.length} på kartan</span></div>
+      ${letar > 0 ? `<div class="kletar"><span class="jprick"></span>Letar upp ${letar} adress${letar === 1 ? '' : 'er'} …</div>` : ''}
+      ${KA.placera ? `<div class="kletar">Tryck på kartan där ${esc(S.data.find((x) => x.id === KA.placera)?.namn || 'företaget')} ligger. <button class="lank" data-kavbryt>Avbryt</button></div>` : ''}
+      ${missade.length ? `<div class="kletar" style="color:var(--mute);border-color:var(--line2);background:none">Kartsöket svarar inte just nu för ${missade.length} adress${missade.length === 1 ? '' : 'er'}. Det provas igen nästa gång du öppnar kartan.</div>` : ''}
+      ${hittas.length ? `<h4>Hittades inte (${hittas.length})</h4><div class="klist">${hittas.map((f) => `<div><span><b>${esc(f.namn)}</b><small>${esc(f.ort)}</small></span><button class="btn ghost sm" data-kplacera="${f.id}">Sätt ut</button></div>`).join('')}</div>` : ''}
+      ${saknar.length ? `<h4>Saknar adress (${saknar.length})</h4><div class="klist">${saknar.slice(0, 60).map((f) => `<div><span><b>${esc(f.namn)}</b><small>${esc(f.bransch || 'Ingen adress')}</small></span><button class="btn ghost sm" data-kadress="${f.id}">Lägg till</button></div>`).join('')}</div>` : ''}
+      ${!utan.length && lista.length ? '<p class="dim" style="font-size:13.5px;margin:0">Alla finns på kartan.</p>' : ''}
+      ${!lista.length ? '<p class="dim" style="font-size:13.5px;margin:0">Inga företag i den här listan.</p>' : ''}
+      <p class="kfot">Kartdata © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></p>
+    </aside>
+  </div>`;
+}
+function kartaPopup(f) {
+  const ring = iRinglistan(f) || iTillbaka(f);
+  return `<div class="kpop"><b>${esc(f.namn)}</b><small>${esc([f.bransch, f.ort].filter(Boolean).join(' · '))}</small>
+    <div class="kpop-st">${pill(f.status)}${f.hemsidaBetyg ? `<span class="intr">Sajt ${esc(String(f.hemsidaBetyg))}</span>` : ''}</div>
+    ${f.hemsidaNotis ? `<p>${esc(String(f.hemsidaNotis).slice(0, 140))}</p>` : ''}
+    <div class="kpop-b">${ring ? `<button class="btn pri sm" data-kring="${f.id}"><svg class="i"><use href="#i-phone"/></svg>Ring</button>` : ''}<button class="btn ghost sm" data-koppna="${f.id}">Öppna</button>${S.demo ? '' : `<button class="btn ghost sm" data-kflytta="${f.id}">Flytta</button>`}</div></div>`;
+}
+async function kartaMontera(v) {
+  const host = $('#kartaHost', v);
+  if (!host) return;
+  if (!KA.el) { KA.el = document.createElement('div'); KA.el.className = 'kmap'; }
+  host.appendChild(KA.el);
+  try { await laddaLeaflet(); } catch (e) { KA.el.innerHTML = `<div class="tom" style="padding:40px"><b>Kartan kunde inte laddas</b>${esc(e.message)}</div>`; return; }
+  if (!KA.map) {
+    KA.map = L.map(KA.el, { zoomControl: true, attributionControl: false }).setView([59.3375, 18.083], 14);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(KA.map);
+    KA.lager = L.layerGroup().addTo(KA.map);
+    KA.map.on('popupopen', (e) => {
+      const el = e.popup.getElement();
+      $$('[data-kring]', el).forEach((b) => b.onclick = () => { KA.map.closePopup(); ringKort(b.dataset.kring); });
+      $$('[data-koppna]', el).forEach((b) => b.onclick = () => { KA.map.closePopup(); oppna(b.dataset.koppna); });
+      $$('[data-kflytta]', el).forEach((b) => b.onclick = () => { KA.map.closePopup(); kartaFlytta(b.dataset.kflytta); });
+    });
+    KA.map.on('click', (e) => { if (KA.placera) kartaSattPlats(KA.placera, e.latlng); });
+  }
+  requestAnimationFrame(() => KA.map.invalidateSize());
+  kartaRita();
+  kartaKo();
+}
+function kartaRita() {
+  if (!KA.map) return;
+  const lista = S.data.filter(KFILTER[KA.filter].f);
+  const synliga = new Set();
+  const punkter = [];
+  for (const f of lista) {
+    const p = S.demo ? demoPlats(f) : harPlats(f) ? f.plats : null;
+    if (!p) continue;
+    synliga.add(f.id); punkter.push([p.lat, p.lng]);
+    const nyckel = [p.lat, p.lng, f.status, f.namn, f.ort, f.hemsidaBetyg, KA.flytta === f.id].join('|');
+    const gammal = KA.mark.get(f.id);
+    if (gammal && gammal.k === nyckel) continue;
+    if (gammal) KA.lager.removeLayer(gammal.m);
+    const c = f.status === 'att_ringa' ? '#ff7a2c' : ST[f.status]?.c || '#999';
+    const m = L.marker([p.lat, p.lng], {
+      icon: L.divIcon({ className: 'kp-wrap', html: `<span class="kp${f.status === 'att_ringa' ? ' puls' : ''}${KA.flytta === f.id ? ' flytt' : ''}" style="--c:${c}"></span>`, iconSize: [22, 22], iconAnchor: [11, 11], popupAnchor: [0, -10] }),
+      title: f.namn, keyboard: true, draggable: KA.flytta === f.id,
+    }).bindPopup(() => kartaPopup(S.data.find((x) => x.id === f.id) || f), { className: 'kpopup', maxWidth: 280, minWidth: 220 });
+    if (KA.flytta === f.id) m.on('dragend', (e) => { KA.flytta = ''; kartaSattPlats(f.id, e.target.getLatLng()); });
+    m.addTo(KA.lager);
+    KA.mark.set(f.id, { m, k: nyckel });
+  }
+  for (const [id, x] of KA.mark) if (!synliga.has(id)) { KA.lager.removeLayer(x.m); KA.mark.delete(id); }
+  if (!KA.anpassad && punkter.length) { KA.anpassad = true; KA.map.fitBounds(punkter, { padding: [40, 40], maxZoom: 16 }); }
+}
+function kartaKo() {
+  if (S.demo || KA.kor) return;
+  KA.ko = S.data.filter(KFILTER[KA.filter].f).filter((f) => platsFraga(f) && !harPlats(f) && !(f.plats?.fel && f.plats.q === platsFraga(f)) && !KA.miss.has(f.id)).map((f) => f.id);
+  if (!KA.ko.length) return;
+  KA.kor = true;
+  (async () => {
+    while (KA.ko.length && S.view === 'karta') {
+      const id = KA.ko.shift();
+      try {
+        const rec = await api('/foretag/' + id + '/plats', { method: 'POST', body: '{}' });
+        const i = S.data.findIndex((x) => x.id === id); if (i >= 0) S.data[i] = rec;
+        if (S.view === 'karta') { kartaRita(); render(false); }
+      } catch (e) { KA.miss.add(id); if (/svarar inte/.test(e.message)) { KA.ko.forEach((x) => KA.miss.add(x)); if (S.view === 'karta') render(false); break; } }
+      await new Promise((r) => setTimeout(r, 1200)); // OpenStreetMap vill ha max ett sök per sekund
+    }
+    KA.kor = false;
+  })();
+}
+async function kartaSattPlats(id, ll) {
+  KA.placera = '';
+  try {
+    const rec = await api('/foretag/' + id + '/plats', { method: 'POST', body: JSON.stringify({ lat: ll.lat, lng: ll.lng }) });
+    const i = S.data.findIndex((x) => x.id === id); if (i >= 0) S.data[i] = rec;
+    toast(`${rec.namn} är utsatt på kartan.`);
+  } catch (e) { toast(e.message, true); }
+  render(false);
+}
+function kartaFlytta(id) {
+  KA.flytta = id; kartaRita();
+  toast('Dra pricken dit företaget ligger.');
+}
+
 /* ================= LÄGG TILL EN KUND ================= */
 const NIVAER = [
   { k: 'ring', t: 'Ring tillbaka', h: 'Ring dem ett annat datum', st: 'aterkom', nar: 1 },
