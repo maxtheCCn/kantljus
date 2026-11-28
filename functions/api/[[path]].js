@@ -86,6 +86,7 @@ async function skapaTabeller(env) {
     env.DB.prepare('CREATE TABLE IF NOT EXISTS nycklar (hash TEXT PRIMARY KEY, person TEXT NOT NULL, skapad TEXT NOT NULL, senast TEXT, aktiv INTEGER NOT NULL DEFAULT 1)'),
     env.DB.prepare('CREATE TABLE IF NOT EXISTS jobbar (person TEXT PRIMARY KEY, data TEXT NOT NULL, tid INTEGER NOT NULL)'),
     env.DB.prepare('CREATE TABLE IF NOT EXISTS exempel (id TEXT PRIMARY KEY, meta TEXT NOT NULL, skapad INTEGER NOT NULL)'),
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS sidor (id TEXT PRIMARY KEY, meta TEXT NOT NULL, skapad INTEGER NOT NULL)'),
     env.DB.prepare('CREATE TABLE IF NOT EXISTS exempel_delar (id TEXT NOT NULL, nr INTEGER NOT NULL, data TEXT NOT NULL, PRIMARY KEY (id, nr))'),
   ]);
   tabellerKlara = true;
@@ -186,6 +187,25 @@ function rensaExMeta(m, gammal = {}) {
   };
 }
 
+// ---------- kundsidor (som Netlify Drop, men bara inne i admin) ----------
+// En hel sajt (HTML + CSS, JS, bilder) sparas fil för fil i exempel_delar med id "<sida>/<nr>".
+// Den visas via /api/sida/<id>/<exp>.<sig>/<sökväg>, en tillfällig signerad länk utan kaka,
+// så att sajtens egna länkar till css/js/bilder fungerar. HTML visas i sandlåda (CSP sandbox).
+const SIDA_MAX = 50 * 1024 * 1024;
+const SIDA_TTL = 24 * 60 * 60;
+const MIME = {
+  html: 'text/html; charset=utf-8', htm: 'text/html; charset=utf-8', css: 'text/css; charset=utf-8', js: 'text/javascript; charset=utf-8', mjs: 'text/javascript; charset=utf-8',
+  json: 'application/json', svg: 'image/svg+xml', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp', gif: 'image/gif', avif: 'image/avif', ico: 'image/x-icon',
+  woff: 'font/woff', woff2: 'font/woff2', ttf: 'font/ttf', otf: 'font/otf', mp4: 'video/mp4', webm: 'video/webm', mp3: 'audio/mpeg', txt: 'text/plain; charset=utf-8', xml: 'application/xml', pdf: 'application/pdf', webmanifest: 'application/manifest+json',
+};
+const mimeFor = (namn) => MIME[(namn.split('.').pop() || '').toLowerCase()] || 'application/octet-stream';
+async function sidaSig(env, id, exp) { return (await hmac(hemlighet(env), 'sida.' + id + '.' + exp)).slice(0, 32); }
+async function sidaUrl(env, id, start) {
+  const exp = Math.floor(Date.now() / 1000) + SIDA_TTL;
+  return `/api/sida/${id}/${exp}.${await sidaSig(env, id, exp)}/${start.split('/').map(encodeURIComponent).join('/')}`;
+}
+const rensaSokvag = (p) => String(p || '').replace(/\\/g, '/').split('/').filter((d) => d && d !== '.' && d !== '..').join('/').slice(0, 300);
+
 // Vad vi söker på för att hitta företaget på kartan: adressen, plus Stockholm om ingen ort står med
 function platsFraga(rec) {
   const a = typeof rec.ort === 'string' ? rec.ort.trim().slice(0, 160) : '';
@@ -253,6 +273,38 @@ export async function onRequest({ request, env, params }) {
       h.append('set-cookie', `${COOKIE}=; Path=/api; Max-Age=0; HttpOnly; Secure; SameSite=Strict`);
       h.append('set-cookie', `${PCOOKIE}=; Path=/api; Max-Age=0; HttpOnly; Secure; SameSite=Strict`);
       return new Response(JSON.stringify({ ok: true }), { status: 200, headers: h });
+    }
+
+    // ---------- kundsida via signerad länk (ingen kaka behövs) ----------
+    if (delar[0] === 'sida' && metod === 'GET') {
+      const [, sid, tok] = delar;
+      const [exp, sig] = String(tok || '').split('.');
+      if (!/^sd[a-z0-9]{6,30}$/.test(sid || '') || !/^\d+$/.test(exp || '') || +exp < Date.now() / 1000 || !lika(sig || '', await sidaSig(env, sid, exp))) {
+        return new Response('Länken har gått ut. Öppna hemsidan igen från admin.', { status: 403, headers: { 'content-type': 'text/plain; charset=utf-8' } });
+      }
+      const rad = await env.DB.prepare('SELECT meta FROM sidor WHERE id = ?').bind(sid).first();
+      if (!rad) return new Response('Finns inte', { status: 404 });
+      const meta = JSON.parse(rad.meta);
+      const prefix = `/api/sida/${sid}/${tok}/`;
+      let vag = rensaSokvag(decodeURIComponent(url.pathname.startsWith(prefix) ? url.pathname.slice(prefix.length) : ''));
+      let i = meta.filer.findIndex((f) => f.namn === vag);
+      if (i < 0) i = meta.filer.findIndex((f) => f.namn === (vag ? vag + '/' : '') + 'index.html');
+      if (i < 0 && !/\.[a-z0-9]{1,8}$/i.test(vag)) i = meta.filer.findIndex((f) => f.namn === meta.start);
+      if (i < 0) return new Response('Filen finns inte i sajten: ' + vag, { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8', 'access-control-allow-origin': '*' } });
+      const fil = meta.filer[i];
+      let bit = 0;
+      const strom = new ReadableStream({
+        async pull(c) {
+          if (bit >= fil.delar) return c.close();
+          const d = await env.DB.prepare('SELECT data FROM exempel_delar WHERE id = ? AND nr = ?').bind(sid + '/' + i, bit++).first();
+          if (!d) return c.close();
+          c.enqueue(franB64(d.data));
+        },
+      });
+      const typ = mimeFor(fil.namn);
+      const h = { 'content-type': typ, 'content-length': String(fil.storlek), 'cache-control': 'private, max-age=3600', 'x-robots-tag': 'noindex, nofollow', 'access-control-allow-origin': '*', 'x-content-type-options': 'nosniff' };
+      if (typ.startsWith('text/html') || typ === 'image/svg+xml') h['content-security-policy'] = 'sandbox allow-scripts allow-forms allow-popups allow-modals allow-popups-to-escape-sandbox';
+      return new Response(strom, { headers: h });
     }
 
     // ---------- allt nedanför kräver inloggning ----------
@@ -358,6 +410,58 @@ export async function onRequest({ request, env, params }) {
         if (forra?.foretag_id) await logga(forra.foretag_id, { tid: nu, av: person, typ: 'klar', vad: txt(kropp.notis, 500) || forra.vad });
         await env.DB.prepare('DELETE FROM jobbar WHERE person = ?').bind(person).run();
         return svar({ ok: true, var: forra });
+      }
+      return svar({ fel: 'Finns inte' }, 404);
+    }
+
+    // ---------- kundsidor ----------
+    if (delar[0] === 'sidor') {
+      const dolda = iValv ? new Map() : await valvIds(env);
+      const medUrl = async (m) => ({ ...m, url: await sidaUrl(env, m.id, m.start) });
+      if (delar.length === 1 && metod === 'GET') {
+        const { results } = await env.DB.prepare('SELECT meta FROM sidor ORDER BY skapad DESC').all();
+        return svar(await Promise.all(results.map((r) => JSON.parse(r.meta)).filter((m) => !dolda.has(m.kund_id)).map(medUrl)));
+      }
+      if (delar.length === 1 && metod === 'POST') {
+        if (!person) return svar({ fel: 'Välj vem du är först' }, 403);
+        const u8 = new Uint8Array(await request.arrayBuffer());
+        if (u8.length < 8 || u8.length > SIDA_MAX + 200_000) return svar({ fel: 'Sajten är för stor (max 50 MB)' }, 413);
+        const mlen = new DataView(u8.buffer, u8.byteOffset).getUint32(0, true);
+        let man;
+        try { man = JSON.parse(new TextDecoder().decode(u8.subarray(4, 4 + mlen))); } catch { return svar({ fel: 'Ogiltig uppladdning' }, 400); }
+        const kund = giltigtId(man.kund_id) ? await hamta(env, man.kund_id) : null;
+        if (!syns(kund)) return svar({ fel: 'Kunden finns inte' }, 404);
+        const lista = Array.isArray(man.filer) ? man.filer.slice(0, 800) : [];
+        if (!lista.length) return svar({ fel: 'Inga filer' }, 400);
+        const sid = 'sd' + Date.now().toString(36) + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
+        const filer = [];
+        let pos = 4 + mlen;
+        for (const [i, f] of lista.entries()) {
+          const n = Math.max(0, Math.min(+f.storlek || 0, u8.length - pos));
+          const data = u8.subarray(pos, pos + n); pos += n;
+          const delar2 = Math.max(1, Math.ceil(data.length / EX_BIT));
+          for (let j = 0; j < delar2; j++) {
+            await env.DB.prepare('INSERT INTO exempel_delar (id, nr, data) VALUES (?, ?, ?)').bind(sid + '/' + i, j, tillB64(data.subarray(j * EX_BIT, (j + 1) * EX_BIT))).run();
+          }
+          filer.push({ namn: rensaSokvag(f.namn) || 'fil' + i, storlek: n, delar: delar2 });
+        }
+        const html = filer.filter((f) => /\.html?$/i.test(f.namn));
+        if (!html.length) return svar({ fel: 'Ingen HTML-fil hittades' }, 400);
+        const start = (html.find((f) => f.namn.toLowerCase() === 'index.html') || html.sort((a, b) => a.namn.split('/').length - b.namn.split('/').length)[0]).namn;
+        const meta = { id: sid, kund_id: kund.id, titel: String(man.titel || kund.namn).slice(0, 120), start, filer, storlek: filer.reduce((a, f) => a + f.storlek, 0), av: person, tid: new Date().toISOString() };
+        await env.DB.prepare('INSERT INTO sidor (id, meta, skapad) VALUES (?, ?, ?)').bind(sid, JSON.stringify(meta), Date.now()).run();
+        return svar(await medUrl(meta));
+      }
+      if (delar.length === 2 && metod === 'DELETE' && /^sd[a-z0-9]{6,30}$/.test(delar[1])) {
+        const rad = await env.DB.prepare('SELECT meta FROM sidor WHERE id = ?').bind(delar[1]).first();
+        if (!rad) return svar({ fel: 'Finns inte' }, 404);
+        const meta = JSON.parse(rad.meta);
+        if (dolda.has(meta.kund_id)) return svar({ fel: 'Finns inte' }, 404);
+        await env.DB.batch([
+          env.DB.prepare("DELETE FROM exempel_delar WHERE id LIKE ?").bind(delar[1] + '/%'),
+          env.DB.prepare('DELETE FROM sidor WHERE id = ?').bind(delar[1]),
+        ]);
+        return svar({ ok: true });
       }
       return svar({ fel: 'Finns inte' }, 404);
     }

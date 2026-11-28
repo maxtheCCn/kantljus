@@ -541,6 +541,31 @@ article.cc:focus-visible{outline:2px solid var(--glod);outline-offset:2px}
 .telflik .mono{font-size:11.5px;color:var(--dim);padding:1px 7px;border-radius:999px;background:rgb(255 255 255/.06)}
 .telflik button[aria-selected="true"] .mono{color:#ffb37a;background:rgb(255 90 31/.18)}
 @media (max-width:820px){.telflik{width:auto;margin-inline:-2px}.telflik button{flex:1;justify-content:center;padding:9px 10px;font-size:13.5px}}
+.sidaknapp{display:flex;align-items:center;justify-content:center;gap:8px;min-height:40px;border-radius:10px;font-size:14px;font-weight:600;color:var(--ink);border:1px solid rgb(90 200 255/.45);background:rgb(90 200 255/.1);transition:background .15s,border-color .15s}
+.sidaknapp:hover{background:rgb(90 200 255/.18);border-color:rgb(90 200 255/.8)}
+.sidaknapp.tom{border-style:dashed}
+.sup{display:grid;gap:16px}
+.sup h2{margin:6px 0 0;font-size:22px}
+.supzon{display:grid;justify-items:center;gap:8px;text-align:center;padding:44px 20px;border:1.5px dashed var(--line2);border-radius:16px;color:var(--mute);cursor:pointer;transition:border-color .2s,background .2s}
+.supzon:hover,.supzon.over{border-color:var(--glod);background:rgb(255 90 31/.06)}
+.supzon b{font-size:18px;color:var(--ink)}
+.supzon .lk-plus{width:50px;height:50px;border-radius:14px}
+.supval{display:flex;gap:8px;justify-content:center}
+.supstatus{position:relative;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font-size:14px;overflow:hidden}
+.supstatus i{position:absolute;left:0;bottom:0;height:3px;width:var(--p);background:var(--glod);transition:width .2s}
+.supstatus.fel{border-color:rgb(255 107 107/.5);color:#ff9a9a;background:rgb(255 107 107/.06)}
+.mbox.svbox{width:min(1400px,100%);height:calc(100dvh - 32px);padding:0;display:block;overflow:hidden}
+.sv{display:grid;grid-template-rows:auto minmax(0,1fr);height:100%}
+.sv-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 14px 12px 20px;border-bottom:1px solid var(--line)}
+.sv-t{display:grid;min-width:0;flex:1}
+.sv-t b{font-size:16px}
+.sv-t small{color:var(--dim);font-size:12.5px}
+.sv-k{display:flex;gap:6px;align-items:center}
+.sv-yta{display:grid;place-items:center;background:#0b0b0c;min-height:0;overflow:auto}
+.sv-yta iframe{width:100%;height:100%;border:0;background:#fff}
+.sv-yta.mobil{padding:22px 0}
+.sv-yta.mobil iframe{width:390px;max-width:100%;height:100%;max-height:844px;border-radius:28px;box-shadow:0 0 0 10px #1c1c1f,0 30px 80px -20px #000}
+@media (max-width:820px){.sv-top{padding:10px 12px}.sv-k .btn{display:none}}
 .ck-valv{justify-self:center;align-self:center;margin-top:2px;padding:6px 10px;font-size:13px;color:var(--dim);text-decoration:underline;text-decoration-color:rgb(255 255 255/.2);text-underline-offset:3px;border-radius:8px}
 .ck-valv:hover{color:var(--ink);text-decoration-color:currentColor}
 .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
@@ -1583,7 +1608,7 @@ const KFAS_GRUPP = [
   { k: 'demo', t: 'Demo', c: '#b48cff', l: [['vill_demo', 'Vill se demo'], ['demo_gors', 'Demo görs'], ['demo_skickad', 'Demo skickad'], ['demo_svar', 'Väntar på svar om demon']] },
   { k: 'start', t: 'Start', c: '#ffcf5a', l: [['offert', 'Offert skickad'], ['forskott', 'Väntar på förskott'], ['material', 'Väntar på material från kunden'], ['ska_borja', 'Sidan behöver börja arbetas med']] },
   { k: 'bygge', t: 'Bygge', c: '#ff7a2c', l: [['arbetar', 'Sidan håller på att arbetas med'], ['granskar', 'Kunden granskar sidan'], ['andringar', 'Kunden vill ha ändringar'], ['andrar', 'Ändringar pågår']] },
-  { k: 'lansering', t: 'Lansering', c: '#5ac8ff', l: [['doman', 'Väntar på domän eller inloggningar'], ['redo', 'Redo att publiceras'], ['live', 'Publicerad och live']] },
+  { k: 'lansering', t: 'Lansering', c: '#5ac8ff', l: [['hemsida_klar', 'Hemsida klar'], ['doman', 'Väntar på domän eller inloggningar'], ['redo', 'Redo att publiceras'], ['live', 'Publicerad och live']] },
   { k: 'reklam', t: 'Reklam', c: '#3ee0c2', l: [['vill_reklam', 'Vill ha reklam'], ['reklam_ide', 'Reklamidé tas fram'], ['grafik_gors', 'Grafisk reklam görs'], ['grafik_klar', 'Grafisk reklam klar'], ['grafik_levererad', 'Grafisk reklam levererad'], ['video_gors', 'Video håller på att göras'], ['video_klar', 'Video klar'], ['video_levererad', 'Video levererad'], ['annons_live', 'Annonser publicerade']] },
   { k: 'betalning', t: 'Betalning', c: '#45c97f', l: [['faktura', 'Faktura skickad'], ['paminnelse', 'Väntar på betalning'], ['betald', 'Betald']] },
   { k: 'efter', t: 'Efteråt', c: '#9aa0a6', l: [['underhall', 'Löpande underhåll'], ['pausad', 'Pausad'], ['avslutad', 'Avslutad']] },
@@ -1593,6 +1618,7 @@ const KF = { grupp: '' };
 const kVarde = (f) => +f.kund?.varde || (f.pris && f.prisTyp !== 'manad' ? +f.pris : 0);
 const kManad = (f) => +f.kund?.manad || (f.pris && f.prisTyp === 'manad' ? +f.pris : 0);
 function vyKunder() {
+  if (SIDV.lista === null) setTimeout(hamtaSidor);
   const alla = S.data.filter((f) => f.status === 'kund').sort((a, b) => ((a.kund?.sedan || '') < (b.kund?.sedan || '') ? 1 : -1));
   const engang = alla.reduce((s, f) => s + kVarde(f), 0);
   const manad = alla.reduce((s, f) => s + kManad(f), 0);
@@ -1618,6 +1644,7 @@ function vyKunder() {
     <article class="cc" data-open="${f.id}" tabindex="0">
       <div><h3>${esc(f.namn)}</h3><span class="mute" style="font-size:13.5px">${esc([f.bransch, f.ort].filter(Boolean).join(' · '))}</span></div>
       ${valj(f)}
+      ${sidaFor(f.id) ? `<button class="sidaknapp" data-sidavisa="${f.id}"><svg class="i"><use href="#i-bild"/></svg>Visa hemsidan</button>` : f.kund?.fas === 'hemsida_klar' ? `<button class="sidaknapp tom" data-sidaupp="${f.id}"><svg class="i"><use href="#i-plus"/></svg>Lägg in hemsidan</button>` : ''}
       <div class="meta">${(f.kund?.tjanster || []).map((t) => `<span class="tag">${esc(t)}</span>`).join('') || '<span class="dim" style="font-size:13px">Inga tjänster valda</span>'}</div>
       <dl>
         <dt>Kund sedan</dt><dd>${f.kund?.sedan ? new Date(f.kund.sedan).toLocaleDateString('sv-SE', { day: 'numeric', month: 'short', year: 'numeric' }).replace('.', '') : '—'}</dd>
@@ -1637,6 +1664,7 @@ async function sattKundFas(id, fas) {
     await db.spara({ ...f, kund: { ...(f.kund || {}), fas, fasTid: new Date().toISOString(), fasAv: S.me || '' } });
     render(false);
     toast(fas ? `${f.namn}: ${KFAS[fas].t}` : `${f.namn}: ingen status`);
+    if (fas === 'hemsida_klar' && !sidaFor(id)) sidaUpp(id);
   } catch (e) { toast(e.message, true); render(false); }
 }
 
@@ -1814,6 +1842,154 @@ function ringKort(id) {
   $('[data-tb]', m).onclick = (e) => { const a = $('#ckAsk', m); a.hidden = !a.hidden; e.currentTarget.classList.toggle('on', !a.hidden); if (!a.hidden) a.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
   $$('[data-nar]', m).forEach((b) => b.onclick = () => ringSvar(id, 'aterkom', $('#ckNot', m)?.value.trim() || '', b.dataset.nar));
   $('#ckNarDag', m).onchange = (e) => { if (e.target.value) ringSvar(id, 'aterkom', $('#ckNot', m)?.value.trim() || '', e.target.value); };
+}
+
+/* ================= KUNDSIDOR (som Netlify Drop, men bara i admin) ================= */
+const SIDV = { lista: null, hamtar: false };
+const sidaFor = (kid) => (SIDV.lista || []).find((x) => x.kund_id === kid);
+async function hamtaSidor() {
+  if (S.demo) { SIDV.lista = SIDV.lista || []; return; }
+  if (SIDV.hamtar) return;
+  SIDV.hamtar = true;
+  try { SIDV.lista = await api('/sidor'); } catch { SIDV.lista = SIDV.lista || []; }
+  SIDV.hamtar = false;
+  if (S.view === 'kunder') render(false);
+  if (S.open) ritaLada();
+}
+const SKRAP = /(^|\/)(__MACOSX|\.git|node_modules|\.DS_Store|Thumbs\.db|desktop\.ini)(\/|$)/i;
+async function lasZip(fil) {
+  const b = new Uint8Array(await fil.arrayBuffer()), dv = new DataView(b.buffer);
+  let e = b.length - 22;
+  while (e >= 0 && dv.getUint32(e, true) !== 0x06054b50) e--;
+  if (e < 0) throw new Error(fil.name + ' är ingen giltig zip-fil');
+  const antal = dv.getUint16(e + 10, true); let p = dv.getUint32(e + 16, true);
+  const ut = [];
+  for (let i = 0; i < antal && dv.getUint32(p, true) === 0x02014b50; i++) {
+    const metod = dv.getUint16(p + 10, true), kstorlek = dv.getUint32(p + 20, true), nl = dv.getUint16(p + 28, true), xl = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true), lok = dv.getUint32(p + 42, true);
+    const namn = new TextDecoder().decode(b.subarray(p + 46, p + 46 + nl));
+    p += 46 + nl + xl + cl;
+    if (namn.endsWith('/')) continue;
+    const start = lok + 30 + dv.getUint16(lok + 26, true) + dv.getUint16(lok + 28, true);
+    const rad = b.subarray(start, start + kstorlek);
+    let data;
+    if (metod === 0) data = rad;
+    else if (metod === 8) data = new Uint8Array(await new Response(new Blob([rad]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+    else throw new Error('Zip-filen använder en komprimering som inte stöds. Packa om den.');
+    ut.push({ namn, blob: new Blob([data]) });
+  }
+  return ut;
+}
+async function lasMapp(entry, bas = '') {
+  if (entry.isFile) return [await new Promise((ok, fel) => entry.file((f) => ok({ namn: bas + f.name, blob: f }), fel))];
+  const las = entry.createReader(), ut = [];
+  for (;;) {
+    const del = await new Promise((ok, fel) => las.readEntries(ok, fel));
+    if (!del.length) break;
+    for (const x of del) ut.push(...(await lasMapp(x, bas + entry.name + '/')));
+  }
+  return ut;
+}
+async function samlaFiler(lista) {
+  // lista: [{namn, blob}] – packa upp zip-filer och ta bort gemensam toppmapp
+  let filer = [];
+  for (const f of lista) {
+    if (/\.zip$/i.test(f.namn)) filer.push(...(await lasZip(f.blob)).map((z) => ({ namn: z.namn, blob: z.blob })));
+    else filer.push(f);
+  }
+  filer = filer.map((f) => ({ ...f, namn: f.namn.replace(/\\/g, '/').replace(/^\/+/, '') })).filter((f) => f.namn && !SKRAP.test(f.namn));
+  for (;;) {
+    const forsta = filer[0]?.namn.split('/')[0];
+    if (filer.length && filer.every((f) => f.namn.includes('/') && f.namn.split('/')[0] === forsta)) filer = filer.map((f) => ({ ...f, namn: f.namn.slice(forsta.length + 1) }));
+    else break;
+  }
+  return filer;
+}
+function sidaUpp(kid) {
+  const f = S.data.find((x) => x.id === kid);
+  if (!f) return;
+  modal(`<div class="sup">
+    <div><span class="mono dim">Hemsida klar</span><h2>Lägg in hemsidan för ${esc(f.namn)}</h2><p class="dim" style="margin:4px 0 0">Som Netlify Drop, fast den publiceras inte. Bara ni ser den, här i admin.</p></div>
+    <label class="supzon" id="supZon">
+      <span class="lk-plus"><svg class="i"><use href="#i-plus"/></svg></span>
+      <b>Släpp sajten här</b>
+      <span>En HTML-fil, en hel mapp eller en zip-fil. Bilder, CSS och JavaScript i mappen fungerar också.</span>
+      <input type="file" id="supFil" multiple accept=".html,.htm,.zip,.css,.js,.json,.svg,.png,.jpg,.jpeg,.webp,.gif,.avif,.ico,.woff,.woff2,.ttf,.otf,.mp4,.webm" hidden>
+    </label>
+    <div class="supval"><button class="btn ghost sm" id="supFiler">Välj filer</button><button class="btn ghost sm" id="supMapp">Välj mapp</button><input type="file" id="supMappIn" webkitdirectory multiple hidden></div>
+    <div class="supstatus" id="supStatus" hidden></div>
+    <div class="mact"><button class="btn ghost" id="supStang">Stäng</button></div>
+  </div>`);
+  $('#supStang').onclick = stangModal;
+  $('#supFiler').onclick = (e) => { e.preventDefault(); $('#supFil').click(); };
+  $('#supMapp').onclick = (e) => { e.preventDefault(); $('#supMappIn').click(); };
+  const kor = async (lista) => {
+    const st = $('#supStatus');
+    st.hidden = false; st.className = 'supstatus'; st.innerHTML = '<span>Läser filerna …</span><i style="--p:0%"></i>';
+    try {
+      const filer = await samlaFiler(lista);
+      if (!filer.some((x) => /\.html?$/i.test(x.namn))) throw new Error('Hittade ingen HTML-fil. Släpp sajtens index.html, mappen eller zip-filen.');
+      if (filer.length > 800) throw new Error('För många filer (max 800).');
+      const total = filer.reduce((a, x) => a + x.blob.size, 0);
+      if (total > 50 * 1024 * 1024) throw new Error(`Sajten är ${mb(total)}. Max är 50 MB.`);
+      if (S.demo) {
+        const start = filer.find((x) => /(^|\/)index\.html?$/i.test(x.namn)) || filer.find((x) => /\.html?$/i.test(x.namn));
+        const m = { id: 'sd' + nyId(), kund_id: kid, titel: f.namn, start: start.namn, filer: filer.map((x) => ({ namn: x.namn, storlek: x.blob.size })), storlek: total, av: S.me, tid: new Date().toISOString(), url: URL.createObjectURL(new Blob([start.blob], { type: 'text/html' })) };
+        SIDV.lista = [m, ...(SIDV.lista || [])];
+        return visaSida(kid);
+      }
+      const man = new TextEncoder().encode(JSON.stringify({ kund_id: kid, titel: f.namn, filer: filer.map((x) => ({ namn: x.namn, storlek: x.blob.size })) }));
+      const hdr = new Uint8Array(4); new DataView(hdr.buffer).setUint32(0, man.length, true);
+      const kropp = new Blob([hdr, man, ...filer.map((x) => x.blob)]);
+      const m = await new Promise((ok, fel) => {
+        const x = new XMLHttpRequest();
+        x.open('POST', '/api/sidor');
+        x.upload.onprogress = (e) => { if (e.lengthComputable) st.innerHTML = `<span>Laddar upp ${filer.length} fil${filer.length === 1 ? '' : 'er'} (${mb(total)}) … ${Math.round((e.loaded / e.total) * 100)} %</span><i style="--p:${(e.loaded / e.total) * 100}%"></i>`; };
+        x.onload = () => { let j = null; try { j = JSON.parse(x.responseText); } catch {} if (x.status === 200 && j) ok(j); else fel(new Error(j?.fel || 'Uppladdningen misslyckades')); };
+        x.onerror = () => fel(new Error('Ingen kontakt med servern'));
+        x.send(kropp);
+      });
+      const gamla = (SIDV.lista || []).filter((x) => x.kund_id === kid);
+      SIDV.lista = [m, ...(SIDV.lista || []).filter((x) => x.kund_id !== kid)];
+      for (const g of gamla) api('/sidor/' + g.id, { method: 'DELETE' }).catch(() => {});
+      if (f.kund?.fas !== 'hemsida_klar' && !['redo', 'live', 'doman'].includes(f.kund?.fas)) await db.spara({ ...f, kund: { ...(f.kund || {}), fas: 'hemsida_klar', fasTid: new Date().toISOString(), fasAv: S.me || '' } }).catch(() => {});
+      render(false); if (S.open) ritaLada();
+      visaSida(kid);
+    } catch (e) { st.className = 'supstatus fel'; st.innerHTML = `<span>${esc(e.message)}</span>`; }
+  };
+  const fraInput = (inp) => () => { const l = [...inp.files].map((x) => ({ namn: x.webkitRelativePath || x.name, blob: x })); inp.value = ''; if (l.length) kor(l); };
+  $('#supFil').onchange = fraInput($('#supFil'));
+  $('#supMappIn').onchange = fraInput($('#supMappIn'));
+  const zon = $('#supZon');
+  zon.ondragover = (e) => { e.preventDefault(); zon.classList.add('over'); };
+  zon.ondragleave = () => zon.classList.remove('over');
+  zon.ondrop = async (e) => {
+    e.preventDefault(); zon.classList.remove('over');
+    const poster = [...(e.dataTransfer?.items || [])].map((it) => it.webkitGetAsEntry?.()).filter(Boolean);
+    if (poster.length) kor((await Promise.all(poster.map((x) => lasMapp(x)))).flat());
+    else kor([...(e.dataTransfer?.files || [])].map((x) => ({ namn: x.name, blob: x })));
+  };
+}
+async function visaSida(kid, lage = 'dator') {
+  if (!S.demo) { SIDV.lista = null; await hamtaSidor(); }
+  const m = sidaFor(kid);
+  if (!m) return sidaUpp(kid);
+  const f = S.data.find((x) => x.id === kid);
+  modal(`<div class="sv">
+    <header class="sv-top">
+      <div class="sv-t"><b>${esc(f?.namn || m.titel)}</b><small>${m.filer.length} fil${m.filer.length === 1 ? '' : 'er'} · ${mb(m.storlek)} · ${esc(m.av)} ${nar(m.tid)}</small></div>
+      <div class="seg" role="radiogroup" aria-label="Visa som"><label><input type="radio" name="svl" value="dator" ${lage === 'dator' ? 'checked' : ''}><span>Dator</span></label><label><input type="radio" name="svl" value="mobil" ${lage === 'mobil' ? 'checked' : ''}><span>Mobil</span></label></div>
+      <div class="sv-k"><a class="btn ghost sm" href="${m.url}" target="_blank" rel="noopener">Öppna i ny flik</a><button class="btn ghost sm" id="svNy">Ny version</button><button class="btn ghost sm" id="svBort">Ta bort</button><button class="ico" id="svStang" aria-label="Stäng"><svg class="i"><use href="#i-x"/></svg></button></div>
+    </header>
+    <div class="sv-yta ${lage}"><iframe src="${m.url}" title="${esc(f?.namn || m.titel)}" sandbox="allow-scripts allow-forms allow-popups allow-modals allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe></div>
+  </div>`, 'svbox');
+  $('#svStang').onclick = stangModal;
+  $('#svNy').onclick = () => sidaUpp(kid);
+  $$('[name=svl]').forEach((r) => r.onchange = () => { $('.sv-yta').className = 'sv-yta ' + r.value; });
+  let saker = false;
+  $('#svBort').onclick = async () => {
+    if (!saker) { saker = true; $('#svBort').textContent = 'Säker? Ta bort'; return; }
+    try { if (!S.demo) await api('/sidor/' + m.id, { method: 'DELETE' }); SIDV.lista = SIDV.lista.filter((x) => x.id !== m.id); stangModal(); render(false); if (S.open) ritaLada(); toast('Hemsidan är borttagen.'); } catch (e) { toast(e.message, true); }
+  };
 }
 
 /* ================= VALVET ================= */
@@ -2908,6 +3084,8 @@ function koppla(v) {
     art.classList.toggle('open', oppna); b.setAttribute('aria-expanded', oppna);
     $('.skc-fold', art).toggleAttribute('inert', !oppna);
   });
+  $$('[data-sidavisa]', v).forEach((b) => b.onclick = (e) => { e.stopPropagation(); visaSida(b.dataset.sidavisa); });
+  $$('[data-sidaupp]', v).forEach((b) => b.onclick = (e) => { e.stopPropagation(); sidaUpp(b.dataset.sidaupp); });
   $$('[data-kfas]', v).forEach((sel) => { sel.onclick = (e) => e.stopPropagation(); sel.onkeydown = (e) => e.stopPropagation(); sel.onchange = () => sattKundFas(sel.dataset.kfas, sel.value); });
   $$('[data-kfgrupp]', v).forEach((b) => b.onclick = () => { KF.grupp = b.dataset.kfgrupp; render(false); });
   $$('article.cc[data-open]', v).forEach((a) => a.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); oppna(a.dataset.open); } });
@@ -3052,6 +3230,7 @@ function ritaLada() {
       <div class="mact"><button class="btn sm" type="submit">Spara kunduppgifter</button></div>
     </form>` : ''}
 
+    ${f.status === 'kund' ? `<div class="box"><h3><svg class="i"><use href="#i-bild"/></svg>Hemsida</h3>${sidaFor(f.id) ? `<p class="dim" style="margin:0 0 10px;font-size:13.5px">${sidaFor(f.id).filer.length} fil${sidaFor(f.id).filer.length === 1 ? '' : 'er'} · ${mb(sidaFor(f.id).storlek)} · ${esc(sidaFor(f.id).av)} ${nar(sidaFor(f.id).tid)}</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri sm" data-sidavisa="${f.id}">Visa hemsidan</button><button class="btn ghost sm" data-sidaupp="${f.id}">Ny version</button></div>` : `<p class="dim" style="margin:0 0 10px;font-size:13.5px">Släpp in den färdiga sajten (HTML-fil, mapp eller zip) så kan alla i teamet titta på den här.</p><button class="btn ghost sm" data-sidaupp="${f.id}"><svg class="i"><use href="#i-plus"/></svg>Lägg in hemsidan</button>`}</div>` : ''}
     ${(f.arbete || []).length ? `<div class="box"><h3><svg class="i"><use href="#i-edit"/></svg>Arbete <span class="mono dim" style="margin-left:auto">via Claude</span></h3>
       <div class="arb">${[...f.arbete].reverse().slice(0, 12).map((x) => `<div>${avatar(x.av)}<span><b>${esc(x.av)}</b> ${x.typ === 'klar' ? 'blev klar' : 'började jobba'}<small>${esc(x.vad || '')}</small></span><span class="mono dim" title="${new Date(x.tid).toLocaleString('sv-SE')}">${nar(x.tid)}</span></div>`).join('')}</div></div>` : ''}
     <div class="box"><h3><svg class="i"><use href="#i-chat"/></svg>Historik <span class="mono dim" style="margin-left:auto">${hist.length} samtal</span></h3>
@@ -3065,6 +3244,9 @@ function ritaLada() {
 
   $('#close', d).onclick = stangLada;
   $('#edit', d).onclick = () => nyttForetag(f);
+  $$('[data-sidavisa]', d).forEach((b) => b.onclick = () => visaSida(b.dataset.sidavisa));
+  $$('[data-sidaupp]', d).forEach((b) => b.onclick = () => sidaUpp(b.dataset.sidaupp));
+  if (f.status === 'kund' && SIDV.lista === null) hamtaSidor();
   $('#dPris', d)?.addEventListener('click', () => { nyttForetag(f); setTimeout(() => $('#fForm')?.pris?.focus(), 60); });
   $('#dStatus', d).onchange = async (e) => { await sparaFalt(f, { status: e.target.value, ...(e.target.value === 'kund' && !f.kund?.sedan ? { kund: { ...(f.kund || {}), sedan: idag() } } : {}) }); };
   $('#dAns', d).onchange = (e) => sparaFalt(f, { ansvarig: e.target.value });
