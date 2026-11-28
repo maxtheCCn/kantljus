@@ -1579,6 +1579,7 @@ function vySamtal() {
 /* ================= KUNDER ================= */
 // Projektstatus för kunder: var i arbetet vi är. Sparas som f.kund.fas.
 const KFAS_GRUPP = [
+  { k: 'intresse', t: 'Intresse', c: '#ff7ab6', l: [['vill_exempel', 'Vill se exempel på sidor vi gjort'], ['exempel_skickade', 'Exempel skickade'], ['vill_info', 'Vill ha mer info på mejl'], ['vill_pris', 'Vill ha ett prisförslag'], ['vill_mote', 'Vill boka ett möte'], ['mote_bokat', 'Möte bokat'], ['tanker', 'Vill tänka på saken'], ['delagare', 'Ska prata med delägare eller chef'], ['jamfor', 'Jämför med andra'], ['ring_senare', 'Vill bli uppringd senare']] },
   { k: 'demo', t: 'Demo', c: '#b48cff', l: [['vill_demo', 'Vill se demo'], ['demo_gors', 'Demo görs'], ['demo_skickad', 'Demo skickad'], ['demo_svar', 'Väntar på svar om demon']] },
   { k: 'start', t: 'Start', c: '#ffcf5a', l: [['offert', 'Offert skickad'], ['forskott', 'Väntar på förskott'], ['material', 'Väntar på material från kunden'], ['ska_borja', 'Sidan behöver börja arbetas med']] },
   { k: 'bygge', t: 'Bygge', c: '#ff7a2c', l: [['arbetar', 'Sidan håller på att arbetas med'], ['granskar', 'Kunden granskar sidan'], ['andringar', 'Kunden vill ha ändringar'], ['andrar', 'Ändringar pågår']] },
@@ -3401,6 +3402,7 @@ function exVisa(id, redigera = false) {
 const NIVAER = [
   { k: 'ring', t: 'Ring tillbaka', h: 'Ring dem ett annat datum', st: 'aterkom', nar: 1 },
   { k: 'demo', t: 'Vill se en demo', h: 'Gör en demo åt dem', st: 'intresserad' },
+  { k: 'exempel', t: 'Vill se exempel', h: 'Visa sidor vi gjort', st: 'intresserad' },
   { k: 'intr', t: 'Intresserad', h: 'Låter positiva', st: 'intresserad' },
   { k: 'mejl', t: 'Vill ha info på mejl', h: 'Skicka mer info', st: 'intresserad' },
   { k: 'vmote', t: 'Vill träffas', h: 'Boka ett möte', st: 'intresserad' },
