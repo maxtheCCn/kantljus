@@ -527,6 +527,13 @@ a.ck-tile:hover{border-color:var(--glod)}
 .kfot{margin:0;font-size:11.5px;color:var(--dim)}
 .kfot a{color:var(--mute)}
 @media (max-width:1080px){.kwrap{grid-template-columns:minmax(0,1fr)}.kside{max-height:none}.khost,.kmap{height:62dvh;min-height:360px}}
+.kfas{appearance:none;width:100%;min-height:40px;padding:0 36px 0 30px;border-radius:10px;border:1px solid color-mix(in srgb,var(--c) 45%,transparent);background:radial-gradient(circle at 15px 50%,var(--c) 0 4.5px,transparent 5.5px),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='m6 9.5 6 6 6-6'/%3E%3C/svg%3E") right 10px center/16px no-repeat,color-mix(in srgb,var(--c) 10%,var(--s1));color:var(--ink);font:500 14px var(--sans);cursor:pointer}
+.kfas:focus-visible{outline:2px solid var(--glod);outline-offset:2px}
+.kfas option,.kfas optgroup{background:#151517;color:var(--ink)}
+.kfchips{margin-bottom:16px}
+.kfchips .chip i{width:8px;height:8px;border-radius:50%;background:var(--c)}
+article.cc{cursor:pointer}
+article.cc:focus-visible{outline:2px solid var(--glod);outline-offset:2px}
 .telflik{display:flex;gap:4px;padding:4px;margin:0 0 22px;border:1px solid var(--line);border-radius:14px;background:var(--s1);width:max-content;max-width:100%;overflow-x:auto;scrollbar-width:none}
 .telflik button{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;font-size:14.5px;font-weight:500;color:var(--mute);white-space:nowrap;transition:background .15s,color .15s}
 .telflik button:hover{color:var(--ink);background:rgb(255 255 255/.04)}
@@ -1570,32 +1577,65 @@ function vySamtal() {
 }
 
 /* ================= KUNDER ================= */
+// Projektstatus för kunder: var i arbetet vi är. Sparas som f.kund.fas.
+const KFAS_GRUPP = [
+  { k: 'demo', t: 'Demo', c: '#b48cff', l: [['vill_demo', 'Vill se demo'], ['demo_gors', 'Demo görs'], ['demo_skickad', 'Demo skickad'], ['demo_svar', 'Väntar på svar om demon']] },
+  { k: 'start', t: 'Start', c: '#ffcf5a', l: [['offert', 'Offert skickad'], ['forskott', 'Väntar på förskott'], ['material', 'Väntar på material från kunden'], ['ska_borja', 'Sidan behöver börja arbetas med']] },
+  { k: 'bygge', t: 'Bygge', c: '#ff7a2c', l: [['arbetar', 'Sidan håller på att arbetas med'], ['granskar', 'Kunden granskar sidan'], ['andringar', 'Kunden vill ha ändringar'], ['andrar', 'Ändringar pågår']] },
+  { k: 'lansering', t: 'Lansering', c: '#5ac8ff', l: [['doman', 'Väntar på domän eller inloggningar'], ['redo', 'Redo att publiceras'], ['live', 'Publicerad och live']] },
+  { k: 'betalning', t: 'Betalning', c: '#45c97f', l: [['faktura', 'Faktura skickad'], ['paminnelse', 'Väntar på betalning'], ['betald', 'Betald']] },
+  { k: 'efter', t: 'Efteråt', c: '#9aa0a6', l: [['underhall', 'Löpande underhåll'], ['pausad', 'Pausad'], ['avslutad', 'Avslutad']] },
+];
+const KFAS = Object.fromEntries(KFAS_GRUPP.flatMap((g) => g.l.map(([k, t]) => [k, { t, g: g.k, c: g.c }])));
+const KF = { grupp: '' };
+const kVarde = (f) => +f.kund?.varde || (f.pris && f.prisTyp !== 'manad' ? +f.pris : 0);
+const kManad = (f) => +f.kund?.manad || (f.pris && f.prisTyp === 'manad' ? +f.pris : 0);
 function vyKunder() {
-  const k = S.data.filter((f) => f.status === 'kund').sort((a, b) => ((a.kund?.sedan || '') < (b.kund?.sedan || '') ? 1 : -1));
-  const total = k.reduce((s, f) => s + (+f.kund?.varde || 0), 0);
+  const alla = S.data.filter((f) => f.status === 'kund').sort((a, b) => ((a.kund?.sedan || '') < (b.kund?.sedan || '') ? 1 : -1));
+  const engang = alla.reduce((s, f) => s + kVarde(f), 0);
+  const manad = alla.reduce((s, f) => s + kManad(f), 0);
+  const totalt = engang + manad * 12;
   const inbetalt = betaltKunder();
-  const manad = k.reduce((s, f) => s + (+f.kund?.manad || 0), 0);
+  const iGrupp = (f, g) => (g === 'ingen' ? !KFAS[f.kund?.fas] : KFAS[f.kund?.fas]?.g === g);
+  if (KF.grupp && !alla.some((f) => iGrupp(f, KF.grupp))) KF.grupp = '';
+  const k = KF.grupp ? alla.filter((f) => iGrupp(f, KF.grupp)) : alla;
+  const grupper = [...KFAS_GRUPP.map((g) => ({ ...g, n: alla.filter((f) => iGrupp(f, g.k)).length })), { k: 'ingen', t: 'Ingen status', c: '#5b5f66', n: alla.filter((f) => iGrupp(f, 'ingen')).length }].filter((g) => g.n);
+  const valj = (f) => `<select class="kfas" data-kfas="${f.id}" aria-label="Status för ${esc(f.namn)}" style="--c:${KFAS[f.kund?.fas]?.c || '#5b5f66'}">
+      <option value="">Välj status …</option>
+      ${KFAS_GRUPP.map((g) => `<optgroup label="${g.t}">${g.l.map(([v, t]) => `<option value="${v}" ${f.kund?.fas === v ? 'selected' : ''}>${t}</option>`).join('')}</optgroup>`).join('')}
+    </select>`;
   return `
   <div class="kpis">
-    <div class="kpi hot"><span class="l">Kunder</span><span class="v">${k.length}</span><span class="s">${kr(inbetalt)} totalt</span></div>
-    <div class="kpi"><span class="l">Betalt av kunder</span><span class="v" style="font-size:32px">${kr(inbetalt)}</span><span class="s">från Ekonomi · ordervärde ${kr(total)}</span></div>
+    <div class="kpi hot"><span class="l">Totalt kundvärde</span><span class="v" style="font-size:clamp(26px,7vw,34px);white-space:nowrap">${kr(totalt)}</span><span class="s">${kr(engang)} engång${manad ? ` + ${kr(manad)}/mån i ett år` : ''}</span></div>
+    <div class="kpi"><span class="l">Kunder</span><span class="v">${alla.length}</span><span class="s">${kr(inbetalt)} betalt hittills</span></div>
     <div class="kpi"><span class="l">Löpande / mån</span><span class="v" style="font-size:32px">${kr(manad)}</span><span class="s">drift och support</span></div>
-    <div class="kpi"><span class="l">Snitt per kund</span><span class="v" style="font-size:32px">${kr(k.length ? total / k.length : 0)}</span><span class="s">ordervärde</span></div>
+    <div class="kpi"><span class="l">Snitt per kund</span><span class="v" style="font-size:32px">${kr(alla.length ? totalt / alla.length : 0)}</span><span class="s">kundvärde</span></div>
   </div>
+  ${grupper.length > 1 ? `<div class="chips kfchips"><button class="chip" data-kfgrupp="" aria-pressed="${!KF.grupp}">Alla <span class="mono dim">${alla.length}</span></button>${grupper.map((g) => `<button class="chip" data-kfgrupp="${g.k}" aria-pressed="${KF.grupp === g.k}"><i style="--c:${g.c}"></i>${g.t} <span class="mono dim">${g.n}</span></button>`).join('')}</div>` : ''}
   ${k.length ? `<div class="cgrid">${k.map((f) => `
-    <button class="cc" data-open="${f.id}">
+    <article class="cc" data-open="${f.id}" tabindex="0">
       <div><h3>${esc(f.namn)}</h3><span class="mute" style="font-size:13.5px">${esc([f.bransch, f.ort].filter(Boolean).join(' · '))}</span></div>
+      ${valj(f)}
       <div class="meta">${(f.kund?.tjanster || []).map((t) => `<span class="tag">${esc(t)}</span>`).join('') || '<span class="dim" style="font-size:13px">Inga tjänster valda</span>'}</div>
       <dl>
         <dt>Kund sedan</dt><dd>${f.kund?.sedan ? new Date(f.kund.sedan).toLocaleDateString('sv-SE', { day: 'numeric', month: 'short', year: 'numeric' }).replace('.', '') : '—'}</dd>
         <dt>Kontakt</dt><dd>${esc(f.kontakt || '—')}</dd>
         <dt>Betalt</dt><dd>${betalt(f.id) ? kr(betalt(f.id)) : '0 kr'}</dd>
-        <dt>Ordervärde</dt><dd>${f.kund?.varde ? kr(f.kund.varde) : f.pris && f.prisTyp !== 'manad' ? kr(f.pris) : '—'}</dd>
-        ${f.kund?.manad ? `<dt>Per månad</dt><dd>${kr(f.kund.manad)}</dd>` : ''}
+        <dt>Ordervärde</dt><dd>${kVarde(f) ? kr(kVarde(f)) : '—'}</dd>
+        ${kManad(f) ? `<dt>Per månad</dt><dd>${kr(kManad(f))}</dd>` : ''}
       </dl>
-      <span style="display:flex;align-items:center;justify-content:space-between;gap:8px">${avatar(f.ansvarig)}<span class="mono dim">${f.webb ? esc(f.webb.replace(/^https?:\/\//, '')) : ''}</span></span>
-    </button>`).join('')}</div>`
+      <span style="display:flex;align-items:center;justify-content:space-between;gap:8px">${avatar(f.ansvarig)}<span class="mono dim">${f.kund?.fasAv ? `${esc(f.kund.fasAv)} ${nar(f.kund.fasTid)}` : f.webb ? esc(f.webb.replace(/^https?:\/\//, '')) : ''}</span></span>
+    </article>`).join('')}</div>`
   : `<section class="card"><div class="empty"><b>Inga kunder än</b>Tryck på Lägg till en kund och välj ”Ja, blir kund”, eller logga ett samtal som slutar med ”Kund”.</div></section>`}`;
+}
+async function sattKundFas(id, fas) {
+  const f = S.data.find((x) => x.id === id);
+  if (!f) return;
+  try {
+    await db.spara({ ...f, kund: { ...(f.kund || {}), fas, fasTid: new Date().toISOString(), fasAv: S.me || '' } });
+    render(false);
+    toast(fas ? `${f.namn}: ${KFAS[fas].t}` : `${f.namn}: ingen status`);
+  } catch (e) { toast(e.message, true); render(false); }
 }
 
 /* ================= RINGLISTA (enkel) ================= */
@@ -2866,6 +2906,9 @@ function koppla(v) {
     art.classList.toggle('open', oppna); b.setAttribute('aria-expanded', oppna);
     $('.skc-fold', art).toggleAttribute('inert', !oppna);
   });
+  $$('[data-kfas]', v).forEach((sel) => { sel.onclick = (e) => e.stopPropagation(); sel.onkeydown = (e) => e.stopPropagation(); sel.onchange = () => sattKundFas(sel.dataset.kfas, sel.value); });
+  $$('[data-kfgrupp]', v).forEach((b) => b.onclick = () => { KF.grupp = b.dataset.kfgrupp; render(false); });
+  $$('article.cc[data-open]', v).forEach((a) => a.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); oppna(a.dataset.open); } });
   $$('[data-valvut]', v).forEach((b) => b.onclick = () => valvFlytta(b.dataset.valvut, false));
   if (S.view === 'exempel') {
     const inp = $('#exFil', v);
