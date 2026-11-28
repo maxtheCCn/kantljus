@@ -204,6 +204,27 @@ async function sidaUrl(env, id, start) {
   const exp = Math.floor(Date.now() / 1000) + SIDA_TTL;
   return `/api/sida/${id}/${exp}.${await sidaSig(env, id, exp)}/${start.split('/').map(encodeURIComponent).join('/')}`;
 }
+// Sajter byggda för en egen domän länkar ofta med "/assets/x.css". Här pekar vi om sådana
+// sökvägar in i sajtens egen mapp: /api/sida/<id>/<sign>/assets/x.css
+const escRe = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function skrivOm(text, typ, prefix, filer) {
+  const kanda = filer.map((f) => f.namn).filter((n) => !n.includes('..')).sort((a, b) => b.length - a.length);
+  if (typ.startsWith('text/html') || typ === 'image/svg+xml') {
+    text = text.replace(/(\s(?:href|src|action|poster|data-src|data-href|xlink:href)\s*=\s*)(["']?)\/(?!\/)/gi, `$1$2${prefix}/`);
+    text = text.replace(/(\s(?:srcset|imagesrcset|data-srcset)\s*=\s*)(["'])([^"']*)\2/gi, (_, a, q, v) => a + q + v.replace(/(^|,\s*)\/(?!\/)/g, `$1${prefix}/`) + q);
+    text = text.replace(/(<meta[^>]+http-equiv=["']?refresh["']?[^>]+url=)\/(?!\/)/gi, `$1${prefix}/`);
+  }
+  if (typ.startsWith('text/html') || typ.startsWith('text/css') || typ === 'image/svg+xml') {
+    text = text.replace(/url\(\s*(["']?)\/(?!\/)/gi, `url($1${prefix}/`);
+    text = text.replace(/@import\s+(["'])\/(?!\/)/gi, `@import $1${prefix}/`);
+  }
+  if (/javascript|json|manifest|text\/html/.test(typ) && kanda.length) {
+    // Bara strängar som pekar på filer som faktiskt finns i sajten, t.ex. "/assets/site.js"
+    const re = new RegExp(`(["'\`])\\/(${kanda.slice(0, 600).map(escRe).join('|')})(?=[?#"'\`])`, 'g');
+    text = text.replace(re, `$1${prefix}/$2`);
+  }
+  return text;
+}
 const rensaSokvag = (p) => String(p || '').replace(/\\/g, '/').split('/').filter((d) => d && d !== '.' && d !== '..').join('/').slice(0, 300);
 
 // Vad vi söker på för att hitta företaget på kartan: adressen, plus Stockholm om ingen ort står med
@@ -289,9 +310,24 @@ export async function onRequest({ request, env, params }) {
       let vag = rensaSokvag(decodeURIComponent(url.pathname.startsWith(prefix) ? url.pathname.slice(prefix.length) : ''));
       let i = meta.filer.findIndex((f) => f.namn === vag);
       if (i < 0) i = meta.filer.findIndex((f) => f.namn === (vag ? vag + '/' : '') + 'index.html');
+      if (i < 0 && vag) i = meta.filer.findIndex((f) => f.namn === vag + '.html');
       if (i < 0 && !/\.[a-z0-9]{1,8}$/i.test(vag)) i = meta.filer.findIndex((f) => f.namn === meta.start);
       if (i < 0) return new Response('Filen finns inte i sajten: ' + vag, { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8', 'access-control-allow-origin': '*' } });
       const fil = meta.filer[i];
+      const typ = mimeFor(fil.namn);
+      const h = { 'content-type': typ, 'cache-control': 'private, max-age=3600', 'x-robots-tag': 'noindex, nofollow', 'access-control-allow-origin': '*', 'x-content-type-options': 'nosniff' };
+      if (typ.startsWith('text/html') || typ === 'image/svg+xml') h['content-security-policy'] = 'sandbox allow-scripts allow-forms allow-popups allow-modals allow-popups-to-escape-sandbox';
+      if (/^text\/(html|css|javascript)|json|manifest|svg/.test(typ) && fil.storlek < 8_000_000) {
+        const bitar = [];
+        for (let j = 0; j < fil.delar; j++) {
+          const d = await env.DB.prepare('SELECT data FROM exempel_delar WHERE id = ? AND nr = ?').bind(sid + '/' + i, j).first();
+          if (d) bitar.push(franB64(d.data));
+        }
+        const hela = new Uint8Array(bitar.reduce((a, x) => a + x.length, 0));
+        let o = 0; for (const x of bitar) { hela.set(x, o); o += x.length; }
+        return new Response(skrivOm(new TextDecoder().decode(hela), typ, `/api/sida/${sid}/${tok}`, meta.filer), { headers: h });
+      }
+      h['content-length'] = String(fil.storlek);
       let bit = 0;
       const strom = new ReadableStream({
         async pull(c) {
@@ -301,9 +337,6 @@ export async function onRequest({ request, env, params }) {
           c.enqueue(franB64(d.data));
         },
       });
-      const typ = mimeFor(fil.namn);
-      const h = { 'content-type': typ, 'content-length': String(fil.storlek), 'cache-control': 'private, max-age=3600', 'x-robots-tag': 'noindex, nofollow', 'access-control-allow-origin': '*', 'x-content-type-options': 'nosniff' };
-      if (typ.startsWith('text/html') || typ === 'image/svg+xml') h['content-security-policy'] = 'sandbox allow-scripts allow-forms allow-popups allow-modals allow-popups-to-escape-sandbox';
       return new Response(strom, { headers: h });
     }
 
